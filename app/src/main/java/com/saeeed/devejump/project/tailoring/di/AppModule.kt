@@ -1,6 +1,10 @@
 package com.saeeed.devejump.project.tailoring.di
 
+import androidx.room.Room
 import com.google.gson.GsonBuilder
+import com.saeeed.devejump.project.tailoring.BaseApplication
+import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
+import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
@@ -55,4 +59,20 @@ object AppModule {
             mapper = sewMethodMapper
         )
     }
+
+    @Singleton
+    @Provides
+    fun provideDb(app: BaseApplication): AppDatabase {
+        return Room
+            .databaseBuilder(app, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRecipeDao(db: AppDatabase): SewMethodDao{
+        return db.recipeDao()
+    }
+
 }

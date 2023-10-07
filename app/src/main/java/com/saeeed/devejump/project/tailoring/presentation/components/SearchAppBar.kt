@@ -1,12 +1,16 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
+import CategoryChip
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -67,7 +71,7 @@ fun SearchAppBar(
             )
         }
         val scrollState = rememberScrollState()
-        ScrollableRow(
+        LazyRow(
             modifier = Modifier
                 .padding(start = 8.dp, bottom = 8.dp)
             ,
@@ -78,7 +82,7 @@ fun SearchAppBar(
             scrollState.scrollTo(scrollPosition)
 
             for(category in categories){
-                FoodCategoryChip(
+                CategoryChip(
                     category = category.value,
                     isSelected = selectedCategory == category,
                     onSelectedCategoryChanged = {
