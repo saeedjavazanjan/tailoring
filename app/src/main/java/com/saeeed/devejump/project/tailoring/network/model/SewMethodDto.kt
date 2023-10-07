@@ -25,9 +25,9 @@ data class SewMethodDto(
     @SerializedName("ingredients")
     var ingredients: List<String> = emptyList(),
 
-    @SerializedName("date_added")
-    var dateAdded: String,
+    @SerializedName("long_date_added")
+    var longDateAdded: Long,
 
-    @SerializedName("date_updated")
-    var dateUpdated: String,
+    @SerializedName("long_date_updated")
+    var longDateUpdated: Long,
 )
