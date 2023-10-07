@@ -2,6 +2,7 @@ package com.saeeed.devejump.project.tailoring.network.model
 
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
+import com.saeeed.devejump.project.tailoring.utils.DateUtils
 
 class SewMethodMapper : DomainMapper<SewMethodDto, SewMethod> {
 
@@ -14,8 +15,8 @@ class SewMethodMapper : DomainMapper<SewMethodDto, SewMethod> {
             publisher = model.publisher,
             sourceUrl = model.sourceUrl,
             ingredients = model.ingredients,
-            dateAdded = model.dateAdded,
-            dateUpdated = model.dateUpdated,
+            dateAdded =DateUtils.longToDate(model.longDateAdded),
+            dateUpdated = DateUtils.longToDate(model.longDateUpdated),
         )
     }
 
@@ -28,8 +29,8 @@ class SewMethodMapper : DomainMapper<SewMethodDto, SewMethod> {
             publisher = domainModel.publisher,
             sourceUrl = domainModel.sourceUrl,
             ingredients = domainModel.ingredients,
-            dateAdded = domainModel.dateAdded,
-            dateUpdated = domainModel.dateUpdated,
+            longDateAdded =  DateUtils.dateToLong(domainModel.dateAdded),
+            longDateUpdated = DateUtils.dateToLong(domainModel.dateUpdated),
         )
     }
 
