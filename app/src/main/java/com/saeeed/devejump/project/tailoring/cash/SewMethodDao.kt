@@ -10,22 +10,22 @@ import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
 @Dao
 interface SewMethodDao {
     @Insert
-    suspend fun insertRecipe(recipe: SewEntity): Long
+    suspend fun insertSew(recipe: SewEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRecipes(recipes: List<SewEntity>): LongArray
+    suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
 
     @Query("SELECT * FROM sewMethods WHERE id = :id")
-    suspend fun getRecipeById(id: Int): SewEntity?
+    suspend fun getSewById(id: Int): SewEntity?
 
     @Query("DELETE FROM sewMethods WHERE id IN (:ids)")
-    suspend fun deleteRecipes(ids: List<Int>): Int
+    suspend fun deleteSew(ids: List<Int>): Int
 
     @Query("DELETE FROM sewMethods")
-    suspend fun deleteAllRecipes()
+    suspend fun deleteAllSewMethods()
 
     @Query("DELETE FROM sewMethods WHERE id = :primaryKey")
-    suspend fun deleteRecipe(primaryKey: Int): Int
+    suspend fun deleteSew(primaryKey: Int): Int
 
     /**
      * Retrieve recipes for a particular page.
@@ -38,7 +38,7 @@ interface SewMethodDao {
         OR ingredients LIKE '%' || :query || '%'  
         ORDER BY date_updated DESC LIMIT :pageSize OFFSET ((:page - 1) * :pageSize)
         """)
-    suspend fun searchRecipes(
+    suspend fun searchSewMethods(
         query: String,
         page: Int,
         pageSize: Int = RECIPE_PAGINATION_PAGE_SIZE
@@ -51,7 +51,7 @@ interface SewMethodDao {
         SELECT * FROM sewMethods 
         ORDER BY date_updated DESC LIMIT :pageSize OFFSET ((:page - 1) * :pageSize)
     """)
-    suspend fun getAllRecipes(
+    suspend fun getAllSewMethods(
         page: Int,
         pageSize: Int = RECIPE_PAGINATION_PAGE_SIZE
     ): List<SewEntity>
@@ -65,7 +65,7 @@ interface SewMethodDao {
         OR ingredients LIKE '%' || :query || '%' 
         ORDER BY date_updated DESC LIMIT (:page * :pageSize)
         """)
-    suspend fun restoreRecipes(
+    suspend fun restoreSewMethods(
         query: String,
         page: Int,
         pageSize: Int = RECIPE_PAGINATION_PAGE_SIZE
@@ -78,7 +78,7 @@ interface SewMethodDao {
         SELECT * FROM sewMethods 
         ORDER BY date_updated DESC LIMIT (:page * :pageSize)
     """)
-    suspend fun restoreAllRecipes(
+    suspend fun restoreAllSewMethods(
         page: Int,
         pageSize: Int = RECIPE_PAGINATION_PAGE_SIZE
     ): List<SewEntity>

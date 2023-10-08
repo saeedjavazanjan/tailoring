@@ -6,6 +6,9 @@ import com.saeeed.devejump.project.tailoring.BaseApplication
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
+import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
@@ -80,6 +83,49 @@ object AppModule {
     @Provides
     fun provideCacheRecipeMapper(): SewEntityMapper {
         return SewEntityMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideSearchRecipe(
+        retrofitService: RetrofitService,
+        sewMethodDao: SewMethodDao,
+        sewEntityMapper: SewEntityMapper,
+        sewDtoMapper: SewMethodMapper,
+    ): SearchSew {
+        return SearchSew(
+            retrofitService = retrofitService,
+            sewMethodDao = sewMethodDao,
+            entityMapper = sewEntityMapper,
+            dtoMapper = sewDtoMapper,
+        )
+    }
+    @Singleton
+    @Provides
+    fun provideRestoreRecipes(
+        sewMethodDao: SewMethodDao,
+        sewEntityMapper: SewEntityMapper
+    ): RestoreSewMethods {
+        return RestoreSewMethods(
+            sewMethodDao = sewMethodDao,
+            entityMapper = sewEntityMapper,
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetRecipe(
+        sewMethodDao: SewMethodDao,
+        sewEntityMapper: SewEntityMapper,
+        retrofitService: RetrofitService,
+        sewDtoMapper: SewMethodMapper,
+    ): GetSewMethod {
+        return GetSewMethod(
+            sewMethodDao= sewMethodDao,
+            entityMapper = sewEntityMapper,
+            retrofitService= retrofitService,
+            sewMethodMapper =  sewDtoMapper,
+        )
     }
 
 }

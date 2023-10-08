@@ -38,7 +38,7 @@ class SearchSew(
                 )
 
                 // insert into cache
-                sewMethodDao.insertRecipes(entityMapper.toEntityList(sewMethods))
+                sewMethodDao.insertSewMethods(entityMapper.toEntityList(sewMethods))
             }catch (e: Exception){
                 // There was a network issue
                 e.printStackTrace()
@@ -46,12 +46,12 @@ class SearchSew(
 
             // query the cache
             val cacheResult = if (query.isBlank()) {
-                sewMethodDao.getAllRecipes(
+                sewMethodDao.getAllSewMethods(
                     pageSize = RECIPE_PAGINATION_PAGE_SIZE,
                     page = page
                 )
             } else {
-                sewMethodDao.searchRecipes(
+                sewMethodDao.searchSewMethods(
                     query = query,
                     pageSize = RECIPE_PAGINATION_PAGE_SIZE,
                     page = page
