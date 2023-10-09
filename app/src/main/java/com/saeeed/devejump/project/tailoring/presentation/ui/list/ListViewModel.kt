@@ -11,6 +11,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
+import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -47,6 +48,8 @@ class ListViewModel
 
     val query = mutableStateOf("")
 
+    val dialogQueue = DialogQueue()
+
     init {
         newSearch()
     }
@@ -60,7 +63,7 @@ class ListViewModel
             }
 
             dataState.error?.let { error ->
-               // dialogQueue.appendErrorMessage("An Error Occurred", error)
+                dialogQueue.appendErrorMessage("An Error Occurred", error)
             }
         }.launchIn(viewModelScope)
     }
@@ -78,7 +81,7 @@ class ListViewModel
             }
 
             dataState.error?.let { error ->
-                Log.e(TAG, "newSearch: ${error}")
+                dialogQueue.appendErrorMessage("An Error Occurred", error)
             }
         }.launchIn(viewModelScope)
     }
@@ -98,7 +101,7 @@ class ListViewModel
 
                     dataState.error?.let { error ->
                         Log.e(TAG, "nextPage: ${error}")
-                       // dialogQueue.appendErrorMessage("An Error Occurred", error)
+                        dialogQueue.appendErrorMessage("An Error Occurred", error)
                     }
                 }.launchIn(viewModelScope)
             }

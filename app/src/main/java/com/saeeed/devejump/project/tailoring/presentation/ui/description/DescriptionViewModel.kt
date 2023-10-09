@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,6 +33,8 @@ constructor(
     val recipe: MutableState<SewMethod?> = mutableStateOf(null)
 
     val loading = mutableStateOf(false)
+
+    val dialogQueue=DialogQueue()
 
     init {
         // restore if process dies
@@ -68,7 +71,7 @@ constructor(
 
             dataState.error?.let { error ->
                 Log.e(TAG, "getRecipe: ${error}")
-                //dialogQueue.appendErrorMessage("An Error Occurred", error)
+                dialogQueue.appendErrorMessage("An Error Occurred", error)
             }
         }.launchIn(viewModelScope)
     }
