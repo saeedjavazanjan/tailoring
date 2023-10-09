@@ -11,6 +11,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
+import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +35,7 @@ class ListViewModel
         private val searchSew: SearchSew,
         private val repository: SewRepository,
         private val restoreRecipes: RestoreSewMethods,
+        private val connectivityManager: ConnectivityManager,
         @Named("auth_token") private val token: String,
         private val savedStateHandle: SavedStateHandle,
 
@@ -73,7 +75,7 @@ class ListViewModel
         // New search. Reset the state
         resetSearchState()
 
-        searchSew.execute(token = token, page = page.value, query = query.value,).onEach { dataState ->
+        searchSew.execute(token = token, page = page.value, query = query.value,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let { list ->
@@ -92,7 +94,7 @@ class ListViewModel
             Log.d(TAG, "nextPage: triggered: ${page.value}")
 
             if (page.value > 1) {
-                searchSew.execute(token = token, page = page.value, query = query.value).onEach { dataState ->
+                searchSew.execute(token = token, page = page.value, query = query.value,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
                     loading.value = dataState.loading
 
                     dataState.data?.let { list ->

@@ -32,8 +32,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.saeeed.devejump.project.tailoring.ui.theme.TailoringTheme
+import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var connectivityManager: ConnectivityManager
+
+   /* @Inject
+    lateinit var settingsDataStore: SettingsDataStore
+*/
+    override fun onStart() {
+        super.onStart()
+        connectivityManager.registerConnectionObserver(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        connectivityManager.unregisterConnectionObserver(this)
+    }
+
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_main)

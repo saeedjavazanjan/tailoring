@@ -21,6 +21,7 @@ class SearchSew(
         token: String,
         page: Int,
         query: String,
+        isNetworkAvailable:Boolean
     ): Flow<DataState<List<SewMethod>>> = flow {
         try {
             emit(DataState.loading())
@@ -31,14 +32,18 @@ class SearchSew(
 
             try{
                 // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
-                val sewMethods = getSewMethodsFromNetwork(
-                    token = token,
-                    page = page,
-                    query = query,
-                )
+                if(isNetworkAvailable){
+                    val sewMethods = getSewMethodsFromNetwork(
+                        token = token,
+                        page = page,
+                        query = query,
+                    )
+                    sewMethodDao.insertSewMethods(entityMapper.toEntityList(sewMethods))
+
+                }
+
 
                 // insert into cache
-                sewMethodDao.insertSewMethods(entityMapper.toEntityList(sewMethods))
             }catch (e: Exception){
                 // There was a network issue
                 e.printStackTrace()

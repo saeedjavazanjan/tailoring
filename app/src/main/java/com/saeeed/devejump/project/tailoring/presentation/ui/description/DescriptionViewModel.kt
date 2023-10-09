@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,8 @@ class DescriptionViewModel
 @Inject
 constructor(
     private val getSewMethod: GetSewMethod,
+    private val connectivityManager: ConnectivityManager,
+
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
 ): ViewModel(){
@@ -60,8 +63,8 @@ constructor(
         }
     }*/
 
-    private suspend fun getSewMethod(id: Int){
-        getSewMethod.execute(id, token,true).onEach { dataState ->
+    private fun getSewMethod(id: Int){
+        getSewMethod.execute(id, token,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let { data ->
