@@ -98,6 +98,10 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
 
 
+    //dataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+
 }
 kapt {
     correctErrorTypes = true
