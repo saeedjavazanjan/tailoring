@@ -42,11 +42,11 @@ constructor(
     init {
         // restore if process dies
         state.get<Int>(STATE_KEY_RECIPE)?.let{ recipeId ->
-         //   onTriggerEvent(GetRecipeEvent(recipeId))
+            onTriggerEvent(GetRecipeEvent(recipeId))
         }
     }
 
-   /* fun onTriggerEvent(event: RecipeEvent){
+    fun onTriggerEvent(event: RecipeEvent){
         viewModelScope.launch {
             try {
                 when(event){
@@ -61,7 +61,7 @@ constructor(
                 e.printStackTrace()
             }
         }
-    }*/
+    }
 
     private fun getSewMethod(id: Int){
         getSewMethod.execute(id, token,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
