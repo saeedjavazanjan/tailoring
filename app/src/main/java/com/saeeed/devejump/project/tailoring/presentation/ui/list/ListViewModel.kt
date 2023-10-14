@@ -37,7 +37,6 @@ class ListViewModel
         private val connectivityManager: ConnectivityManager,
         @Named("auth_token") private val token: String,
         private val savedStateHandle: SavedStateHandle,
-
         ):ViewModel() {
 
     val methods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
