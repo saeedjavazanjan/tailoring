@@ -3,6 +3,7 @@ package com.saeeed.devejump.project.tailoring
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,23 +27,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.saeeed.devejump.project.tailoring.presentation.navigation.Navigation
+import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
+import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListViewModel
 import com.saeeed.devejump.project.tailoring.ui.theme.TailoringTheme
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.internal.lifecycle.HiltViewModelFactory
 import javax.inject.Inject
+@AndroidEntryPoint
 
-class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var connectivityManager: ConnectivityManager
+class MainActivity : AppCompatActivity() {
 
    /* @Inject
+    lateinit var connectivityManager: ConnectivityManager
+
+   *//* @Inject
     lateinit var settingsDataStore: SettingsDataStore
-*/
+*//*
     override fun onStart() {
         super.onStart()
         connectivityManager.registerConnectionObserver(this)
@@ -53,17 +65,27 @@ class MainActivity : ComponentActivity() {
         connectivityManager.unregisterConnectionObserver(this)
     }
 
-
+*/
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_main)
+
+        setContent {
+            Navigation()
+        }
+
+
+
     }
-
-
 }
+
+
+
+
+
+
 /*
         setContent {
             Column(

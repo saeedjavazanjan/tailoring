@@ -3,7 +3,7 @@ package com.saeeed.devejump.project.tailoring.presentation.navigation
 sealed class Screen(
     val route: String,
 ){
-    object RecipeList: Screen("recipeList")
+    object SewList: Screen("sewList")
 
-    object RecipeDetail: Screen("recipeDetail")
+    object SewDescription: Screen("sewDescription")
 }

@@ -86,7 +86,9 @@ dependencies {
     //navigation
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.4")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.4")
+    val nav_version = "2.7.4"
 
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 
     //room
     val room_version = "2.5.2"

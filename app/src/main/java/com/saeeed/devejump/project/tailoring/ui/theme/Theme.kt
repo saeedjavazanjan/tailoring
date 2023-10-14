@@ -85,7 +85,7 @@ fun TailoringTheme(
         typography = Typography,
         content = content
     )
-    Box(
+   /* Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = if (!darkTheme) Grey1 else Color.Black)
@@ -105,7 +105,7 @@ fun TailoringTheme(
         ProcessDialogQueue(
             dialogQueue = dialogQueue,
         )
-    }
+    }*/
 
 
 }

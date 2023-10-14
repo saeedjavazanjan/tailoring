@@ -1,6 +1,5 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.list
 
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +22,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
+const val PAGE_SIZE = 30
 
 const val STATE_KEY_PAGE = "recipe.state.page.key"
 const val STATE_KEY_QUERY = "recipe.state.query.key"
@@ -33,27 +33,67 @@ const val STATE_KEY_SELECTED_CATEGORY = "recipe.state.query.selected_category"
 class ListViewModel
     @Inject constructor(
         private val searchSew: SearchSew,
-        private val repository: SewRepository,
         private val restoreRecipes: RestoreSewMethods,
         private val connectivityManager: ConnectivityManager,
         @Named("auth_token") private val token: String,
         private val savedStateHandle: SavedStateHandle,
-
         ):ViewModel() {
 
     val methods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
     val selectedCategory: MutableState<Category?> = mutableStateOf(null)
-    var categoryScrollPosition: Float = 0F
+   // var categoryScrollPosition: Float = 0F
     val loading = mutableStateOf(false)
     val page = mutableStateOf(1)
-    var recipeListScrollPosition = 0
+    var categoryScrollPosition = 0
 
     val query = mutableStateOf("")
 
     val dialogQueue = DialogQueue()
 
     init {
-        newSearch()
+        savedStateHandle.get<Int>(STATE_KEY_PAGE)?.let { p ->
+            setPage(p)
+        }
+        savedStateHandle.get<String>(STATE_KEY_QUERY)?.let { q ->
+            setQuery(q)
+        }
+        savedStateHandle.get<Int>(STATE_KEY_LIST_POSITION)?.let { p ->
+            setListScrollPosition(p)
+        }
+        savedStateHandle.get<Category>(STATE_KEY_SELECTED_CATEGORY)?.let { c ->
+            setSelectedCategory(c)
+        }
+
+        if(categoryScrollPosition != 0){
+            onTriggerEvent(SewListEvent.RestoreStateEvent)
+        }
+        else{
+            onTriggerEvent(SewListEvent.NewSearchEvent)
+        }
+    }
+
+    fun onTriggerEvent(event: SewListEvent){
+        viewModelScope.launch {
+            try {
+                when(event){
+                    is SewListEvent.NewSearchEvent -> {
+                        newSearch()
+                    }
+                    is SewListEvent.NextPageEvent -> {
+                        nextPage()
+                    }
+                    is SewListEvent.RestoreStateEvent -> {
+                        restoreState()
+                    }
+                }
+            }catch (e: Exception){
+                Log.e(TAG, "launchJob: Exception: ${e}, ${e.cause}")
+                e.printStackTrace()
+            }
+            finally {
+                Log.d(TAG, "launchJob: finally called.")
+            }
+        }
     }
 
     private fun restoreState() {
@@ -89,7 +129,7 @@ class ListViewModel
     }
 
     private fun nextPage() {
-        if ((recipeListScrollPosition + 1) >= (page.value * PAGE_SIZE)) {
+        if ((categoryScrollPosition + 1) >= (page.value * PAGE_SIZE)) {
             incrementPage()
             Log.d(TAG, "nextPage: triggered: ${page.value}")
 
@@ -109,6 +149,17 @@ class ListViewModel
             }
         }
     }
+
+    private fun appendRecipes(recipes: List<SewMethod>){
+        val current = ArrayList(this.methods.value)
+        current.addAll(recipes)
+        this.methods.value = current
+    }
+
+    private fun incrementPage(){
+        setPage(page.value + 1)
+    }
+
     private fun resetSearchState(){
         methods.value = listOf()
         if(selectedCategory.value?.value != query.value) clearSelectedCategory()
@@ -126,15 +177,11 @@ class ListViewModel
         selectedCategory.value = newCategory
         onQueryChanged(category)
     }
-    fun onChangeCategoryScrollPosition(position: Float){
+    fun onChangeCategoryScrollPosition(position: Int){
         categoryScrollPosition = position
     }
-    private fun incrementPage(){
-        setPage(page.value + 1)
-    }
-
     private fun setListScrollPosition(position: Int){
-        recipeListScrollPosition = position
+        categoryScrollPosition = position
         savedStateHandle.set(STATE_KEY_LIST_POSITION, position)
     }
 

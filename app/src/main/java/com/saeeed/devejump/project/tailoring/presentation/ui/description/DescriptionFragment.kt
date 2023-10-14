@@ -13,8 +13,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.TextStyle
-
+@AndroidEntryPoint
 class DescriptionFragment:Fragment() {
 
     override fun onCreateView(

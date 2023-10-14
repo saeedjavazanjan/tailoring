@@ -76,8 +76,11 @@ class ListFragment : Fragment() {
                             SearchAppBar(
                                 query = query,
                                 onQueryChanged = viewModel::onQueryChanged,
-                                onExecuteSearch = viewModel::newSearch,
-                                categories = getAllCategories(),
+                                onExecuteSearch =   {
+                                    viewModel.onTriggerEvent(SewListEvent.NewSearchEvent)
+                                },
+
+                                        categories = getAllCategories(),
                                 selectedCategory = selectedCategory,
                                 onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
                                 scrollPosition = categoryScrollPosition,
