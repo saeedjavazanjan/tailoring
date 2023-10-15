@@ -83,8 +83,8 @@ class ListFragment : Fragment() {
                                         categories = getAllCategories(),
                                 selectedCategory = selectedCategory,
                                 onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                                scrollPosition = categoryScrollPosition,
-                                onChangeScrollPosition = viewModel::onChangeCategoryScrollPosition,
+                               // scrollPosition = categoryScrollPosition,
+                               // onChangeScrollPosition = viewModel::onChangeCategoryScrollPosition,
                             )
                             Box(modifier = Modifier.fillMaxSize()) {
                                 LazyColumn {

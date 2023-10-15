@@ -18,18 +18,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.bumptech.glide.manager.ConnectivityMonitor
 import com.saeeed.devejump.project.tailoring.components.GenericDialog
 import com.saeeed.devejump.project.tailoring.components.GenericDialogInfo
 import com.saeeed.devejump.project.tailoring.components.NegativeAction
 import com.saeeed.devejump.project.tailoring.components.PositiveAction
 import com.saeeed.devejump.project.tailoring.presentation.components.CircularIndeterminateProgressBar
+import com.saeeed.devejump.project.tailoring.presentation.components.ConnectivityMonitor
+import com.saeeed.devejump.project.tailoring.presentation.components.DefaultSnackbar
 import java.util.Queue
 
 private val DarkColorScheme = darkColorScheme(
@@ -54,61 +57,45 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+@ExperimentalComposeUiApi
+
 @Composable
-fun TailoringTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+fun AppTheme(
+    darkTheme: Boolean,
+    isNetworkAvailable: Boolean,
+    displayProgressBar: Boolean,
     dialogQueue: Queue<GenericDialogInfo>? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
-   /* Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = if (!darkTheme) Grey1 else Color.Black)
+        colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
     ){
-        Column{
-            ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
-            content()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = if (!darkTheme) Color.White else Color.Black)
+        ){
+            Column{
+                ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
+                content()
+            }
+            CircularIndeterminateProgressBar(isDisplayed = displayProgressBar)
+          /*  DefaultSnackbar(
+              //  snackbarHostState = scaffoldState.snackbarHostState,
+                onDismiss = {
+                //    scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )*/
+            ProcessDialogQueue(
+                dialogQueue = dialogQueue,
+            )
         }
-        CircularIndeterminateProgressBar(isDisplayed = displayProgressBar, 0.3f)
-        DefaultSnackbar(
-            snackbarHostState = scaffoldState.snackbarHostState,
-            onDismiss = {
-                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-            },
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-        ProcessDialogQueue(
-            dialogQueue = dialogQueue,
-        )
-    }*/
-
-
+    }
 }
+
+
+
 @Composable
 fun ProcessDialogQueue(
     dialogQueue: Queue<GenericDialogInfo>?,
