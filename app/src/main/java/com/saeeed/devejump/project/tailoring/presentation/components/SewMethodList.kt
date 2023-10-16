@@ -17,7 +17,7 @@ fun SewMethodList(
     onChangeScrollPosition: (Int) -> Unit,
     page: Int,
     onTriggerNextPage: () -> Unit,
-    onNavigateToRecipeDetailScreen: (String) -> Unit,
+    onNavigateToDescriptionScreen: (String) -> Unit,
 ) { Box(modifier = Modifier
     .background(color = MaterialTheme.colorScheme.surface)
 ) {
@@ -38,7 +38,7 @@ fun SewMethodList(
                     sewMethod = sewMethod,
                     onClick = {
                         val route = Screen.SewList.route + "/${sewMethod.id}"
-                        onNavigateToRecipeDetailScreen(route)
+                        onNavigateToDescriptionScreen(route)
                     }
                 )
             }

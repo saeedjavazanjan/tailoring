@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
-const val STATE_KEY_RECIPE = "recipe.state.recipe.key"
+const val STATE_KEY_SEW = "sew.state.sew.key"
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
@@ -28,32 +28,31 @@ class DescriptionViewModel
 constructor(
     private val getSewMethod: GetSewMethod,
     private val connectivityManager: ConnectivityManager,
-
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
 ): ViewModel(){
 
-    val recipe: MutableState<SewMethod?> = mutableStateOf(null)
+    val sewMethod: MutableState<SewMethod?> = mutableStateOf(null)
 
     val loading = mutableStateOf(false)
+    val onLoad: MutableState<Boolean> = mutableStateOf(false)
 
     val dialogQueue=DialogQueue()
 
     init {
         // restore if process dies
-     /*   state.get<Int>(STATE_KEY_RECIPE)?.let{ recipeId ->
-            onTriggerEvent(GetRecipeEvent(recipeId))
-        }*/
+        state.get<Int>(STATE_KEY_SEW)?.let{ sewId ->
+            onTriggerEvent(SewEvent.GetSewEvent(sewId))
+        }
     }
 
-/*
-    fun onTriggerEvent(event: RecipeEvent){
+    fun onTriggerEvent(event: SewEvent){
         viewModelScope.launch {
             try {
                 when(event){
-                    is GetRecipeEvent -> {
-                        if(recipe.value == null){
-                            getRecipe(event.id)
+                    is SewEvent.GetSewEvent -> {
+                        if(sewMethod.value == null){
+                            getSewMethod(event.id)
                         }
                     }
                 }
@@ -63,19 +62,18 @@ constructor(
             }
         }
     }
-*/
 
     private fun getSewMethod(id: Int){
         getSewMethod.execute(id, token,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let { data ->
-                recipe.value = data
-                state.set(STATE_KEY_RECIPE, data.id)
+                sewMethod.value = data
+                state.set(STATE_KEY_SEW, data.id)
             }
 
             dataState.error?.let { error ->
-                Log.e(TAG, "getRecipe: ${error}")
+                Log.e(TAG, "getSew: ${error}")
                 dialogQueue.appendErrorMessage("An Error Occurred", error)
             }
         }.launchIn(viewModelScope)

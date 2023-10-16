@@ -15,6 +15,6 @@
 
     <fragment
         android:id="@+id/recipeFragment"
-        android:name="com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionFragment"
+        android:name="com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionScreen"
         android:label="RecipeFragment" />
 </navigation>

@@ -22,12 +22,12 @@ fun ListScreen(
     isDarkTheme: Boolean,
     isNetworkAvailable: Boolean,
     onToggleTheme: () -> Unit,
-    onNavigateToRecipeDetailScreen: (String) -> Unit,
+    onNavigateToDescriptionScreen: (String) -> Unit,
     viewModel: ListViewModel,
 ) {
-    Log.d(TAG, "RecipeListScreen: ${viewModel}")
+    Log.d(TAG, "SewListScreen: ${viewModel}")
 
-    val recipes = viewModel.methods.value
+    val sewMethods = viewModel.methods.value
 
     val query = viewModel.query.value
 
@@ -68,11 +68,11 @@ fun ListScreen(
             ) {
                 SewMethodList(
                     loading = loading,
-                    sewMethods = recipes,
+                    sewMethods = sewMethods,
                     onChangeScrollPosition = viewModel::onChangeCategoryScrollPosition,
                     page = page,
                     onTriggerNextPage = { viewModel.onTriggerEvent(SewListEvent.NextPageEvent) },
-                    onNavigateToRecipeDetailScreen = onNavigateToRecipeDetailScreen,
+                    onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
 
                     )
             }
