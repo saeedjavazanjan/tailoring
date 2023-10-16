@@ -133,35 +133,6 @@ fun SearchAppBar(
                 }
             }
         }
-        /* val scrollState = rememberLazyListState()
-            val coroutineScope = rememberCoroutineScope()
-            LazyRow(
-                modifier = Modifier
-                    .padding(start = 8.dp, bottom = 8.dp),
-                state = scrollState
-            ) {
-                coroutineScope.launch {
-                    scrollState.scrollToItem(scrollPosition, 0)
 
-                }
-
-            }
-            for (category in categories) {
-                CategoryChip(
-                    category = category.value,
-                    isSelected = selectedCategory == category,
-                    onSelectedCategoryChanged = {
-                        onChangeScrollPosition(scrollState.hashCode())
-                        onSelectedCategoryChanged(it)
-                    },
-                    onExecuteSearch = {
-                        onExecuteSearch()
-                    },
-                )
-            }
-
-        }
-
-    }*/
     }
 }
