@@ -6,16 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
-import com.saeeed.devejump.project.tailoring.repository.SewRepository
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -25,10 +22,10 @@ import javax.inject.Named
 
 const val PAGE_SIZE = 30
 
-const val STATE_KEY_PAGE = "recipe.state.page.key"
-const val STATE_KEY_QUERY = "recipe.state.query.key"
-const val STATE_KEY_LIST_POSITION = "recipe.state.query.list_position"
-const val STATE_KEY_SELECTED_CATEGORY = "recipe.state.query.selected_category"
+const val STATE_KEY_PAGE = "sew.state.page.key"
+const val STATE_KEY_QUERY = "sew.state.query.key"
+const val STATE_KEY_LIST_POSITION = "sew.state.query.list_position"
+const val STATE_KEY_SELECTED_CATEGORY = "sew.state.query.selected_category"
 
 @HiltViewModel
 class ListViewModel
@@ -139,7 +136,8 @@ class ListViewModel
                     loading.value = dataState.loading
 
                     dataState.data?.let { list ->
-                        methods.value = list
+                    appendMethods(list)
+
                     }
 
                     dataState.error?.let { error ->
@@ -151,7 +149,7 @@ class ListViewModel
         }
     }
 
-    private fun appendRecipes(recipes: List<SewMethod>){
+    private fun appendMethods(recipes: List<SewMethod>){
         val current = ArrayList(this.methods.value)
         current.addAll(recipes)
         this.methods.value = current
@@ -167,19 +165,20 @@ class ListViewModel
     }
 
     private fun clearSelectedCategory(){
+        setSelectedCategory(null)
         selectedCategory.value = null
     }
     fun onQueryChanged(query: String){
-        this.query.value = query
+        setQuery(query)
     }
 
     fun onSelectedCategoryChanged(category: String){
         val newCategory = getCategory(category)
-        selectedCategory.value = newCategory
+        setSelectedCategory(newCategory)
         onQueryChanged(category)
     }
     fun onChangeCategoryScrollPosition(position: Int){
-        categoryScrollPosition = position
+        setListScrollPosition(position = position)
     }
     private fun setListScrollPosition(position: Int){
         categoryScrollPosition = position
