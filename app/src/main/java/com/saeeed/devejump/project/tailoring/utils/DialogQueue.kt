@@ -4,12 +4,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.saeeed.devejump.project.tailoring.components.GenericDialogInfo
 import com.saeeed.devejump.project.tailoring.components.PositiveAction
+import java.util.ArrayDeque
 import java.util.LinkedList
 import java.util.Queue
 
 
 class DialogQueue {
-
     // Queue for "First-In-First-Out" behavior
     val queue: MutableState<Queue<GenericDialogInfo>> = mutableStateOf(LinkedList())
 
@@ -17,8 +17,9 @@ class DialogQueue {
         if (queue.value.isNotEmpty()) {
             val update = queue.value
             update.remove() // remove first (oldest message)
-            queue.value = LinkedList() // force recompose (bug?)
+            queue.value = ArrayDeque() // force recompose (bug?)
             queue.value = update
+
         }
     }
 
