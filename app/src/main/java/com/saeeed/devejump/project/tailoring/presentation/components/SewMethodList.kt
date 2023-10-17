@@ -37,7 +37,7 @@ fun SewMethodList(
                 SewMethodCard(
                     sewMethod = sewMethod,
                     onClick = {
-                        val route = Screen.SewList.route + "/${sewMethod.id}"
+                        val route = Screen.SewDescription.route + "/${sewMethod.id}"
                         onNavigateToDescriptionScreen(route)
                     }
                 )

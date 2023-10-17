@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
+import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListViewModel
@@ -65,11 +66,11 @@ class MainActivity : ComponentActivity() {
                         type = NavType.IntType
                     })
                 ) { navBackStackEntry ->
-                    RecipeDetailScreen(
-                        isDarkTheme = settingsDataStore.isDark.value,
+                    DescriptionScreen(
+                        isDarkTheme = appDataStore.isDark.value,
                         isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                        recipeId = navBackStackEntry.arguments?.getInt("recipeId"),
-                        viewModel = viewModel,
+                        sewId = navBackStackEntry.arguments?.getInt("sewId"),
+                        viewModel = descriptionViewModel,
                     )
                 }
             }

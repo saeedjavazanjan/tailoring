@@ -4,11 +4,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.saeeed.devejump.project.tailoring.presentation.components.SewMethodView
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun DescriptionScreen(
     isDarkTheme: Boolean,
@@ -17,7 +21,7 @@ fun DescriptionScreen(
     viewModel: DescriptionViewModel,
 ){
     if (sewId == null){
-        TODO("Show Invalid Recipe")
+       // TODO("Show Invalid Recipe")
     }else {
         // fire a one-off event to get the recipe from api
         val onLoad = viewModel.onLoad.value
@@ -40,9 +44,7 @@ fun DescriptionScreen(
             isNetworkAvailable = isNetworkAvailable,
             dialogQueue = dialogQueue.queue.value,
         ){
-            Scaffold(
 
-            ) {
                 Box (
                     modifier = Modifier.fillMaxSize()
                 ){
@@ -53,10 +55,10 @@ fun DescriptionScreen(
                        // TODO("Show Invalid Recipe")
                     }
                     else {
-                        sewMethod?.let {RecipeView(recipe = it) }
+                        sewMethod?.let { SewMethodView(sewMethod = it) }
                     }
                 }
-            }
+
         }
     }
 }
