@@ -1,0 +1,77 @@
+package com.saeeed.devejump.project.tailoring.presentation.components
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
+import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
+import com.saeeed.devejump.project.tailoring.presentation.ui.courses.CoursesScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.posts.PostsScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileScreen
+import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun Navigation(
+    appDataStore: AppDataStore,
+    connectivityManager: ConnectivityManager,
+    navController: NavHostController
+){
+    val listViewModel: ListViewModel = viewModel()
+    val descriptionViewModel: DescriptionViewModel = viewModel()
+
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
+
+        composable(Screen.Home.route){
+            HomeScreen()
+
+        }
+        composable(Screen.Profile.route){
+            ProfileScreen()
+        }
+        composable(Screen.Courses.route){
+            CoursesScreen()
+
+        }
+        composable(Screen.Posts.route){
+            PostsScreen()
+        }
+
+      /*  composable(route = Screen.SewList.route) { navBackStackEntry ->
+
+            ListScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                onToggleTheme = appDataStore::toggleTheme,
+                onNavigateToDescriptionScreen = navController::navigate,
+                viewModel = listViewModel,
+            )
+        }
+        composable(
+            route = Screen.SewDescription.route + "/{sewId}",
+            arguments = listOf(navArgument("sewId") {
+                type = NavType.IntType
+            })
+        ) { navBackStackEntry ->
+            DescriptionScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                sewId = navBackStackEntry.arguments?.getInt("sewId"),
+                viewModel = descriptionViewModel,
+            )
+        }*/
+    }
+}
+
