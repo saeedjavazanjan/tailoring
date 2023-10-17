@@ -31,7 +31,7 @@ const val STATE_KEY_SELECTED_CATEGORY = "sew.state.query.selected_category"
 class ListViewModel
     @Inject constructor(
         private val searchSew: SearchSew,
-        private val restoreRecipes: RestoreSewMethods,
+        private val restoreSewMethods: RestoreSewMethods,
         private val connectivityManager: ConnectivityManager,
         @Named("auth_token") private val token: String,
         private val savedStateHandle: SavedStateHandle,
@@ -95,7 +95,7 @@ class ListViewModel
     }
 
     private fun restoreState() {
-        restoreRecipes.execute(page = page.value, query = query.value).onEach { dataState ->
+        restoreSewMethods.execute(page = page.value, query = query.value).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let { list ->
@@ -149,9 +149,9 @@ class ListViewModel
         }
     }
 
-    private fun appendMethods(recipes: List<SewMethod>){
+    private fun appendMethods(methods: List<SewMethod>){
         val current = ArrayList(this.methods.value)
-        current.addAll(recipes)
+        current.addAll(methods)
         this.methods.value = current
     }
 
