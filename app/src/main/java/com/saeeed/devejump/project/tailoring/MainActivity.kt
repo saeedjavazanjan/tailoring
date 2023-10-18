@@ -3,6 +3,7 @@ package com.saeeed.devejump.project.tailoring
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -11,28 +12,19 @@ import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
-import com.saeeed.devejump.project.tailoring.presentation.BottomNavigationBar
+import com.saeeed.devejump.project.tailoring.presentation.components.BottomNavigationBar
+import com.saeeed.devejump.project.tailoring.presentation.components.ExitAlertDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.Navigation
+import com.saeeed.devejump.project.tailoring.presentation.components.currentRoute
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
-import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionScreen
-import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListScreen
-import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListViewModel
-import com.saeeed.devejump.project.tailoring.utils.BottomNavItem
+import com.saeeed.devejump.project.tailoring.presentation.components.BottomNavItem
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.internal.lifecycle.HiltViewModelFactory
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,6 +35,7 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var appDataStore: AppDataStore
+
 
     override fun onStart() {
         super.onStart()
@@ -61,6 +54,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+
+            val openDialog = remember { mutableStateOf(false) }
+            BackHandler(enabled = (currentRoute(navController) == Screen.Home.route)) {
+
+                openDialog.value = true
+            }
             Scaffold(
                 bottomBar = {
                     BottomNavigationBar(
@@ -89,7 +88,13 @@ class MainActivity : ComponentActivity() {
                         ) ,
                         navController =navController,
                         onItemClick ={
-                            navController.navigate(it.route)
+                            navController.navigate(it.route){
+                                launchSingleTop=true
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                restoreState=true
+                            }
 
                         }
 
@@ -97,7 +102,19 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             ) {
-                Navigation(appDataStore = appDataStore, connectivityManager =connectivityManager,navController=navController )
+                Navigation(appDataStore = appDataStore
+                    , connectivityManager =connectivityManager
+                    ,navController=navController
+                )
+                if (openDialog.value) {
+                    ExitAlertDialog(navController, {
+                        openDialog.value = it
+                    }, {
+                        finish()
+                    })
+
+                }
+
             }
 
          /*   val listViewModel: ListViewModel = viewModel()

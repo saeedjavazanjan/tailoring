@@ -1,4 +1,4 @@
-package com.saeeed.devejump.project.tailoring.utils
+package com.saeeed.devejump.project.tailoring.presentation.components
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
