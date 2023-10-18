@@ -16,6 +16,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.courses.CoursesScre
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.posts.PostsScreen
@@ -31,11 +32,16 @@ fun Navigation(
 ){
     val listViewModel: ListViewModel = viewModel()
     val descriptionViewModel: DescriptionViewModel = viewModel()
+    val homeViewModel: HomeViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Home.route){
-            HomeScreen()
+            HomeScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                viewModel = homeViewModel
+            )
 
         }
         composable(Screen.Profile.route){
