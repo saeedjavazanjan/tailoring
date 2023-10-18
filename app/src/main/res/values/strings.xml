@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Tailoring</string>
+
+
+    <!--exitDialog-->
+    <string name="yes">بله</string>
+    <string name="do_you_want_to_exit_the_app">آیا میخواهید از برنامه خارج شوید؟</string>
+    <string name="close_the_app">بستن برنامه</string>
+    <string name="no">خیر</string>
 </resources>
