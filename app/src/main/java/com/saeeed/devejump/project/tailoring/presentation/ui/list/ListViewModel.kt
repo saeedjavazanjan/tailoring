@@ -113,7 +113,11 @@ class ListViewModel
         // New search. Reset the state
         resetSearchState()
 
-        searchSew.execute(token = token, page = page.value, query = query.value,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
+        searchSew.execute(
+            token = token,
+            page = page.value,
+            query = query.value,
+            connectivityManager.isNetworkAvailable.value).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let { list ->
@@ -132,7 +136,11 @@ class ListViewModel
             Log.d(TAG, "nextPage: triggered: ${page.value}")
 
             if (page.value > 1) {
-                searchSew.execute(token = token, page = page.value, query = query.value,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
+                searchSew.execute(
+                    token = token,
+                    page = page.value,
+                    query = query.value,
+                    connectivityManager.isNetworkAvailable.value).onEach { dataState ->
                     loading.value = dataState.loading
 
                     dataState.data?.let { list ->
