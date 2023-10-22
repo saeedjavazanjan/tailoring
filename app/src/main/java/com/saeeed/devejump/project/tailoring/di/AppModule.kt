@@ -8,9 +8,11 @@ import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
+import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
 import com.saeeed.devejump.project.tailoring.repository.SewRepositoryImpl
@@ -42,9 +44,15 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideBannerMapper(): BannerMapper {
+        return BannerMapper()
+    }
+
+    @Singleton
+    @Provides
     fun provideRetrofitService(): RetrofitService {
         return Retrofit.Builder()
-            .baseUrl("https://food2fork.ca/api/recipe/")
+            .baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(RetrofitService::class.java)
@@ -106,6 +114,18 @@ object AppModule {
             dtoMapper = sewDtoMapper,
         )
     }
+    @Singleton
+    @Provides
+    fun provideGetBanners(
+        retrofitService: RetrofitService,
+        bannerMapper: BannerMapper,
+    ): GetBanners {
+        return GetBanners(
+            retrofitService = retrofitService,
+            dtoMapper = bannerMapper,
+        )
+    }
+
     @Singleton
     @Provides
     fun provideRestoreRecipes(

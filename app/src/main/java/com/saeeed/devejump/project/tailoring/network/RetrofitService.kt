@@ -1,5 +1,6 @@
 package com.saeeed.devejump.project.tailoring.network
 
+import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
 import com.saeeed.devejump.project.tailoring.network.response.SewMethodSearchResponse
 import retrofit2.http.GET
@@ -20,4 +21,11 @@ interface RetrofitService {
         @Header("Authorization") token: String,
         @Query("id") id: Int
     ): SewMethodDto
+
+
+    @GET("get_banners")
+    suspend fun getBanners(
+      //  @Header("Authorization") token: String,
+        @Query("query") query: String
+    ): List<BannerDto>
 }
