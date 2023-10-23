@@ -31,7 +31,7 @@ fun Navigation(
     navController: NavHostController
 ){
     val listViewModel: ListViewModel = viewModel()
-    val descriptionViewModel: DescriptionViewModel = viewModel()
+ //   val descriptionViewModel: DescriptionViewModel = viewModel()
     val homeViewModel: HomeViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {

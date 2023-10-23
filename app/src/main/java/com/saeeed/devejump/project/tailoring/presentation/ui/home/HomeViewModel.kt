@@ -6,17 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.Banner
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
-import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
-import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.GET_HOME_BANNERS
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -69,11 +66,14 @@ class HomeViewModel
             loading.value=dataState.loading
             dataState.data?.let { list ->
                 banners.value = list
+                Log.d(TAG,"list size:${banners.value.size}")
             }
 
             dataState.error?.let { error ->
                 dialogQueue.appendErrorMessage("An Error Occurred", error)
+                Log.e(TAG,"banner ERROR:${error}")
+
             }
-        }
+        }.launchIn(viewModelScope)
     }
 }
