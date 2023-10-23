@@ -5,14 +5,18 @@ import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.Banner
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
+import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.TAG
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-
+import javax.inject.Inject
 class GetBanners(
     private val retrofitService: RetrofitService,
     private val dtoMapper: BannerMapper,
 ) {
+
 
     fun execute(
         token: String,
@@ -20,7 +24,9 @@ class GetBanners(
         isNetworkAvailable: Boolean
     ): Flow<DataState<List<Banner>>> = flow {
         try {
-          //  emit(DataState.loading())
+           emit(DataState.loading())
+
+            //TODO fix network problem
 
             //   if (isNetworkAvailable) {
                     val banners = getBannersFromNetwork(
@@ -31,7 +37,7 @@ class GetBanners(
                     emit(DataState.success(banners))
                   //  Log.d(TAG, "flow : ${banners.size}")
 
-             //   }
+              //  }
 
 
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,7 +59,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class,
     ExperimentalFoundationApi::class, ExperimentalCoroutinesApi::class
 )
@@ -87,17 +87,26 @@ fun HomeScreen(
 
         ) {
             Box(
-
                 modifier = Modifier
                     .scrollable(state = scrollState, orientation = Orientation.Vertical)
+                    .padding(it)
             ) {
                 Column {
                     
                     val pagerState = rememberPagerState(pageCount = {
                         banners.value.size
                     })
-                    HorizontalPager(state = pagerState){page->
-                        Card(
+                    HorizontalPager(
+                        state = pagerState,
+                        pageSize = PageSize.Fill,
+                        pageSpacing = 15.dp,
+                        contentPadding = PaddingValues(
+                            horizontal = 10.dp,
+                            vertical = 5.dp
+                        )
+
+                    ){page->
+                       /* Card(
                             Modifier
                                 .graphicsLayer {
                                     // Calculate the absolute offset for the current page from the
@@ -115,7 +124,7 @@ fun HomeScreen(
                                         fraction = 1f - pageOffset.coerceIn(0f, 1f)
                                     )
                                 }
-                        ) {
+                        )*/
                             BannerCard(
                                 banner = banners.value[page],
                                 onClick = {
@@ -125,12 +134,12 @@ fun HomeScreen(
                             )
 
                             // Card content
-                        }
-                        LaunchedEffect(pagerState.currentPage) {
+
+                        LaunchedEffect(pagerState.settledPage) {
                             delay(3000) // wait for 3 seconds.
                             // increasing the position and check the limit
-                            var newPosition = pagerState.currentPage + 1
-                            if (newPosition > banners.value.lastIndex) newPosition = 0
+                            var newPosition = pagerState.settledPage + 1
+                            if (newPosition > banners.value.lastIndex){ newPosition = -2}
                             // scrolling to the new position.
                             pagerState.animateScrollToPage(newPosition)
                         }

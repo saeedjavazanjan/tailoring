@@ -19,7 +19,9 @@ constructor(
 
     fun registerConnectionObserver(lifecycleOwner: LifecycleOwner){
         connectionLiveData.observe(lifecycleOwner) { isConnected ->
-            isConnected?.let { isNetworkAvailable.value = it }
+            isConnected?.let {
+                isNetworkAvailable.value = it
+            }
         }
     }
 
