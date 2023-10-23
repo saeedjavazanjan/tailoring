@@ -16,6 +16,7 @@ import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
 import com.saeeed.devejump.project.tailoring.repository.SewRepositoryImpl
+import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -122,7 +123,7 @@ object AppModule {
     ): GetBanners {
         return GetBanners(
             retrofitService = retrofitService,
-            dtoMapper = bannerMapper,
+            dtoMapper = bannerMapper
         )
     }
 
