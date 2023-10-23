@@ -99,7 +99,6 @@ fun HomeScreen(
                     HorizontalPager(state = pagerState){page->
                         Card(
                             Modifier
-                                .size(200.dp)
                                 .graphicsLayer {
                                     // Calculate the absolute offset for the current page from the
                                     // scroll position. We use the absolute value which allows us to mirror
