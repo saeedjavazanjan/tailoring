@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +23,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
@@ -31,6 +34,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,12 +45,16 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.bumptech.glide.load.engine.Resource
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.presentation.components.BannerCard
+import com.saeeed.devejump.project.tailoring.presentation.components.BestsRow
+import com.saeeed.devejump.project.tailoring.presentation.components.HomeBannersViewPager
 import com.saeeed.devejump.project.tailoring.presentation.components.SearchAppBar
 import com.saeeed.devejump.project.tailoring.presentation.components.SewMethodCard
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
@@ -72,6 +80,10 @@ fun HomeScreen(
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val banners=viewModel.banners
+    val bestOfMonthMethods=viewModel.bestOfMonthMethods
+
+
+
     AppTheme(
         displayProgressBar = loading,
         darkTheme = isDarkTheme,
@@ -86,71 +98,54 @@ fun HomeScreen(
             }
 
         ) {
-            Box(
-                modifier = Modifier
-                    .scrollable(state = scrollState, orientation = Orientation.Vertical)
-                    .padding(it)
-            ) {
-                Column {
-                    
-                    val pagerState = rememberPagerState(pageCount = {
-                        banners.value.size
-                    })
-                    HorizontalPager(
-                        state = pagerState,
-                        pageSize = PageSize.Fill,
-                        pageSpacing = 15.dp,
-                        contentPadding = PaddingValues(
-                            horizontal = 10.dp,
-                            vertical = 5.dp
+
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()).padding(it)
+                ) {
+
+
+                    HomeBannersViewPager(banners)
+                    Spacer(modifier = Modifier.size(200.dp))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+
+                    }
+                    Row (
+                        modifier= Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Text(
+                            text = stringResource(id = R.string.more),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Blue,
                         )
 
-                    ){page->
-                       /* Card(
-                            Modifier
-                                .graphicsLayer {
-                                    // Calculate the absolute offset for the current page from the
-                                    // scroll position. We use the absolute value which allows us to mirror
-                                    // any effects for both directions
-                                    val pageOffset = (
-                                            (pagerState.currentPage - page) + pagerState
-                                                .currentPageOffsetFraction
-                                            ).absoluteValue
+                        Spacer(modifier = Modifier.weight(1f))
 
-                                    // We animate the alpha, between 50% and 100%
-                                    alpha = lerp(
-                                        start = 0.5f,
-                                        stop = 1f,
-                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                    )
-                                }
-                        )*/
-                            BannerCard(
-                                banner = banners.value[page],
-                                onClick = {
-                                    /*    val route = Screen.SewDescription.route + "/${sewMethod.id}"
-                                        onNavigateToDescriptionScreen(route)*/
-                                }
-                            )
+                        Text(
+                            text = stringResource(id = R.string.best_of_month),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.DarkGray,
+                        )
 
-                            // Card content
 
-                        LaunchedEffect(pagerState.settledPage) {
-                            delay(3000) // wait for 3 seconds.
-                            // increasing the position and check the limit
-                            var newPosition = pagerState.settledPage + 1
-                            if (newPosition > banners.value.lastIndex){ newPosition = -2}
-                            // scrolling to the new position.
-                            pagerState.animateScrollToPage(newPosition)
-                        }
                     }
+                    BestsRow(
+                        loading = loading ,
+                        sewMethods = bestOfMonthMethods.value ,
+                        onNavigateToDescriptionScreen = {
 
+                        }
+
+                    )
+                    Spacer(modifier = Modifier.size(200.dp))
 
                 }
-
-
-
             }
-        }
+
     }
 }

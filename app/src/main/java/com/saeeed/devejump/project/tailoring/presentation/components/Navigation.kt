@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.courses.CoursesScreen
@@ -35,7 +36,12 @@ fun Navigation(
     val homeViewModel: HomeViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
+        navigation(
+            startDestination = Screen.Home.route,
+            route="home_to_description"
+        ){
 
+        }
         composable(Screen.Home.route){
             HomeScreen(
                 isDarkTheme = appDataStore.isDark.value,
