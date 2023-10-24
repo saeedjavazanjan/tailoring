@@ -8,11 +8,13 @@ import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.interactor.home.BestOfMonth
 import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
+import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
 import com.saeeed.devejump.project.tailoring.repository.SewRepositoryImpl
@@ -126,6 +128,19 @@ object AppModule {
             dtoMapper = bannerMapper
         )
     }
+
+    @Singleton
+    @Provides
+    fun provideBestOfMonth(
+        retrofitService: RetrofitService,
+        sewDtoMapper: SewMethodMapper,
+    ): BestOfMonth {
+        return BestOfMonth(
+            retrofitService = retrofitService,
+            dtoMapper = sewDtoMapper
+        )
+    }
+
 
     @Singleton
     @Provides

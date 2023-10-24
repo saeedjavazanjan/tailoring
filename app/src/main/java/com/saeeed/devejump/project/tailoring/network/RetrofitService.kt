@@ -28,4 +28,11 @@ interface RetrofitService {
       //  @Header("Authorization") token: String,
         @Query("query") query: String
     ): List<BannerDto>
+
+    @GET("bests")
+    suspend fun bestsOfMonth(
+      //  @Header("Authorization") token: String,
+        @Query("query") query: String
+    ): List<SewMethodDto>
+
 }

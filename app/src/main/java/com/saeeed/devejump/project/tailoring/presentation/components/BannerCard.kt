@@ -16,9 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -42,13 +47,16 @@ fun BannerCard(
                 bottom = 6.dp,
                 top = 6.dp,
             )
-            .fillMaxWidth().height(225.dp)
+            .fillMaxWidth()
+            .height(225.dp)
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
 
         Box(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
             contentAlignment = Alignment.BottomStart,
         ) {
             banner.imageURL?.let { url ->
@@ -65,22 +73,30 @@ fun BannerCard(
 
             }
             banner.title?.let { title ->
+                Box(
+                    contentAlignment = Alignment.Center,
+
+                    ){
                     Text(
                         text = title,
+                        color= Color.White,
                         modifier = Modifier
                             .fillMaxWidth(0.85f)
-                            .wrapContentWidth(Alignment.Start).padding(10.dp)
+                            .wrapContentWidth(Alignment.Start)
+                            .padding(10.dp)
+                            .drawBehind {
+                                        drawRect(color = Color.DarkGray)
+                            }
                         ,
+                        fontSize = 15.sp,
+                        style =MaterialTheme.typography.bodyMedium
 
-                        style = MaterialTheme.typography.bodySmall
                     )
+                }
+
 
             }
         }
 
-        Column() {
-
-
-        }
     }
 }
