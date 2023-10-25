@@ -89,6 +89,12 @@ class MainActivity : ComponentActivity() {
                         navController =navController,
                         onItemClick ={
                             navController.navigate(it.route){
+                              /*  launchSingleTop=true
+                                popUpTo(Screen.HomeSubNavigation.route){
+                                 //   inclusive=true
+                                    saveState = true
+                                }
+                                restoreState=true*/
                                 launchSingleTop=true
                                 popUpTo(navController.graph.startDestinationId) {
                                     saveState = true
