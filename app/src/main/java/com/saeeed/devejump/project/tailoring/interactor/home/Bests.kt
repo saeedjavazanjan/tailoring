@@ -1,15 +1,13 @@
 package com.saeeed.devejump.project.tailoring.interactor.home
 
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
-import com.saeeed.devejump.project.tailoring.domain.model.Banner
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
-import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class BestOfMonth(
+class Bests(
     private val retrofitService: RetrofitService,
     private val dtoMapper: SewMethodMapper,
 ) {

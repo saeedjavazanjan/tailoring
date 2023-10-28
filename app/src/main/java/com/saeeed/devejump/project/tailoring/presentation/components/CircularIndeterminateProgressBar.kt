@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.saeeed.devejump.project.tailoring.components.progress_bar.DotsFlashing
+import com.saeeed.devejump.project.tailoring.components.progress_bar.DotsPulsing
 
 @Composable
 fun CircularIndeterminateProgressBar(isDisplayed: Boolean) {
@@ -22,9 +24,9 @@ fun CircularIndeterminateProgressBar(isDisplayed: Boolean) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary
-            )
+
+            DotsFlashing()
+
         }
     }
 }
