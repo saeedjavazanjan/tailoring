@@ -25,7 +25,10 @@ import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 fun BestsRowsOfHome(
     onNavigateToDescriptionScreen:(String)-> Unit,
     loading: Boolean,
-    bestOfMonthMethods: MutableState<List<SewMethod>>
+    bestOfMonthMethods: MutableState<List<SewMethod>>,
+    bestOfWeekMethods: MutableState<List<SewMethod>>,
+    bestOfDayMethods: MutableState<List<SewMethod>>,
+    errors:MutableList<Boolean>
 
 
 ) {
@@ -35,120 +38,128 @@ fun BestsRowsOfHome(
     ) {
 
     }
-    Row (
-        modifier= Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        TextButton(
-
-            onClick = {
-                val route = Screen.MoreOfBests.route + "/${"month"}"
-                onNavigateToDescriptionScreen(route)
-            }
+    if (!errors[0]){
+        Row (
+            modifier= Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ){
+            TextButton(
+
+                onClick = {
+                    val route = Screen.MoreOfBests.route + "/${"month"}"
+                    onNavigateToDescriptionScreen(route)
+                }
+            ){
+                Text(
+                    text = stringResource(id = R.string.more),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Blue,
+                )
+
+            }
+
+
+            Spacer(modifier = Modifier.weight(1f))
+
             Text(
-                text = stringResource(id = R.string.more),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Blue,
+                text = stringResource(id = R.string.best_of_month),
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.DarkGray,
             )
 
+
         }
+        BestsRow(
+            loading = loading ,
+            sewMethods = bestOfMonthMethods.value.take(3) ,
+            onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
 
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        Text(
-            text = stringResource(id = R.string.best_of_month),
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.DarkGray,
-        )
-
-
-    }
-    BestsRow(
-        loading = loading ,
-        sewMethods = bestOfMonthMethods.value.take(3) ,
-        onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
-
-
-        )
-    Spacer(modifier = Modifier.size(50.dp))
-    Row (
-        modifier= Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        TextButton(
-
-            onClick = {
-                val route = Screen.MoreOfBests.route + "/${"week"}"
-                onNavigateToDescriptionScreen(route)
-            }
-        ){
-            Text(
-                text = stringResource(id = R.string.more),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Blue,
             )
-
-        }
-
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Text(
-            text = stringResource(id = R.string.best_of_week),
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.DarkGray,
-        )
-
+        Spacer(modifier = Modifier.size(50.dp))
 
     }
+   if(!errors[1]){
+       Row (
+           modifier= Modifier
+               .fillMaxWidth()
+               .padding(10.dp),
+           verticalAlignment = Alignment.CenterVertically
+       ){
+           TextButton(
 
-    BestsRow(
-        loading = loading ,
-        sewMethods = bestOfMonthMethods.value.take(3) ,
-        onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
-    )
-    Spacer(modifier = Modifier.size(50.dp))
-    Row (
-        modifier= Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        TextButton(
+               onClick = {
+                   val route = Screen.MoreOfBests.route + "/${"week"}"
+                   onNavigateToDescriptionScreen(route)
+               }
+           ){
+               Text(
+                   text = stringResource(id = R.string.more),
+                   style = MaterialTheme.typography.bodySmall,
+                   color = Color.Blue,
+               )
 
-            onClick = {
-                val route = Screen.MoreOfBests.route + "/${"day"}"
-                onNavigateToDescriptionScreen(route)
-            }
-        ){
-            Text(
-                text = stringResource(id = R.string.more),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Blue,
-            )
-
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = stringResource(id = R.string.best_of_day),
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.DarkGray,
-        )
+           }
 
 
-    }
-    BestsRow(
-        loading = loading ,
-        sewMethods = bestOfMonthMethods.value.take(3) ,
-        onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
+           Spacer(modifier = Modifier.weight(1f))
+
+           Text(
+               text = stringResource(id = R.string.best_of_week),
+               style = MaterialTheme.typography.bodyLarge,
+               color = Color.DarkGray,
+           )
 
 
-        )
+       }
+
+       BestsRow(
+           loading = loading ,
+           sewMethods = bestOfWeekMethods.value.take(3) ,
+           onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
+       )
+       Spacer(modifier = Modifier.size(50.dp))
+   }
+   if (!errors[2]){
+       Row (
+           modifier= Modifier
+               .fillMaxWidth()
+               .padding(10.dp),
+           verticalAlignment = Alignment.CenterVertically
+       ){
+           TextButton(
+
+               onClick = {
+                   val route = Screen.MoreOfBests.route + "/${"day"}"
+                   onNavigateToDescriptionScreen(route)
+               }
+           ){
+               Text(
+                   text = stringResource(id = R.string.more),
+                   style = MaterialTheme.typography.bodySmall,
+                   color = Color.Blue,
+               )
+
+           }
+
+           Spacer(modifier = Modifier.weight(1f))
+           Text(
+               text = stringResource(id = R.string.best_of_day),
+               style = MaterialTheme.typography.bodyLarge,
+               color = Color.DarkGray,
+           )
+
+
+       }
+       BestsRow(
+           loading = loading ,
+           sewMethods = bestOfDayMethods.value.take(3) ,
+           onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
+
+
+           )
+   }
+
 }

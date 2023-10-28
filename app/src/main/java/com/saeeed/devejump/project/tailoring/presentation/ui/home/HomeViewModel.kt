@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.Banner
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
-import com.saeeed.devejump.project.tailoring.interactor.home.BestOfMonth
+import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
 import com.saeeed.devejump.project.tailoring.utils.BEST_OF_DAY
 import com.saeeed.devejump.project.tailoring.utils.BEST_OF_MONTH
@@ -25,42 +25,46 @@ import javax.inject.Named
 
 @HiltViewModel
 class HomeViewModel
-    @Inject
-    constructor(
-        private val bestOfMonth: BestOfMonth,
-        private val getBanners: GetBanners,
-        private val connectivityManager: ConnectivityManager,
-        @Named("auth_token") private val token: String,
-):ViewModel() {
+@Inject
+constructor(
+    private val bests: Bests,
+    private val getBanners: GetBanners,
+    private val connectivityManager: ConnectivityManager,
+    @Named("auth_token") private val token: String,
+) : ViewModel() {
 
     val banners: MutableState<List<Banner>> = mutableStateOf(ArrayList())
     val bannersQuery = GET_HOME_BANNERS
     val bestsOfMonthQuery = BEST_OF_MONTH
-    val bestOfWeek = BEST_OF_WEEK
-    val bestOfDay = BEST_OF_DAY
+    val bestOfWeekQuery = BEST_OF_WEEK
+    val bestOfDayQuery = BEST_OF_DAY
 
     val bestOfMonthMethods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
+    val bestOfWeekMethods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
+    val bestOfDayMethods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
 
 
     val loading = mutableStateOf(false)
-
+    val errors: MutableState<MutableList<Boolean>> =
+        mutableStateOf(mutableListOf(false, false, false))
     val dialogQueue = DialogQueue()
 
     init {
         onTriggerEvent()
     }
-    fun onTriggerEvent(){
+
+    fun onTriggerEvent() {
         viewModelScope.launch {
             try {
-                    getBanners()
+                getBanners()
                 getBestsOfMonth()
+                getBestsOfWeek()
+                getBestsOfDay()
 
-
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 Log.e(TAG, "launchJob: Exception: ${e}, ${e.cause}")
                 e.printStackTrace()
-            }
-            finally {
+            } finally {
                 Log.d(TAG, "launchJob: finally called.")
             }
 
@@ -71,16 +75,18 @@ class HomeViewModel
         Log.d(TAG, "getbanner: query: ${bannersQuery}")
 
         getBanners.execute(
-            token=token,
-            query=bannersQuery,
-            connectivityManager.isNetworkAvailable.value).onEach {dataState->
-            loading.value=dataState.loading
+            token = token,
+            query = bannersQuery,
+            connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState ->
+            loading.value = dataState.loading
             dataState.data?.let { list ->
                 banners.value = list
+
             }
 
             dataState.error?.let { error ->
-                dialogQueue.appendErrorMessage("An Error Occurred", error)
+                // dialogQueue.appendErrorMessage("An Error Occurred", error)
             }
         }.launchIn(viewModelScope)
     }
@@ -88,18 +94,66 @@ class HomeViewModel
     private fun getBestsOfMonth() {
         Log.d(TAG, "newSearch: query: ${bestsOfMonthQuery}")
         // New search. Reset the state
-        bestOfMonth.execute(
+        bests.execute(
             token = token,
             query = bestsOfMonthQuery,
-            connectivityManager.isNetworkAvailable.value).onEach { dataState ->
+            connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState ->
             loading.value = dataState.loading
 
             dataState.data?.let { list ->
                 bestOfMonthMethods.value = list
+
             }
 
             dataState.error?.let { error ->
                 dialogQueue.appendErrorMessage("An Error Occurred", error)
+                errors.value[0]=false
+
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getBestsOfWeek() {
+        Log.d(TAG, "newSearch: query: ${bestsOfMonthQuery}")
+        // New search. Reset the state
+        bests.execute(
+            token = token,
+            query = bestOfWeekQuery,
+            connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let { list ->
+                bestOfWeekMethods.value = list
+            }
+
+            dataState.error?.let { error ->
+                //  dialogQueue.appendErrorMessage("An Error Occurred", error)
+                errors.value[1]=false
+
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getBestsOfDay() {
+        Log.d(TAG, "newSearch: query: ${bestsOfMonthQuery}")
+        // New search. Reset the state
+        bests.execute(
+            token = token,
+            query = bestOfDayQuery,
+            connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let { list ->
+                bestOfDayMethods.value = list
+            }
+
+            dataState.error?.let { error ->
+                // dialogQueue.appendErrorMessage("An Error Occurred", error)
+                errors.value[2]=false
+
             }
         }.launchIn(viewModelScope)
     }

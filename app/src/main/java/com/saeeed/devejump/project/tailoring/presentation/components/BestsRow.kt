@@ -32,7 +32,7 @@ fun BestsRow(
                 SewMethodCard(
                     sewMethod = sewMethod,
                     onClick = {
-                        val route = Screen.SewDescription.route + "/${sewMethod.id}"
+                        val route =Screen.SewDescription.route + "/${sewMethod.id}"
                         onNavigateToDescriptionScreen(route)
                     }
                 )

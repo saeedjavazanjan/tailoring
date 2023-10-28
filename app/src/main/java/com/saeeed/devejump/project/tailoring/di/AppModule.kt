@@ -8,21 +8,18 @@ import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
-import com.saeeed.devejump.project.tailoring.interactor.home.BestOfMonth
+import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
 import com.saeeed.devejump.project.tailoring.repository.SewRepositoryImpl
-import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
@@ -131,11 +128,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideBestOfMonth(
+    fun provideBests(
         retrofitService: RetrofitService,
         sewDtoMapper: SewMethodMapper,
-    ): BestOfMonth {
-        return BestOfMonth(
+    ): Bests {
+        return Bests(
             retrofitService = retrofitService,
             dtoMapper = sewDtoMapper
         )

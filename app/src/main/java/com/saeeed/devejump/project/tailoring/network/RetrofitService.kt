@@ -35,4 +35,6 @@ interface RetrofitService {
         @Query("query") query: String
     ): List<SewMethodDto>
 
+
+
 }
