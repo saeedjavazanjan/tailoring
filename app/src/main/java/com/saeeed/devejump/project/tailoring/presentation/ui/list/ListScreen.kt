@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.saeeed.devejump.project.tailoring.presentation.components.SearchAppBar
 import com.saeeed.devejump.project.tailoring.presentation.components.SewMethodList
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
@@ -47,6 +50,8 @@ fun ListScreen(
         isNetworkAvailable = isNetworkAvailable,
         dialogQueue = dialogQueue.queue.value,
     ) {
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+
         Scaffold(
             topBar = {
                 SearchAppBar(
@@ -66,15 +71,17 @@ fun ListScreen(
             Column(
                 Modifier.padding(it)
             ) {
-                SewMethodList(
-                    loading = loading,
-                    sewMethods = sewMethods,
-                    onChangeScrollPosition = viewModel::onChangeCategoryScrollPosition,
-                    page = page,
-                    onTriggerNextPage = { viewModel.onTriggerEvent(SewListEvent.NextPageEvent) },
-                    onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
 
-                    )
+                    SewMethodList(
+                        loading = loading,
+                        sewMethods = sewMethods,
+                        onChangeScrollPosition = viewModel::onChangeCategoryScrollPosition,
+                        page = page,
+                        onTriggerNextPage = { viewModel.onTriggerEvent(SewListEvent.NextPageEvent) },
+                        onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
+
+                        )
+                }
             }
 
 

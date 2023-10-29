@@ -1,21 +1,20 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.list
 
 enum class Category(val value: String){
-    CHICKEN("Chicken"),
-    BEEF("Beef"),
-    SOUP("Soup"),
-    DESSERT("Dessert"),
-    VEGETARIAN("Vegetarian"),
-    MILK("Milk"),
-    VEGAN("Vegan"),
-    PIZZA("Pizza"),
-    DONUT("Donut"),
+    TAILORING("خیاطی"),
+    KNITTING("بافتنی"),
+    LEATHERING("چرم دوزی"),
+    EMBROIDERY("گل دوزی"),
+    TERMEHDOOZY("ترمه دوزی"),
+    DOLL_MAKING("عروسک دوزی"),
+    OTHER("سایر"),
+
 }
 
 fun getAllCategories(): List<Category>{
     return listOf(
-        Category.CHICKEN, Category.BEEF, Category.SOUP, Category.DESSERT,
-        Category.VEGETARIAN, Category.MILK, Category.VEGAN, Category.PIZZA, Category.DONUT
+        Category.TAILORING, Category.KNITTING, Category.LEATHERING, Category.EMBROIDERY,
+        Category.TERMEHDOOZY, Category.DOLL_MAKING, Category.OTHER
     )
 }
 
