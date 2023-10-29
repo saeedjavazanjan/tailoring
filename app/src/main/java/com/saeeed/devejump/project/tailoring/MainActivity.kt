@@ -2,7 +2,6 @@ package com.saeeed.devejump.project.tailoring
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -28,7 +27,6 @@ import com.saeeed.devejump.project.tailoring.presentation.components.currentRout
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.components.BottomNavItem
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
-import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -97,7 +95,7 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
-                Screen.SewList.route-> {
+                Screen.Posts.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
                     // topBarState.value = true
@@ -128,7 +126,7 @@ class MainActivity : ComponentActivity() {
                             ),
                             BottomNavItem(
                                 name = "Posts",
-                                route = Screen.SewList.route,
+                                route = Screen.Posts.route,
                                 icon = Icons.Default.MailOutline
                             ),
                             BottomNavItem(

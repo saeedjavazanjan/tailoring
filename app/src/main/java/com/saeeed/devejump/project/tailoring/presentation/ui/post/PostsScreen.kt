@@ -1,4 +1,4 @@
-package com.saeeed.devejump.project.tailoring.presentation.ui.list
+package com.saeeed.devejump.project.tailoring.presentation.ui.post
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -58,7 +58,7 @@ fun ListScreen(
                     query = query,
                     onQueryChanged = viewModel::onQueryChanged,
                     onExecuteSearch = {
-                        viewModel.onTriggerEvent(SewListEvent.NewSearchEvent)
+                        viewModel.onTriggerEvent(PostsEvent.NewSearchEvent)
                     },
                     categories = getAllCategories(),
                     selectedCategory = selectedCategory,
@@ -77,7 +77,7 @@ fun ListScreen(
                         sewMethods = sewMethods,
                         onChangeScrollPosition = viewModel::onChangeCategoryScrollPosition,
                         page = page,
-                        onTriggerNextPage = { viewModel.onTriggerEvent(SewListEvent.NextPageEvent) },
+                        onTriggerNextPage = { viewModel.onTriggerEvent(PostsEvent.NextPageEvent) },
                         onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
 
                         )
