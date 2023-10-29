@@ -45,8 +45,6 @@ constructor(
 
 
     val loading = mutableStateOf(false)
-    val errors: MutableState<MutableList<Boolean>> =
-        mutableStateOf(mutableListOf(false, false, false))
     val dialogQueue = DialogQueue()
 
     init {
@@ -108,7 +106,6 @@ constructor(
 
             dataState.error?.let { error ->
                 dialogQueue.appendErrorMessage("An Error Occurred", error)
-                errors.value[0]=false
 
             }
         }.launchIn(viewModelScope)
@@ -130,7 +127,6 @@ constructor(
 
             dataState.error?.let { error ->
                 //  dialogQueue.appendErrorMessage("An Error Occurred", error)
-                errors.value[1]=false
 
             }
         }.launchIn(viewModelScope)
@@ -152,7 +148,6 @@ constructor(
 
             dataState.error?.let { error ->
                 // dialogQueue.appendErrorMessage("An Error Occurred", error)
-                errors.value[2]=false
 
             }
         }.launchIn(viewModelScope)

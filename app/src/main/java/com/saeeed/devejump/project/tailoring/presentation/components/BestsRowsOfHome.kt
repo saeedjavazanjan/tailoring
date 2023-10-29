@@ -28,7 +28,6 @@ fun BestsRowsOfHome(
     bestOfMonthMethods: MutableState<List<SewMethod>>,
     bestOfWeekMethods: MutableState<List<SewMethod>>,
     bestOfDayMethods: MutableState<List<SewMethod>>,
-    errors:MutableList<Boolean>
 
 
 ) {
@@ -38,7 +37,7 @@ fun BestsRowsOfHome(
     ) {
 
     }
-    if (!errors[0]){
+    if (!bestOfMonthMethods.value.isEmpty()){
         Row (
             modifier= Modifier
                 .fillMaxWidth()
@@ -81,7 +80,7 @@ fun BestsRowsOfHome(
         Spacer(modifier = Modifier.size(50.dp))
 
     }
-   if(!errors[1]){
+   if(!bestOfWeekMethods.value.isEmpty()){
        Row (
            modifier= Modifier
                .fillMaxWidth()
@@ -122,7 +121,7 @@ fun BestsRowsOfHome(
        )
        Spacer(modifier = Modifier.size(50.dp))
    }
-   if (!errors[2]){
+   if (!bestOfDayMethods.value.isEmpty()){
        Row (
            modifier= Modifier
                .fillMaxWidth()

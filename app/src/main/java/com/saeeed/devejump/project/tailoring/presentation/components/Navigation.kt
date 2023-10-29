@@ -69,8 +69,14 @@ fun Navigation(
             CoursesScreen()
 
         }
-        composable(Screen.Posts.route){
-            PostsScreen()
+        composable(Screen.SewList.route){
+            ListScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                onToggleTheme = { /*TODO*/ },
+                onNavigateToDescriptionScreen = navController::navigate,
+                viewModel =listViewModel
+            )
 
         }
 

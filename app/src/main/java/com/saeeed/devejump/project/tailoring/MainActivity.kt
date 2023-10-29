@@ -68,11 +68,15 @@ class MainActivity : ComponentActivity() {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
 
 
-            when (navBackStackEntry?.destination?.route?.take(14)) {
-                Screen.SewDescription.route-> {
+            when (navBackStackEntry?.destination?.route) {
+                Screen.SewDescription.route + "/{sewId}"-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = false
                     // topBarState.value = true
+
+                }
+                Screen.MoreOfBests.route + "/{type}"->{
+                    bottomBarState.value = false
 
                 }
                 Screen.Home.route-> {
@@ -93,7 +97,7 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
-                Screen.Posts.route-> {
+                Screen.SewList.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
                     // topBarState.value = true
@@ -123,15 +127,16 @@ class MainActivity : ComponentActivity() {
                                 icon = Icons.Default.DateRange
                             ),
                             BottomNavItem(
+                                name = "Posts",
+                                route = Screen.SewList.route,
+                                icon = Icons.Default.MailOutline
+                            ),
+                            BottomNavItem(
                                 name = "Profile",
                                 route = Screen.Profile.route,
                                 icon = Icons.Default.Person
-                            ),
-                            BottomNavItem(
-                                name = "Posts",
-                                route = Screen.Posts.route,
-                                icon = Icons.Default.MailOutline
                             )
+
 
                         ),
                         navController = navController,

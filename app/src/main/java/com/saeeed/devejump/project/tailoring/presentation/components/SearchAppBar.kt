@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -30,10 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -64,7 +67,7 @@ fun SearchAppBar(
             Row(modifier = Modifier.fillMaxWidth()) {
                 TextField(
                     modifier = Modifier
-                        .fillMaxWidth(.9f)
+                        .fillMaxWidth()
                         .padding(8.dp),
                     value = query,
 
@@ -72,7 +75,7 @@ fun SearchAppBar(
                         onQueryChanged(it)
                     },
                     label = {
-                        Text(text = "Search")
+                        Text(text = "جستجو")
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -84,7 +87,7 @@ fun SearchAppBar(
                         }
                     ),
                     leadingIcon = {
-                        Icon(Icons.Filled.Search,"")
+                        Icon(Icons.Filled.Search, "")
                     },
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = MaterialTheme.colorScheme.onSurface,
@@ -93,7 +96,7 @@ fun SearchAppBar(
                     )
 
                 )
-                ConstraintLayout(
+         /*       ConstraintLayout(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
                     val (menu) = createRefs()
@@ -110,10 +113,13 @@ fun SearchAppBar(
                         Icon(Icons.Filled.MoreVert, contentDescription = "Toggle Dark/Light Theme")
                     }
 
-                }
+                }*/
 
             }
             val scrollState = rememberLazyListState()
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                //UI
+
             LazyRow(
                 modifier = Modifier
                     .padding(start = 8.dp, bottom = 8.dp),
@@ -132,6 +138,7 @@ fun SearchAppBar(
                     )
                 }
             }
+        }
         }
 
     }

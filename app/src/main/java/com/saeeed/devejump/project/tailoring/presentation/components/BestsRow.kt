@@ -7,7 +7,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.list.PAGE_SIZE
@@ -25,6 +28,8 @@ fun BestsRow(
     } else if (sewMethods.isEmpty()) {
         //   NothingHere()
     } else {
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+
         LazyRow {
             itemsIndexed(
                 items = sewMethods
@@ -32,12 +37,13 @@ fun BestsRow(
                 SewMethodCard(
                     sewMethod = sewMethod,
                     onClick = {
-                        val route =Screen.SewDescription.route + "/${sewMethod.id}"
+                        val route = Screen.SewDescription.route + "/${sewMethod.id}"
                         onNavigateToDescriptionScreen(route)
                     }
                 )
             }
         }
+    }
     }
 }
 }

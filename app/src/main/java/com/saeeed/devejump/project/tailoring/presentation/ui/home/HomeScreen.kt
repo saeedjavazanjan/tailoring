@@ -36,7 +36,6 @@ fun HomeScreen(
 
     ) {
     val loading = viewModel.loading.value
-    val errors=viewModel.errors.value
     val dialogQueue = viewModel.dialogQueue
     val banners=viewModel.banners
     val bestOfMonthMethods=viewModel.bestOfMonthMethods
@@ -57,7 +56,10 @@ fun HomeScreen(
         LaunchedEffect(lifecycleState) {
             when (lifecycleState) {
                 androidx.lifecycle.Lifecycle.State.RESUMED -> {
-                    if(errors[0] || errors[1] || errors[2]){
+                    if(bestOfMonthMethods.value.isEmpty() ||
+                        bestOfWeekMethods.value.isEmpty() ||
+                        bestOfDayMethods.value.isEmpty()
+                        ){
                         viewModel.onTriggerEvent()
                     }
                 }
@@ -91,7 +93,6 @@ fun HomeScreen(
                             bestOfMonthMethods = bestOfMonthMethods,
                             bestOfWeekMethods = bestOfWeekMethods,
                             bestOfDayMethods = bestOfDayMethods,
-                            errors=errors
 
                         )
                         Spacer(modifier = Modifier.size(70.dp))
