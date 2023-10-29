@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -57,22 +58,29 @@ fun SewMethodCard(
                 start = 10.dp,
                 end = 10.dp
             )
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick).
+        width(300.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
 
         Column() {
             sewMethod.featuredImage?.let { url ->
-                GlideImage(
-                    model = url,
-                   loading =  placeholder(R.drawable.empty_plate),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(225.dp),
-                    contentScale = ContentScale.Crop,
-                )
+
+                if (
+                    url.takeLast(3)=="png" ||
+                    url.takeLast(3)=="jpg"
+                ){
+                    GlideImage(
+                        model = url,
+                        loading =  placeholder(R.drawable.empty_plate),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(225.dp),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+
 
 
             }
@@ -89,16 +97,86 @@ fun SewMethodCard(
                         ,
                         style = MaterialTheme.typography.bodySmall
                     )
-                    Row(
+                    ConstraintLayout(
+                        modifier = Modifier.fillMaxWidth(1f)
+                            .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp),
+
+                    ) {
+                        val avatar=sewMethod.featuredImage
+                        val (avatarHolder) = createRefs()
+                        GlideImage(
+                            model = avatar,
+                            loading =  placeholder(R.drawable.empty_plate),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .width(30.dp)
+                                .height(30.dp)
+                                .clip(CircleShape)
+                                .constrainAs(avatarHolder){
+                                    start.linkTo(parent.start)
+                                    bottom.linkTo(parent.bottom)
+                                    top.linkTo(parent.top)
+                                },
+                            contentScale = ContentScale.Crop,
+                        )
+                        val author=sewMethod.publisher
+                        val(authorText)=createRefs()
+                        Text(
+                            text = author,
+                            modifier = Modifier
+                                .wrapContentWidth(Alignment.Start)
+                                .padding(5.dp)
+                                .constrainAs(authorText){
+                                  start.linkTo(avatarHolder.end)
+                                    bottom.linkTo(parent.bottom)
+                                    top.linkTo(parent.top)
+                                },
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        val(likeIcon)=createRefs()
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.like) ,
+                            tint = Color.Red,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                                .constrainAs(likeIcon){
+                                    end.linkTo(parent.end)
+                                    bottom.linkTo(parent.bottom)
+                                    top.linkTo(parent.top)
+                                }
+
+                        )
+                        val likes = sewMethod.rating.toString()
+                        val(likesCount)=createRefs()
+
+                        Text(
+                            text = likes,
+                            modifier = Modifier
+                                .wrapContentWidth(Alignment.End)
+                                .constrainAs(likesCount){
+                                  end.linkTo(likeIcon.start)
+                                    bottom.linkTo(parent.bottom)
+                                    top.linkTo(parent.top)
+                                },
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+               /*     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
+
                     ){
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ){
+
+
                             val avatar=sewMethod.featuredImage
                             GlideImage(
                                 model = avatar,
@@ -141,7 +219,7 @@ fun SewMethodCard(
                             )
                         }
 
-                    }
+                    }*/
 
                 }
 

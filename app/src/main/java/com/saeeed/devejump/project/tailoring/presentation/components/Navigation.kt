@@ -3,14 +3,11 @@ package com.saeeed.devejump.project.tailoring.presentation.components
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.bests.BestsScreen
@@ -19,9 +16,8 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.description.Descrip
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListScreen
-import com.saeeed.devejump.project.tailoring.presentation.ui.list.ListViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.posts.PostsScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileScreen
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 
@@ -69,7 +65,7 @@ fun Navigation(
             CoursesScreen()
 
         }
-        composable(Screen.SewList.route){
+        composable(Screen.Posts.route){
             ListScreen(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
