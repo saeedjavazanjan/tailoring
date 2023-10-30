@@ -36,13 +36,14 @@ fun DescriptionScreen(
 
         val dialogQueue = viewModel.dialogQueue
 
-        //val scaffoldState = rememberScaffoldState()
-
+        val snackBar = viewModel.customSnackBar.customSnackBarInfo
         AppTheme(
             displayProgressBar = loading,
             darkTheme = isDarkTheme,
             isNetworkAvailable = isNetworkAvailable,
             dialogQueue = dialogQueue.queue.value,
+            snackBarInfo = snackBar
+
         ){
 
                 Box (
@@ -55,7 +56,15 @@ fun DescriptionScreen(
                        // TODO("Show Invalid Recipe")
                     }
                     else {
-                        sewMethod?.let { SewMethodView(sewMethod = it) }
+                        sewMethod?.let {
+                            SewMethodView(
+                            sewMethod = it,
+                                save={
+                                    viewModel.saveInDataBase()
+                                }
+
+                        )
+                        }
                     }
                 }
 

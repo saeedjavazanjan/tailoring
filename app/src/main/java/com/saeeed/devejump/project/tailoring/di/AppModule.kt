@@ -6,7 +6,9 @@ import com.google.gson.GsonBuilder
 import com.saeeed.devejump.project.tailoring.BaseApplication
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
+import com.saeeed.devejump.project.tailoring.cash.model.BookMarkedSewEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.interactor.description.BookmarkPost
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
@@ -52,7 +54,8 @@ object AppModule {
     @Provides
     fun provideRetrofitService(): RetrofitService {
         return Retrofit.Builder()
-            .baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
+            //.baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
+            .baseUrl("https://food2fork.ca/api/recipe/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(RetrofitService::class.java)
@@ -97,6 +100,12 @@ object AppModule {
     @Provides
     fun provideCacheRecipeMapper(): SewEntityMapper {
         return SewEntityMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideBookMarkedPostMapper(): BookMarkedSewEntityMapper {
+        return BookMarkedSewEntityMapper()
     }
 
     @Singleton
@@ -153,7 +162,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideGetRecipe(
+    fun provideGetSewMethod(
         sewMethodDao: SewMethodDao,
         sewEntityMapper: SewEntityMapper,
         retrofitService: RetrofitService,
@@ -167,4 +176,16 @@ object AppModule {
         )
     }
 
+@Singleton
+@Provides
+fun provideBookmarkPost(
+    sewMethodDao: SewMethodDao,
+    bookMarkedSewEntityMapper: BookMarkedSewEntityMapper,
+):BookmarkPost{
+    return BookmarkPost(
+        sewMethodDao= sewMethodDao,
+        bookMarkMapper  = bookMarkedSewEntityMapper,
+    )
+
+}
 }

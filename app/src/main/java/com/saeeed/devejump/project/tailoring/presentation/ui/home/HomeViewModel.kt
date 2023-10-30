@@ -90,7 +90,7 @@ constructor(
     }
 
     private fun getBestsOfMonth() {
-        Log.d(TAG, "newSearch: query: ${bestsOfMonthQuery}")
+        Log.d(TAG, "bestOfMonth: query: ${bestsOfMonthQuery}")
         // New search. Reset the state
         bests.execute(
             token = token,
@@ -112,7 +112,7 @@ constructor(
     }
 
     private fun getBestsOfWeek() {
-        Log.d(TAG, "newSearch: query: ${bestsOfMonthQuery}")
+        Log.d(TAG, "bestOfWeek: query: ${bestsOfMonthQuery}")
         // New search. Reset the state
         bests.execute(
             token = token,
@@ -133,7 +133,7 @@ constructor(
     }
 
     private fun getBestsOfDay() {
-        Log.d(TAG, "newSearch: query: ${bestsOfMonthQuery}")
+        Log.d(TAG, "bestOfDay: query: ${bestsOfMonthQuery}")
         // New search. Reset the state
         bests.execute(
             token = token,

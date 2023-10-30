@@ -7,8 +7,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.interactor.description.BookmarkPost
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.presentation.components.CustomSnackBarInfo
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
+import com.saeeed.devejump.project.tailoring.utils.CustomSnackBar
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +33,7 @@ constructor(
     private val connectivityManager: ConnectivityManager,
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
+    private val bookmarkPost: BookmarkPost
 ): ViewModel(){
 
     val sewMethod: MutableState<SewMethod?> = mutableStateOf(null)
@@ -38,6 +42,7 @@ constructor(
     val onLoad: MutableState<Boolean> = mutableStateOf(false)
 
     val dialogQueue=DialogQueue()
+    val customSnackBar=CustomSnackBar()
 
     init {
         // restore if process dies
@@ -78,5 +83,24 @@ constructor(
             }
         }.launchIn(viewModelScope)
     }
+    fun saveInDataBase() {
 
+            bookmarkPost.execute(sewMethod.value!!).onEach {dataState ->
+                  dataState.data?.let {
+                      customSnackBar.show("با موفقیت ذخیره شد")
+                      Log.d(TAG, "save in database ${it}")
+
+                  }
+
+                dataState.error?.let { error ->
+                    dialogQueue.appendErrorMessage("An Error Occurred", error)
+                   // Log.e(TAG, "save in database faild ${error}")
+
+                }
+
+
+            }.launchIn(viewModelScope)
+
+
+    }
 }
