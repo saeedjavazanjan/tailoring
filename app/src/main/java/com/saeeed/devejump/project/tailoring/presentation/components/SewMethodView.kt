@@ -28,12 +28,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @Composable
 fun SewMethodView(
     sewMethod: SewMethod,
+    save:() -> Unit
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
@@ -55,7 +57,9 @@ fun SewMethodView(
                             .fillMaxSize(),
                         contentScale = ContentScale.Crop,
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        save()
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_bookmark_border_24),
                             contentDescription = null
@@ -115,3 +119,5 @@ fun SewMethodView(
         }
     }
 }
+
+

@@ -17,7 +17,7 @@ class GetSewMethod (
 ){
 
     fun execute(
-        recipeId: Int,
+        postId: Int,
         token: String,
         isNetworkAvailable: Boolean,
     ): Flow<DataState<SewMethod>> = flow {
@@ -27,7 +27,7 @@ class GetSewMethod (
             // just to show loading, cache is fast
           //  delay(1000)
 
-            var sewMethod = getSewFromCache(recipeId = recipeId)
+            var sewMethod = getSewFromCache(postId = postId)
 
             if(sewMethod != null){
                 emit(DataState.success(sewMethod))
@@ -37,7 +37,7 @@ class GetSewMethod (
 
                 if(isNetworkAvailable){
                     // get recipe from network
-                    val networkRecipe = getSewFromNetwork(token, recipeId) // dto -> domain
+                    val networkRecipe = getSewFromNetwork(token, postId) // dto -> domain
 
                     // insert into cache
                     sewMethodDao.insertSew(
@@ -47,7 +47,7 @@ class GetSewMethod (
                 }
 
                 // get from cache
-                sewMethod = getSewFromCache(recipeId = recipeId)
+                sewMethod = getSewFromCache(postId = postId)
 
                 // emit and finish
                 if(sewMethod != null){
@@ -63,8 +63,8 @@ class GetSewMethod (
         }
     }
 
-    private suspend fun getSewFromCache(recipeId: Int): SewMethod? {
-        return sewMethodDao.getSewById(recipeId)?.let { sewEntity ->
+    private suspend fun getSewFromCache(postId: Int): SewMethod? {
+        return sewMethodDao.getSewById(postId)?.let { sewEntity ->
             entityMapper.mapToDomainModel(sewEntity)
         }
     }

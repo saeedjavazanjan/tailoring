@@ -4,14 +4,17 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.saeeed.devejump.project.tailoring.cash.model.BookMarkedSewEntity
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntity
 import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
 
 @Dao
 interface SewMethodDao {
     @Insert
-    suspend fun insertSew(recipe: SewEntity): Long
+    suspend fun insertSew(sewPost: SewEntity): Long
 
+    @Insert (onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertBookMarkedSew(sewPost: BookMarkedSewEntity): Long
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
 

@@ -34,15 +34,14 @@ class SearchSew(
 
             try{
                 // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
-                if(isNetworkAvailable){
+            //    if(isNetworkAvailable){
                     val sewMethods = getSewMethodsFromNetwork(
                         token = token,
                         page = page,
                         query = query,
                     )
                     sewMethodDao.insertSewMethods(entityMapper.toEntityList(sewMethods))
-
-                }
+             //   }
 
 
                 // insert into cache
