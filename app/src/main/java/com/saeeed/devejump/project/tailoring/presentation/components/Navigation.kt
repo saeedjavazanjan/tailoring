@@ -1,5 +1,6 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,7 +27,8 @@ import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 fun Navigation(
     appDataStore: AppDataStore,
     connectivityManager: ConnectivityManager,
-    navController: NavHostController
+    navController: NavHostController,
+    scaffoldState:ScaffoldState
 ){
     val listViewModel: ListViewModel = viewModel()
     val descriptionViewModel: DescriptionViewModel = viewModel()
@@ -55,6 +57,7 @@ fun Navigation(
                     isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                     sewId = navBackStackEntry.arguments?.getInt("sewId"),
                     viewModel = descriptionViewModel,
+                    scaffoldState = scaffoldState
                 )
             }
 

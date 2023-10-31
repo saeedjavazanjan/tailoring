@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Tailoring</string>
 
+    <string name="ok">OK</string>
 
     <!--exitDialog-->
     <string name="yes">بله</string>
@@ -14,5 +15,8 @@
     <string name="best_of_week">برترین های هفته</string>
     <string name="best_of_day">برترین های روز</string>
     <string name="more">بیشتر</string>
+
+    <!--description-->
+        <string name="saved_successFully">با موفقیت ذخیره شد</string>
 
 </resources>
