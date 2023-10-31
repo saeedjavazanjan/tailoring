@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
             val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
             val topBarState = rememberSaveable { (mutableStateOf(true)) }
-
+            val scaffoldState= rememberScaffoldState()
 
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -154,16 +155,21 @@ class MainActivity : ComponentActivity() {
                             }
 
                         },
-                        bottomBarState = bottomBarState
+                        bottomBarState = bottomBarState,
+
 
 
                     )
+                },
+                snackbarHost = {
+                    scaffoldState.snackbarHostState
                 }
             ) {
                 Navigation(
                     appDataStore = appDataStore,
                     connectivityManager = connectivityManager,
-                    navController = navController
+                    navController = navController,
+                    scaffoldState=scaffoldState
                 )
                 if (openDialog.value) {
                     ExitAlertDialog(navController, {

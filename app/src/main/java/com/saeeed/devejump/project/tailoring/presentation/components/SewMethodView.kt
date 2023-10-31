@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,14 +33,17 @@ import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @ExperimentalCoroutinesApi
 @Composable
 fun SewMethodView(
     sewMethod: SewMethod,
     save:() -> Unit
 ) {
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+    val composableScope = rememberCoroutineScope()
+    val snackbarController=SnackbarController(composableScope)
 
         LazyColumn(
             modifier = Modifier
@@ -58,7 +64,7 @@ fun SewMethodView(
                         contentScale = ContentScale.Crop,
                     )
                     IconButton(onClick = {
-                        save()
+                       save()
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_bookmark_border_24),
@@ -117,7 +123,7 @@ fun SewMethodView(
                 }
             }
         }
-    }
+
 }
 
 

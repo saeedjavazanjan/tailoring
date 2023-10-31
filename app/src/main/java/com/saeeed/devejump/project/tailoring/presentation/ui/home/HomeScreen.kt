@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ fun HomeScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
 
+    val scaffoldState= rememberScaffoldState()
 
 
     AppTheme(
@@ -52,6 +54,8 @@ fun HomeScreen(
         darkTheme = isDarkTheme,
         isNetworkAvailable = isNetworkAvailable,
         dialogQueue = dialogQueue.queue.value,
+        scaffoldState = scaffoldState
+
     ) {
         LaunchedEffect(lifecycleState) {
             when (lifecycleState) {

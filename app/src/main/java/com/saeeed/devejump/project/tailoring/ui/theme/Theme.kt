@@ -1,11 +1,13 @@
 package com.saeeed.devejump.project.tailoring.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -26,8 +28,6 @@ import com.saeeed.devejump.project.tailoring.components.NegativeAction
 import com.saeeed.devejump.project.tailoring.components.PositiveAction
 import com.saeeed.devejump.project.tailoring.presentation.components.CircularIndeterminateProgressBar
 import com.saeeed.devejump.project.tailoring.presentation.components.ConnectivityMonitor
-import com.saeeed.devejump.project.tailoring.presentation.components.CustomSnackBarInfo
-import com.saeeed.devejump.project.tailoring.presentation.components.DefaultSnackbar
 import java.util.Queue
 
 private val DarkColorScheme = darkColorScheme(
@@ -52,6 +52,7 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalComposeUiApi
 
 @Composable
@@ -60,7 +61,7 @@ fun AppTheme(
     isNetworkAvailable: Boolean,
     displayProgressBar: Boolean,
     dialogQueue: Queue<GenericDialogInfo>? = null,
-     snackBarInfo: CustomSnackBarInfo? = null,
+    scaffoldState:ScaffoldState,
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
@@ -71,25 +72,18 @@ fun AppTheme(
                 .fillMaxSize()
                 .background(color = if (!darkTheme) Color.White else Color.Black)
         ){
-            Column{
-                ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
-                content()
-            }
+
+                Column{
+                    ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
+                    content()
+                }
+
             CircularIndeterminateProgressBar(isDisplayed = displayProgressBar)
-            val snackbarHostState = remember { SnackbarHostState() }
-            DefaultSnackbar(
-                snackbarHostState = snackbarHostState,
-                onDismiss = {
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                },
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
+
             ProcessDialogQueue(
                 dialogQueue = dialogQueue,
             )
-            showSnackBar(snackBarInfo =snackBarInfo
-                , snackbarHostState =snackbarHostState
-            )
+
         }
     }
 }
@@ -110,7 +104,7 @@ fun ProcessDialogQueue(
         )
     }
 }
-@Composable
+/*@Composable
 fun showSnackBar(
     snackBarInfo: CustomSnackBarInfo?,
     snackbarHostState: SnackbarHostState
@@ -121,5 +115,5 @@ fun showSnackBar(
             onDismiss = snackBarInfo.onDismiss
             )
     }
-}
+}*/
 

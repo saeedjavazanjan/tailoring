@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -42,14 +43,18 @@ constructor(
                     actionLabel = actionLabel
                 )
                 cancelActiveJob()
+
             }
+
         }
         else{
             cancelActiveJob()
             snackbarJob = scope.launch {
                 scaffoldState.snackbarHostState.showSnackbar(
                     message = message,
-                    actionLabel = actionLabel
+                    actionLabel = actionLabel,
+                    duration = SnackbarDuration.Short
+
                 )
                 cancelActiveJob()
             }

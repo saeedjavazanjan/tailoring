@@ -1,6 +1,10 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.description
 
+import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -9,12 +13,12 @@ import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.BookmarkPost
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
-import com.saeeed.devejump.project.tailoring.presentation.components.CustomSnackBarInfo
+import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarController
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
-import com.saeeed.devejump.project.tailoring.utils.CustomSnackBar
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -42,7 +46,9 @@ constructor(
     val onLoad: MutableState<Boolean> = mutableStateOf(false)
 
     val dialogQueue=DialogQueue()
-    val customSnackBar=CustomSnackBar()
+
+
+
 
     init {
         // restore if process dies
@@ -83,11 +89,24 @@ constructor(
             }
         }.launchIn(viewModelScope)
     }
-    fun saveInDataBase() {
+    @SuppressLint("SuspiciousIndentation")
+    @OptIn(ExperimentalMaterialApi::class)
+     fun saveInDataBase(scaffoldState: ScaffoldState,scope:CoroutineScope) {
+        val snackbarController=SnackbarController(scope)
 
             bookmarkPost.execute(sewMethod.value!!).onEach {dataState ->
                   dataState.data?.let {
-                      customSnackBar.show("با موفقیت ذخیره شد")
+                     snackbarController.getScope().launch {
+                        // if (it.toInt() != -1){
+                             snackbarController.showSnackbar(
+                                 scaffoldState = scaffoldState,
+                                 message =  "با موفقیت ذخیره شد.",
+                                 actionLabel ="Ok"
+                             )
+                       //  }
+
+                     }
+
                       Log.d(TAG, "save in database ${it}")
 
                   }
