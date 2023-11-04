@@ -35,7 +35,7 @@ class GetSewMethod (
             // if the recipe is null, it means it was not in the cache for some reason. So get from network.
             else{
 
-                if(isNetworkAvailable){
+            //    if(isNetworkAvailable){
                     // get recipe from network
                     val networkRecipe = getSewFromNetwork(token, postId) // dto -> domain
 
@@ -44,7 +44,7 @@ class GetSewMethod (
                         // map domain -> entity
                         entityMapper.mapFromDomainModel(networkRecipe)
                     )
-                }
+           //     }
 
                 // get from cache
                 sewMethod = getSewFromCache(postId = postId)

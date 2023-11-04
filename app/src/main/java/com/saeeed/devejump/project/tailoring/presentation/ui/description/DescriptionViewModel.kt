@@ -62,9 +62,11 @@ constructor(
             try {
                 when(event){
                     is SewEvent.GetSewEvent -> {
-                        if(sewMethod.value == null){
+                     //   if(sewMethod.value == null){
                             getSewMethod(event.id)
-                        }
+                            Log.d(TAG, "sewId:${event.id}")
+
+                     //   }
                     }
                 }
             }catch (e: Exception){
@@ -77,7 +79,6 @@ constructor(
     private fun getSewMethod(id: Int){
         getSewMethod.execute(id, token,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
             loading.value = dataState.loading
-
             dataState.data?.let { data ->
                 sewMethod.value = data
                 state.set(STATE_KEY_SEW, data.id)
@@ -86,6 +87,7 @@ constructor(
             dataState.error?.let { error ->
                 Log.e(TAG, "getSew: ${error}")
                 dialogQueue.appendErrorMessage("An Error Occurred", error)
+
             }
         }.launchIn(viewModelScope)
     }

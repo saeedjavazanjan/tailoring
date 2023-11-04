@@ -1,5 +1,6 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.description.Descrip
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalCoroutinesApi
 @Composable

@@ -13,7 +13,7 @@ interface SewMethodDao {
     @Insert
     suspend fun insertSew(sewPost: SewEntity): Long
 
-    @Insert (onConflict = OnConflictStrategy.IGNORE)
+    @Insert
     suspend fun insertBookMarkedSew(sewPost: BookMarkedSewEntity): Long
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
