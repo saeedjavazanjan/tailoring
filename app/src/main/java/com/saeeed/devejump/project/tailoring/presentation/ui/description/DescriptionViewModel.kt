@@ -9,7 +9,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.saeeed.devejump.project.tailoring.BaseApplication
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.BookmarkPost
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
@@ -43,14 +48,11 @@ constructor(
     val sewMethod: MutableState<SewMethod?> = mutableStateOf(null)
 
     val loading = mutableStateOf(false)
-    val onLoad: MutableState<Boolean> = mutableStateOf(false)
 
     val dialogQueue=DialogQueue()
 
-
-
-
     init {
+
         // restore if process dies
         state.get<Int>(STATE_KEY_SEW)?.let{ sewId ->
             onTriggerEvent(SewEvent.GetSewEvent(sewId))
@@ -62,11 +64,11 @@ constructor(
             try {
                 when(event){
                     is SewEvent.GetSewEvent -> {
-                     //   if(sewMethod.value == null){
+                      //  if(sewMethod.value == null){
                             getSewMethod(event.id)
                             Log.d(TAG, "sewId:${event.id}")
 
-                     //   }
+                        //   }
                     }
                 }
             }catch (e: Exception){
@@ -82,6 +84,7 @@ constructor(
             dataState.data?.let { data ->
                 sewMethod.value = data
                 state.set(STATE_KEY_SEW, data.id)
+
             }
 
             dataState.error?.let { error ->
@@ -124,4 +127,6 @@ constructor(
 
 
     }
+
+
 }
