@@ -1,12 +1,9 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.description
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -16,15 +13,15 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.saeeed.devejump.project.tailoring.presentation.components.SewMethodView
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
-import com.saeeed.devejump.project.tailoring.utils.TAG
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation",
+    "CoroutineCreationDuringComposition"
+)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun DescriptionScreen(
@@ -43,13 +40,14 @@ fun DescriptionScreen(
             viewModel.onTriggerEvent(SewEvent.GetSewEvent(sewId))
 
         }
+
         val loading = viewModel.loading.value
 
         val sewMethod = viewModel.sewMethod.value
 
         val dialogQueue = viewModel.dialogQueue
         val composableScope = rememberCoroutineScope()
-
+        val bookMarkState=viewModel.bookMarkState.value
 
         AppTheme(
             displayProgressBar = loading,
@@ -76,8 +74,12 @@ fun DescriptionScreen(
                             sewMethod?.let {
                                 SewMethodView(
                                     sewMethod = it,
+                                    bookMarkState=bookMarkState,
                                     save = {
-                                        viewModel.saveInDataBase(scaffoldState, composableScope)
+                                        viewModel.saveAsBookMarkInDataBase(scaffoldState, composableScope)
+                                    },
+                                    remove={
+                                        viewModel.removeFromBookMarkDataBase(scaffoldState,composableScope)
                                     }
 
                                 )

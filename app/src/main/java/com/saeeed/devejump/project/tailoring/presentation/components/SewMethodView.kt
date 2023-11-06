@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconToggleButton
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
@@ -20,6 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,20 +35,24 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.interactor.description.CheckBookMarkState
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalCoroutinesApi
 @Composable
 fun SewMethodView(
     sewMethod: SewMethod,
-    save:() -> Unit
+    bookMarkState: Boolean,
+    save:() -> Unit,
+    remove:()-> Unit
 ) {
     val composableScope = rememberCoroutineScope()
     val snackbarController=SnackbarController(composableScope)
+    val bookState= mutableStateOf(bookMarkState)
 
         LazyColumn(
             modifier = Modifier
@@ -65,16 +72,58 @@ fun SewMethodView(
                             .fillMaxSize(),
                         contentScale = ContentScale.Crop,
                     )
-                    IconButton(onClick = {
-                       save()
-                    }) {
+                    //  if (bookMarkState){
+                    IconToggleButton(
+                        checked = bookMarkState,
+                        onCheckedChange = {
+                            if(bookState.value){
+                                bookState.value=false
+                                remove()
+                            }else{
+                                bookState.value=true
+
+                                save()
+                            }
+                        })
+                    {
                         Icon(
-                            painter = painterResource(id = R.drawable.baseline_bookmark_border_24),
-                            contentDescription = null
-                        , tint = Color.White
+                            painter = painterResource(if (bookState.value) R.drawable.baseline_bookmark_24 else R.drawable.baseline_bookmark_border_24),
+                            contentDescription = "Radio button icon",
+                            tint = Color(
+                                0xFF9B51E0
+                            )
                         )
-                        
                     }
+
+                     /*   var iconId=R.drawable.baseline_bookmark_24
+                        IconButton(onClick = { save()
+
+
+                        }) {
+                            Icon(
+                                painter = painterResource(id = iconId ),
+                                contentDescription = null
+                                , tint = Color.White
+                            )
+
+                        }*/
+                   /* }else{
+                        var iconId=R.drawable.baseline_bookmark_24
+                        IconButton(onClick = {
+                            if(save() > 0){
+                                iconId=R.drawable.baseline_bookmark_border_24
+
+                            }
+                        }) {
+                            Icon(
+                                painter = painterResource(id = iconId ),
+                                contentDescription = null
+                                , tint = Color.White
+                            )
+
+                        }
+                    }
+*/
 
                 }
 

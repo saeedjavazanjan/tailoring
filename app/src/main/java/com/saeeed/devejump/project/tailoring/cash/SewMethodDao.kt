@@ -18,10 +18,14 @@ interface SewMethodDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
 
+    @Query("SELECT EXISTS(SELECT * FROM bookMarkedSewMethods WHERE id = :id)")
+    fun isBookMarkedOrNot(id : Int) : Boolean
+    /*@Query("SELECT id FROM bookMarkedSewMethods WHERE id = :id")
+    suspend fun getBookMarkedSewById(id: Int): Int*/
     @Query("SELECT * FROM sewMethods WHERE id = :id")
     suspend fun getSewById(id: Int): SewEntity?
 
-    @Query("DELETE FROM sewMethods WHERE id IN (:ids)")
+    @Query("DELETE FROM bookMarkedSewMethods WHERE id IN (:ids)")
     suspend fun deleteSew(ids: List<Int>): Int
 
     @Query("DELETE FROM sewMethods")
