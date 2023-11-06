@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
@@ -27,6 +29,9 @@ import com.saeeed.devejump.project.tailoring.presentation.components.Navigation
 import com.saeeed.devejump.project.tailoring.presentation.components.currentRoute
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.components.BottomNavItem
+import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListViewModel
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -56,6 +61,10 @@ class MainActivity : ComponentActivity() {
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val desviewModel=ViewModelProvider(this).get(DescriptionViewModel::class.java)
+        val homeviewModel=ViewModelProvider(this).get(HomeViewModel::class.java)
+        val listviewModel=ViewModelProvider(this).get(ListViewModel::class.java)
+
         setContent {
 
 
@@ -170,6 +179,7 @@ class MainActivity : ComponentActivity() {
                     connectivityManager = connectivityManager,
                     navController = navController,
                     scaffoldState=scaffoldState
+
                 )
                 if (openDialog.value) {
                     ExitAlertDialog(navController, {
