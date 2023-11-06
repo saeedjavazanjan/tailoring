@@ -9,6 +9,7 @@ import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
 import com.saeeed.devejump.project.tailoring.cash.model.BookMarkedSewEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.interactor.description.BookmarkPost
+import com.saeeed.devejump.project.tailoring.interactor.description.CheckBookMarkState
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
@@ -86,6 +87,7 @@ object AppModule {
     fun provideDb(@ApplicationContext context: Context): AppDatabase {
         return Room
             .databaseBuilder(context, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
+            .allowMainThreadQueries()
             .fallbackToDestructiveMigration()
             .build()
     }
@@ -181,11 +183,22 @@ object AppModule {
 fun provideBookmarkPost(
     sewMethodDao: SewMethodDao,
     bookMarkedSewEntityMapper: BookMarkedSewEntityMapper,
-):BookmarkPost{
+):BookmarkPost {
     return BookmarkPost(
-        sewMethodDao= sewMethodDao,
-        bookMarkMapper  = bookMarkedSewEntityMapper,
+        sewMethodDao = sewMethodDao,
+        bookMarkMapper = bookMarkedSewEntityMapper,
     )
-
 }
+
+    @Singleton
+    @Provides
+    fun provideCheckBookMarkState(
+        sewMethodDao: SewMethodDao,
+        bookMarkedSewEntityMapper: BookMarkedSewEntityMapper,
+    ):CheckBookMarkState{
+        return CheckBookMarkState(
+            sewMethodDao= sewMethodDao,
+            bookMarkMapper  = bookMarkedSewEntityMapper,
+        )
+    }
 }

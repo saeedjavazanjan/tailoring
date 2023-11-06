@@ -25,4 +25,15 @@ class BookmarkPost(
             emit(DataState.error(e.message.toString()))
         }
     }
+
+    fun remove(
+        post:SewMethod
+    ): Flow<DataState<Int>> =flow{
+        try {
+            val result= sewMethodDao.deleteSew(listOf( bookMarkMapper.mapFromDomainModel(post).id))
+            emit(DataState.success(result))
+        }catch (e:Exception){
+            emit(DataState.error(e.message.toString()))
+        }
+    }
 }

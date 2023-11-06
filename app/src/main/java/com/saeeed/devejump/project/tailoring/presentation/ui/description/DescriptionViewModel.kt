@@ -4,19 +4,14 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-import com.saeeed.devejump.project.tailoring.BaseApplication
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.BookmarkPost
+import com.saeeed.devejump.project.tailoring.interactor.description.CheckBookMarkState
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarController
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
@@ -42,12 +37,13 @@ constructor(
     private val connectivityManager: ConnectivityManager,
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
-    private val bookmarkPost: BookmarkPost
+    private val bookmarkPost: BookmarkPost,
+    private val checkBookMarkState: CheckBookMarkState
 ): ViewModel(){
-
     val sewMethod: MutableState<SewMethod?> = mutableStateOf(null)
 
     val loading = mutableStateOf(false)
+    val bookMarkState= mutableStateOf(false)
 
     val dialogQueue=DialogQueue()
 
@@ -84,7 +80,7 @@ constructor(
             dataState.data?.let { data ->
                 sewMethod.value = data
                 state.set(STATE_KEY_SEW, data.id)
-
+                checkSewBookMarkState()
             }
 
             dataState.error?.let { error ->
@@ -96,23 +92,28 @@ constructor(
     }
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalMaterialApi::class)
-     fun saveInDataBase(scaffoldState: ScaffoldState,scope:CoroutineScope) {
+     fun saveAsBookMarkInDataBase(scaffoldState: ScaffoldState, scope:CoroutineScope) {
         val snackbarController=SnackbarController(scope)
 
             bookmarkPost.execute(sewMethod.value!!).onEach {dataState ->
                   dataState.data?.let {
                      snackbarController.getScope().launch {
-                        // if (it.toInt() != -1){
+                         if (it.toInt() > 0){
                              snackbarController.showSnackbar(
                                  scaffoldState = scaffoldState,
                                  message =  "با موفقیت ذخیره شد.",
                                  actionLabel ="Ok"
                              )
-                       //  }
+
+                         }else{
+                             snackbarController.showSnackbar(
+                                 scaffoldState = scaffoldState,
+                                 message =  "خطایی رخ داده است.",
+                                 actionLabel ="Ok"
+                             )
+                         }
 
                      }
-
-                      Log.d(TAG, "save in database ${it}")
 
                   }
 
@@ -122,11 +123,63 @@ constructor(
 
                 }
 
+            }.launchIn(viewModelScope)
+
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    @OptIn(ExperimentalMaterialApi::class)
+    fun removeFromBookMarkDataBase(scaffoldState: ScaffoldState,scope:CoroutineScope) {
+        val snackbarController=SnackbarController(scope)
+
+        bookmarkPost.remove(sewMethod.value!!).onEach {dataState ->
+            dataState.data?.let {
+                snackbarController.getScope().launch {
+                    if (it > 0){
+                        snackbarController.showSnackbar(
+                            scaffoldState = scaffoldState,
+                            message =  "از علاقه مندی ها حذف شد.",
+                            actionLabel ="Ok"
+                        )
+
+                    }else{
+                        snackbarController.showSnackbar(
+                            scaffoldState = scaffoldState,
+                            message =  "خطایی رخ داده است.",
+                            actionLabel ="Ok"
+                        )
+                    }
+
+                }
+
+            }
+
+            dataState.error?.let { error ->
+                dialogQueue.appendErrorMessage("An Error Occurred", error)
+                // Log.e(TAG, "save in database faild ${error}")
+
+            }
+
+        }.launchIn(viewModelScope)
+
+    }
+    fun checkSewBookMarkState(){
+            checkBookMarkState.execute(sewMethod.value!!).onEach { dataState ->
+
+                dataState.data.let {
+                   bookMarkState.value=it!!
+                     Log.d(TAG, "check bookmark ${sewMethod.value!!.id}")
+
+                }
+                dataState.error.let {error->
+                    dialogQueue.appendErrorMessage("An Error Occurred", error!!)
+                     Log.e(TAG, "check bookmark ${sewMethod.value!!.id}")
+
+                }
 
             }.launchIn(viewModelScope)
 
 
     }
-
 
 }
