@@ -2,6 +2,7 @@ package com.saeeed.devejump.project.tailoring.network
 
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
+import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import com.saeeed.devejump.project.tailoring.network.response.SewMethodSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -34,6 +35,13 @@ interface RetrofitService {
       //  @Header("Authorization") token: String,
         @Query("query") query: String
     ): List<SewMethodDto>
+
+
+    @GET("userData")
+    suspend fun userData(
+        //  @Header("Authorization") token: String,
+        @Query("query") query: Int
+    ):UserDataDto
 
 
 

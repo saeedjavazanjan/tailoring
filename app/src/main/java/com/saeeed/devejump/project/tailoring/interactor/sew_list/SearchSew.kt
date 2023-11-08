@@ -43,7 +43,6 @@ class SearchSew(
                     sewMethodDao.insertSewMethods(entityMapper.toEntityList(sewMethods))
              //   }
 
-
                 // insert into cache
             }catch (e: Exception){
                 // There was a network issue

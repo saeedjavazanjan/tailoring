@@ -4,21 +4,21 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "userActivityOnPost")
-data class UserActivityEntity(
+@Entity(tableName = "userData")
+data class UserDataEntity(
 // Value from API
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "id")
     var id: Int,
 
-    @ColumnInfo(name="bookMarkState")
-    var bookMarkState: Boolean,
+    @ColumnInfo(name="bookMars")
+    var bookMarks: String,
 
-    @ColumnInfo(name="likeState")
-    var liKeState: Boolean,
+    @ColumnInfo(name="likes")
+    var liKes: String,
 
     @ColumnInfo(name="comment")
-    var comment: String,
+    var comments: String,
 )
 
 

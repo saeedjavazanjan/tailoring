@@ -4,6 +4,8 @@ package com.saeeed.devejump.project.tailoring.utils
 
     const val RECIPE_PAGINATION_PAGE_SIZE = 30
 
+const val USERID=1
+
 const val  GET_HOME_BANNERS="get_home_banners"
 
 const val BEST_OF_MONTH="best_of_month"

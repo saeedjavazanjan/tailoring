@@ -5,6 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntity
+import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntity
+import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
 
 @Dao
@@ -12,25 +14,30 @@ interface SewMethodDao {
     @Insert
     suspend fun insertSew(sewPost: SewEntity): Long
 
-   /* @Insert
-    suspend fun insertBookMarkedSew(sewPost: UserActivityOnPostEntity): Long*/
+    @Insert
+    suspend fun insertUserData(userData: UserDataEntity): Long
 
-    @Query("UPDATE userActivityOnPost SET bookMarkState = :bookmarkState WHERE id LIKE :id ")
-    suspend fun updateBookmarkState(bookmarkState:Boolean,id:Int):Int
+    @Query("SELECT * FROM userData WHERE id = :id")
+    suspend fun getUserData(id: Int):UserDataEntity
+
+  /*  @Query("UPDATE userData SET userData = :bookmarkState WHERE id LIKE :id ")
+    suspend fun updateBookmarkState(bookmarkState:Boolean,id:Int):Int*/
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
 
-    @Query("SELECT EXISTS(SELECT bookMarkState FROM userActivityOnPost WHERE id = :id)")
-    fun isBookMarkedOrNot(id : Int) : Boolean
+
+
+   /* @Query("SELECT EXISTS(SELECT bookMars FROM userData WHERE id = :id)")
+    fun isBookMarkedOrNot(id : Int) : Boolean*/
     /*@Query("SELECT id FROM bookMarkedSewMethods WHERE id = :id")
     suspend fun getBookMarkedSewById(id: Int): Int*/
     @Query("SELECT * FROM sewMethods WHERE id = :id")
     suspend fun getSewById(id: Int): SewEntity?
 
-    @Query("DELETE FROM userActivityOnPost WHERE id IN (:ids)")
-    suspend fun deleteSew(ids: List<Int>): Int
+   /* @Query("DELETE FROM userData WHERE id IN (:ids)")
+    suspend fun deleteSew(ids: List<Int>): Int*/
 
     @Query("DELETE FROM sewMethods")
     suspend fun deleteAllSewMethods()

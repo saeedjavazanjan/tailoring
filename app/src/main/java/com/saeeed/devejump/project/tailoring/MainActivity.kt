@@ -61,9 +61,6 @@ class MainActivity : ComponentActivity() {
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val desviewModel=ViewModelProvider(this).get(DescriptionViewModel::class.java)
-        val homeviewModel=ViewModelProvider(this).get(HomeViewModel::class.java)
-        val listviewModel=ViewModelProvider(this).get(ListViewModel::class.java)
 
         setContent {
 
@@ -111,6 +108,12 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
+                Screen.Splash.route-> {
+                    // Show BottomBar and TopBar
+                    bottomBarState.value = false
+                    // topBarState.value = true
+
+                }
             }
 
 
@@ -144,7 +147,6 @@ class MainActivity : ComponentActivity() {
                                 route = Screen.Profile.route,
                                 icon = Icons.Default.Person
                             )
-
 
                         ),
                         navController = navController,
