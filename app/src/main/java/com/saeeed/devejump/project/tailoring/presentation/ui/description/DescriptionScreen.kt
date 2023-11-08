@@ -80,6 +80,9 @@ fun DescriptionScreen(
                                     },
                                     remove={
                                         viewModel.removeFromBookMarkDataBase(scaffoldState,composableScope)
+                                    },
+                                    like = {
+
                                     }
 
                                 )

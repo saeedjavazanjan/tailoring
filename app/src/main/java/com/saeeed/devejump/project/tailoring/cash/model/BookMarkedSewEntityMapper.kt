@@ -2,15 +2,14 @@ package com.saeeed.devejump.project.tailoring.cash.model
 
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
-import com.saeeed.devejump.project.tailoring.utils.DateUtils
-
-class BookMarkedSewEntityMapper :DomainMapper<BookMarkedSewEntity,SewMethod> {
-    override fun mapToDomainModel(model: BookMarkedSewEntity): SewMethod {
+/*
+class BookMarkedSewEntityMapper :DomainMapper<UserActivityEntity,SewMethod> {
+    override fun mapToDomainModel(model: UserActivityEntity): SewMethod {
         TODO("Not yet implemented")
     }
 
-    override fun mapFromDomainModel(domainModel: SewMethod): BookMarkedSewEntity {
-        return BookMarkedSewEntity(
+    override fun mapFromDomainModel(domainModel: SewMethod): UserActivityEntity {
+       *//* return UserActivityOnPostEntity(
             id = domainModel.id,
             title = domainModel.title,
             featuredImage = domainModel.featuredImage,
@@ -21,7 +20,8 @@ class BookMarkedSewEntityMapper :DomainMapper<BookMarkedSewEntity,SewMethod> {
             dateAdded = DateUtils.dateToLong(domainModel.dateAdded),
             dateUpdated = DateUtils.dateToLong(domainModel.dateUpdated),
             dateCached = DateUtils.dateToLong(DateUtils.createTimestamp())
-        )
+        )*//*
+        return null
     }
 
     private fun convertIngredientListToString(ingredients: List<String>): String {
@@ -31,4 +31,4 @@ class BookMarkedSewEntityMapper :DomainMapper<BookMarkedSewEntity,SewMethod> {
         }
         return ingredientsString.toString()
     }
-}
+}*/

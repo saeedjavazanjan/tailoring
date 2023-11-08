@@ -10,8 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
-import com.saeeed.devejump.project.tailoring.interactor.description.BookmarkPost
-import com.saeeed.devejump.project.tailoring.interactor.description.CheckBookMarkState
+import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarController
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
@@ -37,8 +36,7 @@ constructor(
     private val connectivityManager: ConnectivityManager,
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
-    private val bookmarkPost: BookmarkPost,
-    private val checkBookMarkState: CheckBookMarkState
+   // private val userActivityOnPost: UserActivityOnPost,
 ): ViewModel(){
     val sewMethod: MutableState<SewMethod?> = mutableStateOf(null)
 
@@ -93,9 +91,9 @@ constructor(
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalMaterialApi::class)
      fun saveAsBookMarkInDataBase(scaffoldState: ScaffoldState, scope:CoroutineScope) {
-        val snackbarController=SnackbarController(scope)
+       /* val snackbarController=SnackbarController(scope)
 
-            bookmarkPost.execute(sewMethod.value!!).onEach {dataState ->
+            userActivityOnPost.bookMark(sewMethod.value!!.id).onEach { dataState ->
                   dataState.data?.let {
                      snackbarController.getScope().launch {
                          if (it.toInt() > 0){
@@ -123,7 +121,7 @@ constructor(
 
                 }
 
-            }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)*/
 
     }
 
@@ -132,7 +130,7 @@ constructor(
     fun removeFromBookMarkDataBase(scaffoldState: ScaffoldState,scope:CoroutineScope) {
         val snackbarController=SnackbarController(scope)
 
-        bookmarkPost.remove(sewMethod.value!!).onEach {dataState ->
+   /*     userActivityOnPost.remove(sewMethod.value!!).onEach { dataState ->
             dataState.data?.let {
                 snackbarController.getScope().launch {
                     if (it > 0){
@@ -161,10 +159,10 @@ constructor(
             }
 
         }.launchIn(viewModelScope)
-
+*/
     }
     fun checkSewBookMarkState(){
-            checkBookMarkState.execute(sewMethod.value!!).onEach { dataState ->
+    /*        userActivityOnPost.bookMark(sewMethod.value!!).onEach { dataState ->
 
                 dataState.data.let {
                    bookMarkState.value=it!!
@@ -177,9 +175,15 @@ constructor(
 
                 }
 
-            }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)*/
 
 
     }
+
+    fun checkLikeState(){
+
+    }
+
+
 
 }
