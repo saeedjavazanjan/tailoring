@@ -6,9 +6,8 @@ import com.google.gson.GsonBuilder
 import com.saeeed.devejump.project.tailoring.BaseApplication
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
-import com.saeeed.devejump.project.tailoring.cash.model.BookMarkedSewEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
-import com.saeeed.devejump.project.tailoring.interactor.description.BookmarkPost
+import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.interactor.description.CheckBookMarkState
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
@@ -104,11 +103,11 @@ object AppModule {
         return SewEntityMapper()
     }
 
-    @Singleton
+   /* @Singleton
     @Provides
     fun provideBookMarkedPostMapper(): BookMarkedSewEntityMapper {
         return BookMarkedSewEntityMapper()
-    }
+    }*/
 
     @Singleton
     @Provides
@@ -178,27 +177,19 @@ object AppModule {
         )
     }
 
+/*
 @Singleton
 @Provides
 fun provideBookmarkPost(
     sewMethodDao: SewMethodDao,
     bookMarkedSewEntityMapper: BookMarkedSewEntityMapper,
-):BookmarkPost {
-    return BookmarkPost(
+):UserActivityOnPost {
+    return UserActivityOnPost(
         sewMethodDao = sewMethodDao,
         bookMarkMapper = bookMarkedSewEntityMapper,
     )
 }
+*/
 
-    @Singleton
-    @Provides
-    fun provideCheckBookMarkState(
-        sewMethodDao: SewMethodDao,
-        bookMarkedSewEntityMapper: BookMarkedSewEntityMapper,
-    ):CheckBookMarkState{
-        return CheckBookMarkState(
-            sewMethodDao= sewMethodDao,
-            bookMarkMapper  = bookMarkedSewEntityMapper,
-        )
-    }
+
 }

@@ -26,6 +26,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashScreen
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,7 +46,17 @@ fun Navigation(
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
+       /* composable(Screen.Splash.route){
+            SplashScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                viewModel = homeViewModel,
+                onNavigateToDescriptionScreen = navController::navigate
+
+            )
+        }*/
             composable(Screen.Home.route){
+
 
 
                 HomeScreen(
