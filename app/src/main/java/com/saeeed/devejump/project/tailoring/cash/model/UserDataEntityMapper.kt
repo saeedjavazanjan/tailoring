@@ -23,7 +23,7 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData> {
         )
     }
 
-    private fun convertListToString(list: List<String>): String {
+     fun convertListToString(list: List<String>): String {
         val ingredientsString = StringBuilder()
         for(item in list){
             ingredientsString.append("$item,")
@@ -31,7 +31,7 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData> {
         return ingredientsString.toString()
     }
 
-    private fun convertStringToList(ingredientsString: String?): List<String>{
+     fun convertStringToList(ingredientsString: String?): MutableList<String>{
         val list: ArrayList<String> = ArrayList()
         ingredientsString?.let {
             for(item in it.split(",")){

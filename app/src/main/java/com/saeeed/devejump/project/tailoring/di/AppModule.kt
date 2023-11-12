@@ -11,6 +11,7 @@ import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.interactor.Splash.GetUserStuffsFromServer
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
@@ -62,8 +63,8 @@ object AppModule {
     @Provides
     fun provideRetrofitService(): RetrofitService {
         return Retrofit.Builder()
-            .baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
-           // .baseUrl("https://food2fork.ca/api/recipe/")
+           // .baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
+           .baseUrl("https://food2fork.ca/api/recipe/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(RetrofitService::class.java)
@@ -201,6 +202,21 @@ fun provideUserData(
         retrofitService = retrofitService
     )
 }
+
+    @Singleton
+    @Provides
+
+    fun provideUserActivityOnPost(
+        sewMethodDao: SewMethodDao,
+        userDataEntityMapper: UserDataEntityMapper,
+        retrofitService: RetrofitService
+    ):UserActivityOnPost {
+        return UserActivityOnPost(
+            sewMethodDao = sewMethodDao,
+            entityMapper = userDataEntityMapper,
+            retrofitService = retrofitService
+        )
+    }
 
 
 }

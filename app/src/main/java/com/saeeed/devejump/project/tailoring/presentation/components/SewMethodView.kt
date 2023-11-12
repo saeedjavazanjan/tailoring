@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,7 +47,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
-import com.saeeed.devejump.project.tailoring.interactor.description.CheckBookMarkState
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.post.PAGE_SIZE
@@ -60,17 +60,19 @@ import kotlinx.coroutines.launch
 fun SewMethodView(
     sewMethod: SewMethod,
     bookMarkState: Boolean,
+    likeState:Boolean,
+    likesCount:Int,
     save:() -> Unit,
     remove:()-> Unit,
-    like:() ->Unit
+    like:() ->Unit,
+    unlike:() ->Unit
 ) {
-    val composableScope = rememberCoroutineScope()
-    val snackbarController=SnackbarController(composableScope)
-    val bookState= mutableStateOf(bookMarkState)
-    val likeState= remember {
-        mutableStateOf(true)
-    }
+  //  val composableScope = rememberCoroutineScope()
+  //  val snackbarController=SnackbarController(composableScope)
 
+    val bookState= mutableStateOf(bookMarkState)
+    val likeIconState= mutableStateOf(likeState)
+    val likes = mutableStateOf( likesCount)
     LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -144,11 +146,10 @@ fun SewMethodView(
                         )
 
 
-                        var rank = remember {
-                            mutableStateOf( sewMethod.rating)
-                        }
+
+
                         Text(
-                            text = rank.value.toString(),
+                            text = likes.value.toString(),
                             modifier = Modifier
                                 .constrainAs(likeCount){
                                     top.linkTo(parent.top)
@@ -166,22 +167,24 @@ fun SewMethodView(
                                     bottom.linkTo(parent.bottom)
                                     end.linkTo(parent.end)
                                 },
-                            checked = likeState.value,
+                            checked = likeIconState.value,
                             onCheckedChange = {
-                                if(likeState.value){
-                                    likeState.value=false
-                                    rank.value--
+                                if(likeIconState.value){
+                                    likeIconState.value=false
+                                  //  likes.value--
+                                    unlike()
 
                                 }else{
-                                    likeState.value=true
-                                    rank.value++
+                                    likeIconState.value=true
+                                  //  likes.value++
+                                    like()
                                 }
                             })
                         {
                             Icon(
                                 painter = painterResource(R.drawable.gray_heart),
                                 contentDescription = "Radio button icon",
-                                tint = if (likeState.value) Color.Red else Color.LightGray
+                                tint = if (likeIconState.value) Color.Red else Color.LightGray
                             )
                         }
                     }
@@ -276,6 +279,8 @@ fun SewMethodView(
 
             }
         }
+
+
 
 }
 

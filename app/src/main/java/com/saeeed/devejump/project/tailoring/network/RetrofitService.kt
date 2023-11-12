@@ -4,8 +4,10 @@ import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import com.saeeed.devejump.project.tailoring.network.response.SewMethodSearchResponse
+import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface RetrofitService {
@@ -43,6 +45,18 @@ interface RetrofitService {
         @Query("query") query: Int
     ):UserDataDto
 
+    @POST("userData")
+    suspend fun bookMark(
+        // @Header("Authorization") token: String,
+        @Field("UserId") userId: Int,
+        @Field("postId") postId:Int
+    ):Int
 
+    @POST("userData")
+    suspend fun likePost(
+        // @Header("Authorization") token: String,
+        @Field("UserId") userId: Int,
+        @Field("postId") postId:Int
+    ):Int
 
 }
