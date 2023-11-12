@@ -30,7 +30,7 @@ fun SplashScreen(
 
     ) {
         LaunchedEffect(Unit){
-          //  viewModel.getUserData(USERID)
+         //   viewModel.getUserData(USERID)
 
         }
     }

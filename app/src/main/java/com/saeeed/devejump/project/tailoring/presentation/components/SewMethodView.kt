@@ -130,16 +130,17 @@ fun SewMethodView(
                     ConstraintLayout(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 8.dp, end = 8.dp)
+                          //  .padding(start = 8.dp, end = 8.dp)
                     ) {
                         val(titleHolder,likeCount,likeIcon)=createRefs()
                         Text(
                             text = sewMethod.title,
-                            modifier = Modifier
+                            modifier = Modifier.fillMaxWidth(0.85f)
                                 .constrainAs(titleHolder){
                                     top.linkTo(parent.top)
                                     bottom.linkTo(parent.bottom)
                                     start.linkTo(parent.start)
+                                    end.linkTo(likeCount.start)
                                 }
                             ,
                             style = MaterialTheme.typography.bodyLarge
@@ -150,18 +151,19 @@ fun SewMethodView(
 
                         Text(
                             text = likes.value.toString(),
-                            modifier = Modifier
+                            modifier = Modifier.fillMaxWidth(0.05f)
                                 .constrainAs(likeCount){
                                     top.linkTo(parent.top)
                                     bottom.linkTo(parent.bottom)
                                     end.linkTo(likeIcon.start)
+                                    start.linkTo(titleHolder.end)
                                 }
                             ,
                             style = MaterialTheme.typography.bodyMedium
                         )
 
                         IconToggleButton(
-                            modifier = Modifier
+                            modifier = Modifier.fillMaxWidth(0.1f)
                                 .constrainAs(likeIcon){
                                     top.linkTo(parent.top)
                                     bottom.linkTo(parent.bottom)
@@ -171,12 +173,10 @@ fun SewMethodView(
                             onCheckedChange = {
                                 if(likeIconState.value){
                                     likeIconState.value=false
-                                  //  likes.value--
                                     unlike()
 
                                 }else{
                                     likeIconState.value=true
-                                  //  likes.value++
                                     like()
                                 }
                             })
@@ -258,7 +258,7 @@ fun SewMethodView(
                 ) {
 
                 }
-           /*     LazyColumn(){
+               /* LazyColumn(){
                     itemsIndexed(
                         items = sewMethods
                     ) { index, sewMethod ->
