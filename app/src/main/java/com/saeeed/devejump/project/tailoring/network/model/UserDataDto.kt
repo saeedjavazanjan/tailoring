@@ -14,7 +14,17 @@ data class UserDataDto (
     var bookMarks: List<String> = emptyList(),
 
     @SerializedName("comments")
-    var comments: List<String> = emptyList(),
+    var comments: List<UserComments> = emptyList()
+
+    )
+
+data class UserComments(
+    @SerializedName("id")
+    var postId: String,
+
+    @SerializedName("comment")
+    var comment: String,
+
 
     )
 
