@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarController
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
@@ -35,12 +36,14 @@ constructor(
     private val connectivityManager: ConnectivityManager,
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
-   // private val userActivityOnPost: UserActivityOnPost,
+    private val userActivityOnPost: UserActivityOnPost,
 ): ViewModel(){
     val sewMethod: MutableState<SewMethod?> = mutableStateOf(null)
 
     val loading = mutableStateOf(false)
     val bookMarkState= mutableStateOf(false)
+    val liKeState= mutableStateOf(false)
+    val likeCount= mutableStateOf(0)
 
     val dialogQueue=DialogQueue()
 
@@ -78,6 +81,8 @@ constructor(
                 sewMethod.value = data
                 state.set(STATE_KEY_SEW, data.id)
                 checkSewBookMarkState()
+                checkLikeState()
+                likeCount.value=data.rating
             }
 
             dataState.error?.let { error ->
@@ -90,12 +95,13 @@ constructor(
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalMaterialApi::class)
      fun saveAsBookMarkInDataBase(scaffoldState: ScaffoldState, scope:CoroutineScope) {
-       /* val snackbarController=SnackbarController(scope)
+        val snackbarController=SnackbarController(scope)
 
             userActivityOnPost.bookMark(sewMethod.value!!.id).onEach { dataState ->
                   dataState.data?.let {
                      snackbarController.getScope().launch {
-                         if (it.toInt() > 0){
+                         if (it> 0){
+                             bookMarkState.value=true
                              snackbarController.showSnackbar(
                                  scaffoldState = scaffoldState,
                                  message =  "با موفقیت ذخیره شد.",
@@ -120,7 +126,7 @@ constructor(
 
                 }
 
-            }.launchIn(viewModelScope)*/
+            }.launchIn(viewModelScope)
 
     }
 
@@ -129,10 +135,11 @@ constructor(
     fun removeFromBookMarkDataBase(scaffoldState: ScaffoldState,scope:CoroutineScope) {
         val snackbarController=SnackbarController(scope)
 
-   /*     userActivityOnPost.remove(sewMethod.value!!).onEach { dataState ->
+        userActivityOnPost.unBookMark(sewMethod.value!!.id).onEach { dataState ->
             dataState.data?.let {
                 snackbarController.getScope().launch {
                     if (it > 0){
+                        bookMarkState.value=false
                         snackbarController.showSnackbar(
                             scaffoldState = scaffoldState,
                             message =  "از علاقه مندی ها حذف شد.",
@@ -158,10 +165,9 @@ constructor(
             }
 
         }.launchIn(viewModelScope)
-*/
     }
     fun checkSewBookMarkState(){
-    /*        userActivityOnPost.bookMark(sewMethod.value!!).onEach { dataState ->
+            userActivityOnPost.checkBookMarkState(sewMethod.value!!.id).onEach { dataState ->
 
                 dataState.data.let {
                    bookMarkState.value=it!!
@@ -169,20 +175,86 @@ constructor(
 
                 }
                 dataState.error.let {error->
-                    dialogQueue.appendErrorMessage("An Error Occurred", error!!)
+                 //   dialogQueue.appendErrorMessage("An Error Occurred", error!!)
                      Log.e(TAG, "check bookmark ${sewMethod.value!!.id}")
 
                 }
 
-            }.launchIn(viewModelScope)*/
+            }.launchIn(viewModelScope)
 
 
     }
 
     fun checkLikeState(){
+        userActivityOnPost.checkLikeState(sewMethod.value!!.id).onEach { dataState ->
+
+            dataState.data.let {
+                liKeState.value=it!!
+                Log.d(TAG, "check like ${sewMethod.value!!.id}")
+
+            }
+            dataState.error.let {error->
+                //   dialogQueue.appendErrorMessage("An Error Occurred", error!!)
+                Log.e(TAG, "check like ${sewMethod.value!!.id}")
+
+            }
+
+        }.launchIn(viewModelScope)
+
 
     }
 
+    @SuppressLint("SuspiciousIndentation")
+    fun likePost() {
+
+        userActivityOnPost.likePost(sewMethod.value!!.id).onEach { dataState ->
+            dataState.data?.let {
+                    if (it> 0){
+                        liKeState.value=true
+                        likeCount.value++
+                         Log.d(TAG, "like ${it}")
 
 
+                    }
+
+                }
+
+
+
+            dataState.error?.let { error ->
+                dialogQueue.appendErrorMessage("An Error Occurred", error)
+                // Log.e(TAG, "save in database faild ${error}")
+
+            }
+
+        }.launchIn(viewModelScope)
+
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    fun unLikePost() {
+
+        userActivityOnPost.unLikePost(sewMethod.value!!.id).onEach { dataState ->
+            dataState.data?.let {
+                if (it> 0){
+                    liKeState.value=false
+                    likeCount.value--
+
+                    Log.d(TAG, "unlike ${it}")
+
+                }
+
+            }
+
+
+
+            dataState.error?.let { error ->
+                dialogQueue.appendErrorMessage("An Error Occurred", error)
+                // Log.e(TAG, "save in database faild ${error}")
+
+            }
+
+        }.launchIn(viewModelScope)
+
+    }
 }

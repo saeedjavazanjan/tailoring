@@ -42,13 +42,12 @@ fun DescriptionScreen(
         }
 
         val loading = viewModel.loading.value
-
         val sewMethod = viewModel.sewMethod.value
-
         val dialogQueue = viewModel.dialogQueue
         val composableScope = rememberCoroutineScope()
         val bookMarkState=viewModel.bookMarkState.value
-
+        val likeState=viewModel.liKeState.value
+        val likesCount =viewModel.likeCount.value
         AppTheme(
             displayProgressBar = loading,
             darkTheme = isDarkTheme,
@@ -72,20 +71,28 @@ fun DescriptionScreen(
                             // TODO("Show Invalid Recipe")
                         } else {
                             sewMethod?.let {
-                                SewMethodView(
-                                    sewMethod = it,
-                                    bookMarkState=bookMarkState,
-                                    save = {
-                                        viewModel.saveAsBookMarkInDataBase(scaffoldState, composableScope)
-                                    },
-                                    remove={
-                                        viewModel.removeFromBookMarkDataBase(scaffoldState,composableScope)
-                                    },
-                                    like = {
 
-                                    }
+                                    SewMethodView(
+                                        sewMethod = it,
+                                        bookMarkState=bookMarkState,
+                                        likeState=likeState,
+                                        likesCount = likesCount,
+                                        save = {
+                                            viewModel.saveAsBookMarkInDataBase(scaffoldState, composableScope)
+                                        },
+                                        remove={
+                                            viewModel.removeFromBookMarkDataBase(scaffoldState,composableScope)
+                                        },
+                                        like = {
+                                            viewModel.likePost()
+                                        },
+                                        unlike = {
+                                            viewModel.unLikePost()
+                                        }
 
-                                )
+                                    )
+
+
                             }
                         }
                     }

@@ -20,10 +20,11 @@ interface SewMethodDao {
     @Query("SELECT * FROM userData WHERE id = :id")
     suspend fun getUserData(id: Int):UserDataEntity
 
-  /*  @Query("UPDATE userData SET userData = :bookmarkState WHERE id LIKE :id ")
-    suspend fun updateBookmarkState(bookmarkState:Boolean,id:Int):Int*/
+    @Query("UPDATE userData SET bookMars = :bookmarkState WHERE id LIKE :id ")
+    suspend fun updateBookmarks(bookmarkState:String,id:Int):Int
 
-
+    @Query("UPDATE userData SET likes = :likedPostsId WHERE id LIKE :userId ")
+    suspend fun updateLikes(likedPostsId:String,userId:Int):Int
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
 
