@@ -78,7 +78,7 @@ fun DescriptionScreen(
                                         likeState=likeState,
                                         likesCount = likesCount,
                                         save = {
-                                            viewModel.saveAsBookMarkInDataBase(scaffoldState, composableScope)
+                                            viewModel.bookMark(scaffoldState, composableScope)
                                         },
                                         remove={
                                             viewModel.removeFromBookMarkDataBase(scaffoldState,composableScope)

@@ -49,7 +49,6 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData> {
         comments.let {
             for(item in it.split("},")){
                 var gson = Gson()
-
                 var result = gson.fromJson(item, UserComments::class.java)
                 list.add(result)
             }

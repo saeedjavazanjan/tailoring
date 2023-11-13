@@ -51,15 +51,25 @@ fun SewMethodCard(
     ) {
 
         Column() {
-            sewMethod.featuredImage?.let { url ->
+            sewMethod.let { method ->
 
                 if (
-                    url.takeLast(3)=="png" ||
-                    url.takeLast(3)=="jpg"
+                    method.featuredImage.takeLast(3)=="png" ||
+                    method.featuredImage.takeLast(3)=="jpg"
                 ){
                     GlideImage(
-                        model = url,
+                        model = method.featuredImage,
                         loading =  placeholder(R.drawable.empty_plate),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(225.dp),
+                        contentScale = ContentScale.Crop,
+                    )
+                }else{
+                    GlideImage(
+                        model = method.videoUrl,
+                       // loading =  placeholder(R.drawable.empty_plate),
                         contentDescription = "",
                         modifier = Modifier
                             .fillMaxWidth()
@@ -136,7 +146,7 @@ fun SewMethodCard(
                                 }
 
                         )
-                        val likes = sewMethod.rating.toString()
+                        val likes = sewMethod.like.toString()
                         val(likesCount)=createRefs()
 
                         Text(

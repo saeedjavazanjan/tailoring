@@ -14,9 +14,9 @@ interface RetrofitService {
 
     @GET("search")
     suspend fun search(
-        @Header("Authorization") token: String,
-        @Query("page") page: Int,
-        @Query("query") query: String
+       // @Header("Authorization") token: String,
+      //  @Query("page") page: Int,
+      //  @Query("query") query: String
     ): SewMethodSearchResponse
 
     @GET("get")

@@ -1,5 +1,7 @@
 package com.saeeed.devejump.project.tailoring.cash.model
 
+import com.google.gson.Gson
+import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
 import com.saeeed.devejump.project.tailoring.utils.DateUtils
@@ -10,12 +12,14 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
         return SewMethod(
             id = model.id,
             title = model.title,
+            postType=model.postType,
             featuredImage = model.featuredImage,
-            rating = model.rating,
+            like = model.like,
             publisher = model.publisher,
-            sourceUrl = model.sourceUrl,
-            ingredients = convertIngredientsToList(model.ingredients),
-            dateAdded = DateUtils.longToDate(model.dateAdded),
+            videoUrl = model.video,
+            description = model.description,
+            comments=convertCommentsStringToList(model.comments),
+            dateAdded =DateUtils.longToDate(model.dateAdded),
             dateUpdated = DateUtils.longToDate(model.dateUpdated),
         )
     }
@@ -25,11 +29,13 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
         return SewEntity(
             id = domainModel.id,
             title = domainModel.title,
+            postType=domainModel.postType,
             featuredImage = domainModel.featuredImage,
-            rating = domainModel.rating,
+            like = domainModel.like,
             publisher = domainModel.publisher,
-            sourceUrl = domainModel.sourceUrl,
-            ingredients = convertIngredientListToString(domainModel.ingredients),
+            video = domainModel.videoUrl,
+            description = domainModel.description,
+            comments=convertCommentsListToString(domainModel.comments),
             dateAdded = DateUtils.dateToLong(domainModel.dateAdded),
             dateUpdated = DateUtils.dateToLong(domainModel.dateUpdated),
             dateCached = DateUtils.dateToLong(DateUtils.createTimestamp())
@@ -38,24 +44,32 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
 
 
 
-    /**
-     * "Carrot, potato, Chicken, ..."
-     */
-    private fun convertIngredientListToString(ingredients: List<String>): String {
-        val ingredientsString = StringBuilder()
-        for(ingredient in ingredients){
-            ingredientsString.append("$ingredient,")
+
+    private fun convertCommentsListToString(comments: List<Comment>): String {
+        var gson = Gson()
+        var jsonString= StringBuilder()
+        for(item in comments){
+            val convertedString=gson.toJson(item)
+            jsonString.append("$convertedString,")
+
         }
-        return ingredientsString.toString()
+        return jsonString.toString()
     }
 
-    private fun convertIngredientsToList(ingredientsString: String?): List<String>{
-        val list: ArrayList<String> = ArrayList()
-        ingredientsString?.let {
-            for(ingredient in it.split(",")){
-                list.add(ingredient)
+    private fun convertCommentsStringToList(comments: String): List<Comment>{
+        val list: ArrayList<Comment> = ArrayList()
+        comments.let {
+            for(item in comments.split("},")){
+                var gson = Gson()
+                var comment= "$item}"
+                if(!item.equals("")) {
+                    var result = gson.fromJson(comment, Comment::class.java)
+                    list.add(result)
+                }
             }
+
         }
+
         return list
     }
 

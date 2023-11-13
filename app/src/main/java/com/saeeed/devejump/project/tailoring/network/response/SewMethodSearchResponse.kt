@@ -9,5 +9,5 @@ data class SewMethodSearchResponse(
     var count: Int,
 
     @SerializedName("results")
-    var recipes: List<SewMethodDto>,
+    var sewmethods: List<SewMethodDto>,
 )

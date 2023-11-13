@@ -82,7 +82,7 @@ constructor(
                 state.set(STATE_KEY_SEW, data.id)
                 checkSewBookMarkState()
                 checkLikeState()
-                likeCount.value=data.rating
+                likeCount.value=data.like
             }
 
             dataState.error?.let { error ->
@@ -94,7 +94,7 @@ constructor(
     }
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalMaterialApi::class)
-     fun saveAsBookMarkInDataBase(scaffoldState: ScaffoldState, scope:CoroutineScope) {
+     fun bookMark(scaffoldState: ScaffoldState, scope:CoroutineScope) {
         val snackbarController=SnackbarController(scope)
 
             userActivityOnPost.bookMark(sewMethod.value!!.id).onEach { dataState ->
@@ -129,7 +129,6 @@ constructor(
             }.launchIn(viewModelScope)
 
     }
-
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalMaterialApi::class)
     fun removeFromBookMarkDataBase(scaffoldState: ScaffoldState,scope:CoroutineScope) {
@@ -255,6 +254,13 @@ constructor(
             }
 
         }.launchIn(viewModelScope)
+
+    }
+
+    fun getUserCommentComments(){
+
+
+
 
     }
 }

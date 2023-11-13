@@ -54,7 +54,7 @@ interface SewMethodDao {
     @Query("""
         SELECT * FROM sewMethods 
         WHERE title LIKE '%' || :query || '%'
-        OR ingredients LIKE '%' || :query || '%'  
+        OR description LIKE '%' || :query || '%'  
         ORDER BY date_updated DESC LIMIT :pageSize OFFSET ((:page - 1) * :pageSize)
         """)
     suspend fun searchSewMethods(
@@ -81,7 +81,7 @@ interface SewMethodDao {
     @Query("""
         SELECT * FROM sewMethods 
         WHERE title LIKE '%' || :query || '%'
-        OR ingredients LIKE '%' || :query || '%' 
+        OR description LIKE '%' || :query || '%' 
         ORDER BY date_updated DESC LIMIT (:page * :pageSize)
         """)
     suspend fun restoreSewMethods(
