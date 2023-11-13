@@ -2,7 +2,6 @@ package com.saeeed.devejump.project.tailoring.repository
 
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 
 class SewRepositoryImpl (
@@ -11,7 +10,9 @@ class SewRepositoryImpl (
 ): SewRepository {
 
     override suspend fun search(token: String, page: Int, query: String): List<SewMethod> {
-        return mapper.toDomainList(recipeService.search(token = token, page = page, query = query).recipes)
+        return mapper.toDomainList(recipeService.search(
+          //  token = token, page = page, query = query
+        ).sewmethods)
     }
 
     override suspend fun get(token: String, id: Int): SewMethod {

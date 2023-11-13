@@ -79,203 +79,207 @@ fun SewMethodView(
                 .fillMaxHeight()
         ) {
             item{
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(225.dp),
-                    contentAlignment = Alignment.TopEnd,
-                ) {
-                    AsyncImage(
-                        model = sewMethod.featuredImage,
-                        contentDescription = sewMethod.title,
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                    )
-                    //  if (bookMarkState){
-                    IconToggleButton(
-                        checked = bookMarkState,
-                        onCheckedChange = {
-                            if(bookState.value){
-                                bookState.value=false
-                                remove()
-                            }else{
-                                bookState.value=true
-
-                                save()
-                            }
-                        })
-                    {
-                        Icon(
-                            painter = painterResource(
-                                if (bookState.value) R.drawable.baseline_bookmark_24
-                                else R.drawable.baseline_bookmark_border_24),
-                            contentDescription = "Radio button icon",
-                            tint = Color(
-                                0xFF9B51E0
-                            )
-                        )
-                    }
-
-
-
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(1f)
-                        .fillMaxHeight()
-                        .padding(top = 8.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
-                ) {
-                    ConstraintLayout(
+                Column {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                          //  .padding(start = 8.dp, end = 8.dp)
+                            .height(225.dp),
+                        contentAlignment = Alignment.TopEnd,
                     ) {
-                        val(titleHolder,likeCount,likeIcon)=createRefs()
-                        Text(
-                            text = sewMethod.title,
-                            modifier = Modifier.fillMaxWidth(0.85f)
-                                .constrainAs(titleHolder){
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(parent.bottom)
-                                    start.linkTo(parent.start)
-                                    end.linkTo(likeCount.start)
-                                }
-                            ,
-                            style = MaterialTheme.typography.bodyLarge
+                        AsyncImage(
+                            model = sewMethod.featuredImage,
+                            contentDescription = sewMethod.title,
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentScale = ContentScale.Crop,
                         )
-
-
-
-
-                        Text(
-                            text = likes.value.toString(),
-                            modifier = Modifier.fillMaxWidth(0.05f)
-                                .constrainAs(likeCount){
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(parent.bottom)
-                                    end.linkTo(likeIcon.start)
-                                    start.linkTo(titleHolder.end)
-                                }
-                            ,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-
+                        //  if (bookMarkState){
                         IconToggleButton(
-                            modifier = Modifier.fillMaxWidth(0.1f)
-                                .constrainAs(likeIcon){
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(parent.bottom)
-                                    end.linkTo(parent.end)
-                                },
-                            checked = likeIconState.value,
+                            checked = bookMarkState,
                             onCheckedChange = {
-                                if(likeIconState.value){
-                                    likeIconState.value=false
-                                    unlike()
-
+                                if(bookState.value){
+                                    bookState.value=false
+                                    remove()
                                 }else{
-                                    likeIconState.value=true
-                                    like()
+                                    bookState.value=true
+
+                                    save()
                                 }
                             })
                         {
                             Icon(
-                                painter = painterResource(R.drawable.gray_heart),
+                                painter = painterResource(
+                                    if (bookState.value) R.drawable.baseline_bookmark_24
+                                    else R.drawable.baseline_bookmark_border_24),
                                 contentDescription = "Radio button icon",
-                                tint = if (likeIconState.value) Color.Red else Color.LightGray
+                                tint = Color(
+                                    0xFF9B51E0
+                                )
                             )
                         }
-                    }
-                }
 
+
+
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .fillMaxHeight()
+                            .padding(top = 8.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
+                    ) {
                         ConstraintLayout(
                             modifier = Modifier
-                                .fillMaxWidth(1f)
-                                .fillMaxHeight()
-                                .padding(top = 12.dp, start = 8.dp, end = 8.dp),
+                                .fillMaxWidth()
+                                .padding(start = 8.dp, end = 8.dp)
                         ) {
-                            val (avatarHolder,authorText,date) = createRefs()
-
-                            val avatar=sewMethod.featuredImage
-                          //  val (avatarHolder) = createRefs()
-                            GlideImage(
-                                model = avatar,
-                                loading =  placeholder(R.drawable.empty_plate),
-                                contentDescription = "",
+                            val(titleHolder,likeCount,likeIcon)=createRefs()
+                            Text(
+                                text = sewMethod.title,
                                 modifier = Modifier
-                                    .width(30.dp)
-                                    .height(30.dp)
-                                    .clip(CircleShape)
-                                    .constrainAs(avatarHolder) {
-                                        start.linkTo(parent.start)
+                                    .constrainAs(titleHolder){
                                         top.linkTo(parent.top)
                                         bottom.linkTo(parent.bottom)
-                                    },
-                                contentScale = ContentScale.Crop,
+                                        start.linkTo(parent.start)
+                                    }
+                                ,
+                                style = MaterialTheme.typography.bodyLarge
                             )
-                            val author=sewMethod.publisher
-                          //  val(authorText)=createRefs()
+
+
+
+
                             Text(
-                                text = author,
+                                text = likes.value.toString(),
                                 modifier = Modifier
-                                    .wrapContentWidth(Alignment.Start)
-                                    .padding(10.dp)
-                                    .constrainAs(authorText) {
-                                        start.linkTo(avatarHolder.end)
-                                        bottom.linkTo(avatarHolder.bottom)
-                                        top.linkTo(avatarHolder.top)
-                                    },
+                                    .constrainAs(likeCount){
+                                        top.linkTo(parent.top)
+                                        bottom.linkTo(parent.bottom)
+                                        end.linkTo(likeIcon.start)
+                                    }
+                                ,
                                 style = MaterialTheme.typography.bodyMedium
                             )
-                           // val(date)=createRefs()
 
-                        }
-                val updated = sewMethod.dateUpdated
-                Text(
-                    text = "Updated ${updated} by ${sewMethod.publisher}",
-                    color=Color.Gray,
-                    modifier = Modifier
-                        .padding(start = 10.dp),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                val ingredient = sewMethod.ingredients
+                            IconToggleButton(
+                                modifier = Modifier
+                                    .constrainAs(likeIcon){
+                                        top.linkTo(parent.top)
+                                        bottom.linkTo(parent.bottom)
+                                        end.linkTo(parent.end)
+                                    },
+                                checked = likeIconState.value,
+                                onCheckedChange = {
+                                    if(likeIconState.value){
+                                        likeIconState.value=false
+                                        //  likes.value--
+                                        unlike()
 
-                Text(
-                    text = ingredient.toString(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, top = 20.dp, end = 10.dp)
-                    ,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                ) {
-
-                }
-               /* LazyColumn(){
-                    itemsIndexed(
-                        items = sewMethods
-                    ) { index, sewMethod ->
-                        onChangeScrollPosition(index)
-                        if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
-                            onTriggerNextPage()
-                        }
-                        SewMethodCard(
-                            sewMethod = sewMethod,
-                            onClick = {
-                                val route = Screen.SewDescription.route + "/${sewMethod.id}"
-                                onNavigateToDescriptionScreen(route)
+                                    }else{
+                                        likeIconState.value=true
+                                        //  likes.value++
+                                        like()
+                                    }
+                                })
+                            {
+                                Icon(
+                                    painter = painterResource(R.drawable.gray_heart),
+                                    contentDescription = "Radio button icon",
+                                    tint = if (likeIconState.value) Color.Red else Color.LightGray
+                                )
                             }
-                        )
+                        }
                     }
 
-                }*/
+                    ConstraintLayout(
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .fillMaxHeight()
+                            .padding(top = 12.dp, start = 8.dp, end = 8.dp),
+                    ) {
+                        val (avatarHolder,authorText) = createRefs()
+
+                        val avatar=sewMethod.featuredImage
+                        //  val (avatarHolder) = createRefs()
+                        GlideImage(
+                            model = avatar,
+                            loading =  placeholder(R.drawable.empty_plate),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .width(30.dp)
+                                .height(30.dp)
+                                .clip(CircleShape)
+                                .constrainAs(avatarHolder) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
+                                },
+                            contentScale = ContentScale.Crop,
+                        )
+                        val author=sewMethod.publisher
+                        //  val(authorText)=createRefs()
+                        Text(
+                            text = author,
+                            modifier = Modifier
+                                .wrapContentWidth(Alignment.Start)
+                                .padding(10.dp)
+                                .constrainAs(authorText) {
+                                    start.linkTo(avatarHolder.end)
+                                    bottom.linkTo(avatarHolder.bottom)
+                                    top.linkTo(avatarHolder.top)
+                                },
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        // val(date)=createRefs()
+
+                    }
+                    val updated = sewMethod.dateUpdated
+                    Text(
+                        text = "Updated ${updated} by ${sewMethod.publisher}",
+                        color=Color.Gray,
+                        modifier = Modifier
+                            .padding(start = 10.dp),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    val description = sewMethod.description
+
+                    Text(
+                        text = description,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp, top = 20.dp, end = 10.dp)
+                        ,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                    ) {
+
+                    }
+                    LazyColumn( modifier = Modifier
+                        .fillMaxWidth()){
+                        itemsIndexed(
+                            items = sewMethod.comments
+                        ) { index, comment ->
+
+                            CommentCard(
+                                text = comment.toString(),
+                                edit={
+
+                                },
+                                report = {
+
+                                }
+
+                            )
+                        }
+
+                    }
+
+                }
 
             }
         }

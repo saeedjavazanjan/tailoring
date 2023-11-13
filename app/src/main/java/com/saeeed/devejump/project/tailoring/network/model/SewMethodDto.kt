@@ -1,14 +1,18 @@
 package com.saeeed.devejump.project.tailoring.network.model
 
 import com.google.gson.annotations.SerializedName
+import com.saeeed.devejump.project.tailoring.domain.model.Comment
 
 data class SewMethodDto(
 
-    @SerializedName("pk")
+    @SerializedName("id")
     var pk: Int,
 
     @SerializedName("title")
     var title: String,
+
+    @SerializedName("post_type")
+    var postType: String,
 
     @SerializedName("publisher")
     var publisher: String,
@@ -16,14 +20,17 @@ data class SewMethodDto(
     @SerializedName("featured_image")
     var featuredImage: String,
 
-    @SerializedName("rating")
-    var rating: Int = 0,
+    @SerializedName("like")
+    var like: Int = 0,
 
-    @SerializedName("source_url")
-    var sourceUrl: String,
+    @SerializedName("video")
+    var videoUrl: String,
 
-    @SerializedName("ingredients")
-    var ingredients: List<String> = emptyList(),
+    @SerializedName("description")
+    var description: String,
+
+    @SerializedName("comments")
+    var comments: List<Comment> = emptyList(),
 
     @SerializedName("long_date_added")
     var longDateAdded: Long,
@@ -31,3 +38,4 @@ data class SewMethodDto(
     @SerializedName("long_date_updated")
     var longDateUpdated: Long,
 )
+

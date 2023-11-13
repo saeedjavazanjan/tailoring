@@ -63,8 +63,8 @@ object AppModule {
     @Provides
     fun provideRetrofitService(): RetrofitService {
         return Retrofit.Builder()
-           // .baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
-           .baseUrl("https://food2fork.ca/api/recipe/")
+            .baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
+         //  .baseUrl("https://food2fork.ca/api/recipe/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(RetrofitService::class.java)

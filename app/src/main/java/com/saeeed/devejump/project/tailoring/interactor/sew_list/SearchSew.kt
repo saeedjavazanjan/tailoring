@@ -1,6 +1,5 @@
 package com.saeeed.devejump.project.tailoring.interactor.sew_list
 
-import android.util.Log
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
@@ -8,7 +7,6 @@ import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
-import com.saeeed.devejump.project.tailoring.utils.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -79,11 +77,10 @@ class SearchSew(
         query: String
     ): List<SewMethod> {
         return dtoMapper.toDomainList(
-            retrofitService.search(
-                token = token,
-                page = page,
-                query = query,
-            ).recipes
+            retrofitService.search().sewmethods
+            //  token = token,
+            // page = page,
+            //  query = query,
         )
     }
 }

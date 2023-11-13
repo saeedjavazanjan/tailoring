@@ -10,11 +10,13 @@ class SewMethodMapper : DomainMapper<SewMethodDto, SewMethod> {
         return SewMethod(
             id = model.pk,
             title = model.title,
+            postType=model.postType,
             featuredImage = model.featuredImage,
-            rating = model.rating,
+            like = model.like,
             publisher = model.publisher,
-            sourceUrl = model.sourceUrl,
-            ingredients = model.ingredients,
+            videoUrl = model.videoUrl,
+            description = model.description,
+            comments=model.comments,
             dateAdded =DateUtils.longToDate(model.longDateAdded),
             dateUpdated = DateUtils.longToDate(model.longDateUpdated),
         )
@@ -24,11 +26,13 @@ class SewMethodMapper : DomainMapper<SewMethodDto, SewMethod> {
         return SewMethodDto(
             pk = domainModel.id,
             title = domainModel.title,
+            postType=domainModel.postType,
             featuredImage = domainModel.featuredImage,
-            rating = domainModel.rating,
+            like = domainModel.like,
             publisher = domainModel.publisher,
-            sourceUrl = domainModel.sourceUrl,
-            ingredients = domainModel.ingredients,
+            videoUrl = domainModel.videoUrl,
+            description = domainModel.description,
+            comments=domainModel.comments,
             longDateAdded =  DateUtils.dateToLong(domainModel.dateAdded),
             longDateUpdated = DateUtils.dateToLong(domainModel.dateUpdated),
         )
