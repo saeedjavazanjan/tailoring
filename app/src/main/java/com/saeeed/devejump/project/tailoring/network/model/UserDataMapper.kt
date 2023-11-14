@@ -1,15 +1,18 @@
 package com.saeeed.devejump.project.tailoring.network.model
 
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
-import com.saeeed.devejump.project.tailoring.utils.DateUtils
 
 class UserDataMapper: DomainMapper<UserDataDto, UserData> {
 
     override fun mapToDomainModel(model: UserDataDto): UserData {
         return UserData(
-            id = model.id,
+            userId = model.userId,
+            userName=model.userName,
+            phoneNumber = model.phoneNumber,
+            avatar = model.avatar,
+            followers = model.followers,
+            following = model.following,
             likes = model.likes,
             bookMarks = model.bookMarks,
             comments = model.comments
@@ -18,7 +21,12 @@ class UserDataMapper: DomainMapper<UserDataDto, UserData> {
 
     override fun mapFromDomainModel(domainModel: UserData): UserDataDto {
         return UserDataDto(
-            id = domainModel.id,
+            userId = domainModel.userId,
+            userName=domainModel.userName,
+            phoneNumber = domainModel.phoneNumber,
+            avatar = domainModel.avatar,
+            followers = domainModel.followers,
+            following = domainModel.following,
             likes = domainModel.likes,
             bookMarks = domainModel.bookMarks,
             comments = domainModel.comments

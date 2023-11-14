@@ -19,24 +19,61 @@ val banner ="\n      [\n        { \n       " +
         "  \"click_destination\" : \"00\"\n        }\n   " +
         "   ]\n    "
 
-val userData ="\n          { \n       " +
-        "   \"id\" : 1,\n        " +
-        "  \"likes\" :  [\n" +
-        "                \"1\",\n" +
-        "                \"8\",\n" +
-        "                \"3\"\n" +
-        "            ],\n" +
-        "  \"bookMarks\" :  [\n" +
-        "                \"4\",\n" +
-        "                \"12\",\n" +
-        "                \"10\"\n" +
-        "            ],\n" +
-        "     \"comments\" : [\n" +
-        "                \"5\",\n" +
-        "                \"6\",\n" +
-        "                \"7\"\n" +
-        "            ]\n" +
-        "        }\n"
+val userData ="{\"userid\":1," +
+        "\"user_name\":\"fati\"," +
+        "\"phone_number\":\"09193480263\","+
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"," +
+        "\"followers\":" +
+        "[{\"userid\":25," +
+        "\"user_name\":" +
+        "\"elahe\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"}," +
+        "{\"userid\":20," +
+        "\"user_name\":\"mahsa\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"}]," +
+        "\"following\":" +
+        "[{\"userid\":10," +
+        "\"user_name\":\"sepideh\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"}]," +
+        "\"likes\":[\"1\",\"8\",\"3\"]," +
+        "\"bookMarks\":[\"4\",\"12\",\"10\"]," +
+        "\"comments\":" +
+        "[{\"postid\":\"1\"," +
+        "\"comment\":" +
+        "[{\"id\":1," +
+        "\"comment\":\"somthing\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"," +
+        "\"userName\":\"saeed\"," +
+        "\"date\":\"یکمهر\"}," +
+        "{\"id\":3," +
+        "\"comment\":\"somthing\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"," +
+        "\"userName\":\"saeed\"," +
+        "\"date\":\"یکمهر\"}," +
+        "{\"id\":8," +
+        "\"comment\":\"somthing\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"," +
+        "\"userName\":\"saeed\"," +
+        "\"date\":\"یکمهر\"}]}," +
+        "{\"postid\":\"4\"," +
+        "\"comment\":" +
+        "[{\"id\":1," +
+        "\"comment\":\"somthing\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"," +
+        "\"userName\":\"saeed\"," +
+        "\"date\":\"یکمهر\"}," +
+        "{\"id\":8," +
+        "\"comment\":\"somthing\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"," +
+        "\"userName\":\"saeed\"," +
+        "\"date\":\"یکمهر\"}]}," +
+        "{\"postid\":\"2\",\"comment\":" +
+        "[{\"id\":1," +
+        "\"comment\":\"somthing\"," +
+        "\"avatar\":\"https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg\"," +
+        "\"userName\":\"saeed\"," +
+        "\"date\":\"یکمهر\"}]}]}"
+
 
 
 
