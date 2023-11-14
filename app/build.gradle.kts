@@ -92,6 +92,7 @@ dependencies {
 
     //coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-video:2.4.0")
 
     //navigation
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.4")

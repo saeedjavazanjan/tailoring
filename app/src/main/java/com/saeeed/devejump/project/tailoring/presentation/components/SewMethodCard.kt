@@ -1,10 +1,15 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
+
+import android.net.Uri
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
@@ -14,17 +19,26 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.ImageLoader
+import coil.compose.AsyncImage
+import coil.decode.VideoFrameDecoder
+
+import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
+import com.bumptech.glide.request.RequestOptions
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,18 +59,15 @@ fun SewMethodCard(
                 start = 10.dp,
                 end = 10.dp
             )
-            .clickable(onClick = onClick).
-        width(300.dp),
+            .clickable(onClick = onClick)
+            .width(300.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
 
         Column() {
             sewMethod.let { method ->
 
-                if (
-                    method.featuredImage.takeLast(3)=="png" ||
-                    method.featuredImage.takeLast(3)=="jpg"
-                ){
+                if (method.postType.equals("image")){
                     GlideImage(
                         model = method.featuredImage,
                         loading =  placeholder(R.drawable.empty_plate),
@@ -66,16 +77,48 @@ fun SewMethodCard(
                             .height(225.dp),
                         contentScale = ContentScale.Crop,
                     )
-                }else{
-                    GlideImage(
-                        model = method.videoUrl,
-                       // loading =  placeholder(R.drawable.empty_plate),
-                        contentDescription = "",
+                }else if(method.postType.equals("video")){
+                    //with coil
+                   /* val imageLoader = ImageLoader.Builder(LocalContext.current)
+                        .components {
+                            add(VideoFrameDecoder.Factory())
+                        }
+                        .build()
+                    AsyncImage(
+                        model = method.videoUrl,//your video here
+                        imageLoader = imageLoader,
+                        contentDescription = "icon",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(225.dp),
-                        contentScale = ContentScale.Crop,
-                    )
+                        )*/
+
+                    //with glide
+                    Box( modifier = Modifier
+                        .fillMaxWidth()
+                        .height(225.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val requestbuilder=Glide.with(LocalView.current)
+                        GlideImage(
+                            model = method.videoUrl,
+                            loading =  placeholder(R.drawable.empty_plate),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                        ){
+                            it.thumbnail(requestbuilder.asDrawable().load(Uri.parse(method.videoUrl)))
+                        }
+                        Icon(
+                            painter = painterResource(
+                               R.drawable.baseline_play_circle_outline_24),
+                            contentDescription = "Radio button icon",
+                            tint = Color.White
+                        )
+                    }
+
                 }
 
 
@@ -95,7 +138,8 @@ fun SewMethodCard(
                         style = MaterialTheme.typography.bodySmall
                     )
                     ConstraintLayout(
-                        modifier = Modifier.fillMaxWidth(1f)
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
                             .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp),
 
                     ) {
@@ -109,7 +153,7 @@ fun SewMethodCard(
                                 .width(30.dp)
                                 .height(30.dp)
                                 .clip(CircleShape)
-                                .constrainAs(avatarHolder){
+                                .constrainAs(avatarHolder) {
                                     start.linkTo(parent.start)
                                     bottom.linkTo(parent.bottom)
                                     top.linkTo(parent.top)
@@ -123,8 +167,8 @@ fun SewMethodCard(
                             modifier = Modifier
                                 .wrapContentWidth(Alignment.Start)
                                 .padding(5.dp)
-                                .constrainAs(authorText){
-                                  start.linkTo(avatarHolder.end)
+                                .constrainAs(authorText) {
+                                    start.linkTo(avatarHolder.end)
                                     bottom.linkTo(parent.bottom)
                                     top.linkTo(parent.top)
                                 },
@@ -139,7 +183,7 @@ fun SewMethodCard(
                             modifier = Modifier
                                 .width(20.dp)
                                 .height(20.dp)
-                                .constrainAs(likeIcon){
+                                .constrainAs(likeIcon) {
                                     end.linkTo(parent.end)
                                     bottom.linkTo(parent.bottom)
                                     top.linkTo(parent.top)
@@ -153,8 +197,8 @@ fun SewMethodCard(
                             text = likes,
                             modifier = Modifier
                                 .wrapContentWidth(Alignment.End)
-                                .constrainAs(likesCount){
-                                  end.linkTo(likeIcon.start)
+                                .constrainAs(likesCount) {
+                                    end.linkTo(likeIcon.start)
                                     bottom.linkTo(parent.bottom)
                                     top.linkTo(parent.top)
                                 },
