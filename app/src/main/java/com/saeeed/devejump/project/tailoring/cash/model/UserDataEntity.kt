@@ -3,73 +3,47 @@ package com.saeeed.devejump.project.tailoring.cash.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
+import com.saeeed.devejump.project.tailoring.domain.model.CommentOnSpecificPost
+import com.saeeed.devejump.project.tailoring.domain.model.UserData
 
 @Entity(tableName = "userData")
 data class UserDataEntity(
 // Value from API
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "id")
-    var id: Int,
+    @ColumnInfo(name = "userid")
+    var userId: Int,
 
-    @ColumnInfo(name="bookMars")
-    var bookMarks: String,
+    @ColumnInfo(name="user_name")
+    var userName: String,
+
+    @ColumnInfo(name="phone_number")
+    var phoneNumber: String,
+
+    @ColumnInfo(name="avatar")
+    var avatar: String,
+
+    @ColumnInfo(name="followers")
+    var followers: String,
+
+    @ColumnInfo(name="following")
+    var following: String,
 
     @ColumnInfo(name="likes")
     var liKes: String,
 
-    @ColumnInfo(name="comment")
+    @ColumnInfo(name="bookMarks")
+    var bookMarks: String,
+
+
+    @ColumnInfo(name="comments")
     var comments: String,
 )
 
 
 
 
-/*
-// Value from API
-    @ColumnInfo(name = "title")
-    var title: String,
-
-// Value from API
-    @ColumnInfo(name = "publisher")
-    var publisher: String,
-
-// Value from API
-    @ColumnInfo(name = "featured_image")
-    var featuredImage: String,
-
-// Value from API
-    @ColumnInfo(name = "rating")
-    var rating: Int,
-
-// Value from API
-    @ColumnInfo(name = "source_url")
-    var sourceUrl: String,
 
 
-    @ColumnInfo(name = "ingredients")
-    var ingredients: String = "",
 
-    */
-/**
-     * Value from API
-     *//*
 
-    @ColumnInfo(name = "date_added")
-    var dateAdded: Long,
-
-    */
-/**
-     * Value from API
-     *//*
-
-    @ColumnInfo(name = "date_updated")
-    var dateUpdated: Long,
-
-    */
-/**
-     * The date this recipe was "refreshed" in the cache.
-     *//*
-
-    @ColumnInfo(name = "date_cached")
-    var dateCached: Long,
-)*/

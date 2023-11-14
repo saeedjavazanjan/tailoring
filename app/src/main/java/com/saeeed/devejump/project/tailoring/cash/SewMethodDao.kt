@@ -11,19 +11,19 @@ import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
 
 @Dao
 interface SewMethodDao {
-    @Insert
+    @Insert (onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSew(sewPost: SewEntity): Long
 
-    @Insert
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserData(userData: UserDataEntity): Long
 
-    @Query("SELECT * FROM userData WHERE id = :id")
+    @Query("SELECT * FROM userData WHERE userid = :id")
     suspend fun getUserData(id: Int):UserDataEntity
 
-    @Query("UPDATE userData SET bookMars = :bookmarkState WHERE id LIKE :id ")
+    @Query("UPDATE userData SET bookMarks = :bookmarkState WHERE userid LIKE :id ")
     suspend fun updateBookmarks(bookmarkState:String,id:Int):Int
 
-    @Query("UPDATE userData SET likes = :likedPostsId WHERE id LIKE :userId ")
+    @Query("UPDATE userData SET likes = :likedPostsId WHERE userid LIKE :userId ")
     suspend fun updateLikes(likedPostsId:String,userId:Int):Int
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
