@@ -59,32 +59,15 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData> {
 
     fun convertStringToCommentList(comments:String):MutableList<CommentOnSpecificPost>{
         val gson = Gson()
-        val type = object : TypeToken<List<CommentOnSpecificPost>>() {}.type
-        return gson.fromJson(comments, type)
+        try {
+            val commentsList="["+comments +"]"
+            val type = object : TypeToken<List<CommentOnSpecificPost>>() {}.type
+            return gson.fromJson(commentsList, type)
+        } catch(e:Exception){
+            e.printStackTrace()
+            return mutableListOf()
+        }
 
-      /*  val listOfCommentsWithPostId: ArrayList<CommentOnSpecificPost> = ArrayList()
-        var commentsOnPost=comments.substringBeforeLast("],")
-        commentsOnPost.let {
-                    for (i in it.split("]}")){
-                        var postId =i.substringAfterLast("],")
-                        var gson = Gson()
-                        var comment1= "$i}"
-                        if(!i.equals("")) {
-                            var result1 = gson.fromJson(comment1, CommentOnSpecificPost::class.java)
-                            result1.postId=postId
-                            for (j in i.split("},")) {
-                                var comment2 = "$j}"
-                                if (!j.equals("")) {
-                                    var result2 = gson.fromJson(comment2, Comment::class.java)
-                                    result1.comments.add(result2)
-                                }
-                            }
-                            listOfCommentsWithPostId.add(result1)
-
-                        }
-                    }
-                }
-        return listOfCommentsWithPostId*/
 
     }
 
@@ -128,6 +111,9 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData> {
         for(item in userComments){
             val convertedString=gson.toJson(item)
             jsonString.append("$convertedString,")
+           /* val gson = Gson()
+            val type = object : TypeToken<List<CommentOnSpecificPost>>() {}.type
+            jsonString.append( gson.toJson(item, type))*/
 
         }
 

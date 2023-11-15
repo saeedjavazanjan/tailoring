@@ -1,8 +1,12 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
 import android.annotation.SuppressLint
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,16 +41,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
+import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
@@ -79,20 +90,34 @@ fun SewMethodView(
                 .fillMaxHeight()
         ) {
             item{
-                Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(225.dp),
                         contentAlignment = Alignment.TopEnd,
                     ) {
-                        AsyncImage(
-                            model = sewMethod.featuredImage,
-                            contentDescription = sewMethod.title,
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentScale = ContentScale.Crop,
-                        )
+                        if(sewMethod.postType.equals("video")){
+                            val context = LocalContext.current
+                            VideoPlayer(
+                                 videoUrl = sewMethod.videoUrl,
+                                context =context
+                            )
+
+                        }else{
+                            AsyncImage(
+                                model = sewMethod.featuredImage,
+                                contentDescription = sewMethod.title,
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
+
                         //  if (bookMarkState){
                         IconToggleButton(
                             checked = bookMarkState,
@@ -259,33 +284,46 @@ fun SewMethodView(
                     ) {
 
                     }
-                    LazyColumn( modifier = Modifier
-                        .fillMaxWidth()){
-                        itemsIndexed(
-                            items = sewMethod.comments
-                        ) { index, comment ->
+                    
+                    Text(
+                        modifier = Modifier.padding(10.dp),
 
-                            CommentCard(
-                                text = comment.toString(),
-                                edit={
+                        text = "نظرات")
+                    CommentsList(comments = sewMethod.comments)
 
-                                },
-                                report = {
-
-                                }
-
-                            )
-                        }
-
-                    }
-
-                }
 
             }
+
+
+
+
+
+        }
         }
 
 
 
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun CommentsList(comments:List<Comment>){
+    FlowColumn {
+
+        comments.forEach{
+            CommentCard(
+                comment=it,
+                edit={
+
+                },
+                report = {
+
+                }
+
+            )
+        }
+        
+    }
 }
 
 
