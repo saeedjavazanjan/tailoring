@@ -29,7 +29,10 @@ class GetUserStuffsFromServer(
 
             try {
                 val getedUserData=getUserDataFromNetwork(userId)
-                sewMethodDao.insertUserData(entityMapper.mapFromDomainModel(getedUserData))
+                getedUserData.let {
+                    sewMethodDao.insertUserData(entityMapper.mapFromDomainModel(it))
+
+                }
 
             }catch (e:Exception){
                 e.printStackTrace()

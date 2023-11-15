@@ -68,6 +68,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material:1.5.4")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0-alpha02")
+    implementation ("androidx.compose.foundation:foundation:1.5.4")
 
 
     testImplementation("junit:junit:4.13.2")
@@ -113,6 +114,11 @@ dependencies {
 
     //dataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    //exoplayer
+    implementation ("androidx.media3:media3-exoplayer:1.1.1")
+    implementation ("androidx.media3:media3-exoplayer-dash:1.1.1")
+    implementation ("androidx.media3:media3-ui:1.1.1")
 
 
 }
