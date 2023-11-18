@@ -10,6 +10,12 @@
     <string name="no">خیر</string>
 
 
+    <!--reportDialog-->
+    <string name="report_title">گزارش</string>
+    <string name="report_text">در صورت مشاهده نظرات خلاف قوانین و نامناسب روی دکمه گزارش کلیک کنید</string>
+    <string name="report">گزارش</string>
+    <string name="cancel">انصراف</string>
+
   <!--Home-->
     <string name="best_of_month">برترین های ماه</string>
     <string name="best_of_week">برترین های هفته</string>
