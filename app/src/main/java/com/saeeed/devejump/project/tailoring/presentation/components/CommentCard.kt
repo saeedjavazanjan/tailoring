@@ -15,6 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
+import com.saeeed.devejump.project.tailoring.utils.USERID
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -44,7 +46,9 @@ fun CommentCard(
                 top = 6.dp,
                 start = 10.dp,
                 end = 10.dp
-            ).fillMaxWidth().wrapContentHeight(),
+            )
+            .fillMaxWidth()
+            .wrapContentHeight(),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
 
@@ -58,14 +62,13 @@ fun CommentCard(
                     end = 10.dp
                 )
         ) {
-            ConstraintLayout {
                 ConstraintLayout(
                     modifier = Modifier
                         .fillMaxWidth(1f)
                         .fillMaxHeight()
                         .padding(top = 12.dp, start = 8.dp, end = 8.dp),
                 ) {
-                    val (avatarHolder, authorName, date, commentText) = createRefs()
+                    val (avatarHolder, authorName, date, commentText,reportButton,editButton) = createRefs()
 
                     GlideImage(
                         model = comment.avatar,
@@ -102,9 +105,9 @@ fun CommentCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 10.dp, top = 20.dp, end = 10.dp)
-                            .constrainAs(commentText){
-                             top.linkTo(avatarHolder.bottom)
-                             start.linkTo(parent.start)
+                            .constrainAs(commentText) {
+                                top.linkTo(avatarHolder.bottom)
+                                start.linkTo(parent.start)
 
                             },
                         style = MaterialTheme.typography.bodyMedium
@@ -115,18 +118,67 @@ fun CommentCard(
                         color = Color.Gray,
                         modifier = Modifier
                             .padding(start = 10.dp)
-                            .constrainAs(date){
+                            .constrainAs(date) {
 
                             },
                         style = MaterialTheme.typography.bodySmall
                     )
+                    TextButton(
+                        modifier = Modifier
+                            .constrainAs(reportButton) {
+                                top.linkTo(commentText.bottom)
+                                bottom.linkTo(parent.bottom)
+                                end.linkTo(parent.end)
+                            },
+
+
+                        onClick = {
+                            report()
+                        }){
+                        Text(
+                            text = "گزارش این نظر",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+
+                        )
+
+                    }
+                    if (comment.userId== USERID) {
+                        TextButton(
+                            modifier = Modifier
+                                .constrainAs(editButton) {
+                                    top.linkTo(commentText.bottom)
+                                    bottom.linkTo(parent.bottom)
+                                    end.linkTo(reportButton.start)
+                                },
+
+
+                            onClick = {
+                                edit()
+
+                            }) {
+                            Text(
+                                text = "ویرایش",
+                                style = MaterialTheme.typography.bodySmall
+
+
+                            )
+
+                        }
+                    }
+
+
+
+                    }
+
                 }
+
+
 
 
 
             }
 
-        }
+
     }
 
-}

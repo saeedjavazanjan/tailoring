@@ -45,7 +45,7 @@ fun Navigation(
     val descriptionViewModel: DescriptionViewModel = viewModel()
     val homeViewModel: HomeViewModel = viewModel()
     val splashViewModel:SplashViewModel= viewModel()
-    NavHost(navController = navController, startDestination = Screen.Splash.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route){
             SplashScreen(

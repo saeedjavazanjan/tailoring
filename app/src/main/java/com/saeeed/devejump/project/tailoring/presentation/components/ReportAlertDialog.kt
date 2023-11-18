@@ -16,12 +16,10 @@ import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
 @Composable
-fun ExitAlertDialog(
-    navController: NavController,
-    cancel: (isOpen: Boolean) -> Unit,
-    ok: () -> Unit) {
-    val openDialog = remember { mutableStateOf(true) }
-    if (currentRoute(navController = navController) == Screen.Home.route && openDialog.value) {
+fun ReportAlertDialog(
+    ok: () -> Unit,
+    cancle : () -> Unit
+) {
         AlertDialog(
             onDismissRequest = {
             },
@@ -29,22 +27,21 @@ fun ExitAlertDialog(
             // box and we are setting text color to white.
             title = {
                 Text(
-                    text = stringResource(R.string.close_the_app),
+                    text = stringResource(R.string.report_title),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
             },
             text = {
-                Text(text = stringResource(R.string.do_you_want_to_exit_the_app), fontSize = 16.sp)
+                Text(text = stringResource(R.string.report_text), fontSize = 16.sp)
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        openDialog.value = false
                         ok()
                     }) {
                     Text(
-                        stringResource(R.string.yes),
+                        stringResource(R.string.report),
                         fontWeight = FontWeight.Bold,
                         style = TextStyle(color = Color.Black)
                     )
@@ -53,16 +50,15 @@ fun ExitAlertDialog(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        openDialog.value = false
-                        cancel(false)
+                        cancle()
                     }) {
                     Text(
-                        stringResource(R.string.no),
+                        stringResource(R.string.cancel),
                         fontWeight = FontWeight.Bold,
                         style = TextStyle(color = Color.Black)
                     )
                 }
             },
         )
-    }
+
 }
