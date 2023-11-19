@@ -88,6 +88,18 @@ fun DescriptionScreen(
                                         },
                                         unlike = {
                                             viewModel.unLikePost()
+                                        },
+                                        Insertcomment = {
+
+                                        },
+                                        editComment = {
+
+                                        },
+                                        report = {
+
+                                        },
+                                        sellItem = {
+
                                         }
 
                                     )
