@@ -1,7 +1,6 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,9 +24,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,14 +35,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,8 +59,10 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.utils.USERID
+import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
+import com.saeeed.devejump.project.tailoring.utils.USER_NAME
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import okhttp3.internal.wait
 
 
 @SuppressLint("SuspiciousIndentation", "UnrememberedMutableState")
@@ -74,7 +79,11 @@ fun SewMethodView(
     save:() -> Unit,
     remove:()-> Unit,
     like:() ->Unit,
-    unlike:() ->Unit
+    unlike:() ->Unit,
+    Insertcomment:(comment:Comment) -> Unit,
+    editComment:(comment:Comment)-> Unit,
+    report:(comment:Comment) -> Unit,
+    sellItem: () -> Unit
 ) {
 
     val bookState= mutableStateOf(bookMarkState)
@@ -82,10 +91,22 @@ fun SewMethodView(
     val likes = mutableStateOf( likesCount)
     val openDialog = remember { mutableStateOf(false) }
 
-
     var scrollState= rememberLazyListState()
 
-        LazyColumn(
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    var query= remember {
+        mutableStateOf("")
+    }
+    var commentState= remember { mutableStateOf("firstComment") }
+
+
+        var onEditComment  = remember {
+            mutableStateOf( Comment(0,"","","",0,""))
+        }
+
+
+    LazyColumn(
             state = scrollState,
             modifier = Modifier
                 .fillMaxWidth()
@@ -287,8 +308,15 @@ fun SewMethodView(
                         text = "نظرات"
                     )
                     CommentsList(comments = sewMethod.comments,
-                        showDialog = {
+                        showReportDialog = { id,text,UsrId->
                             openDialog.value = true
+
+                        },
+                        editComment={
+                            focusRequester.requestFocus()
+                            commentState.value = "editComment"
+                            query.value=it.comment
+                            onEditComment.value=it
 
                         }
                         )
@@ -297,6 +325,7 @@ fun SewMethodView(
                         ReportAlertDialog(
                             ok={
                                 openDialog.value = false
+
 
                             },
                             cancle = {
@@ -331,22 +360,50 @@ fun SewMethodView(
                     .background(MaterialTheme.colorScheme.surface),
 
             ) {
-                Icon(
-                    Icons.Filled.Send,
-                    contentDescription = null,
+                IconButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(5.dp)
-                   // painter = painterResource(R.drawable.ic_baseline_print_24),
+                        .padding(5.dp),
+                    onClick = {
+                        if (commentState.value.equals("firstComment")) {
+                            Insertcomment(
+                                Comment(
+                                    sewMethod.comments.size,
+                                    query.value,
+                                    USER_AVATAR,
+                                    USER_NAME,
+                                    USERID,
+                                    "یکم آبان"
+                                )
+                            )
+                        }else if (commentState.value.equals("editComment")){
 
-                    )
-                var query= remember {
-                    mutableStateOf("")
+                            onEditComment.let {
+                                it.value.comment=query.value
+                                editComment(it.value)
+
+                            }
+                            }
+
+
+                        focusManager.clearFocus()
+                        query.value=""
+
+
+
+                    }
+
+                    ){
+                    Icon( Icons.Filled.Send,
+                        contentDescription = null)
+                    // painter = painterResource(R.drawable.ic_baseline_print_24),
                 }
+
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .focusRequester(focusRequester),
                     value = query.value,
                     shape = MaterialTheme.shapes.medium,
 
@@ -354,7 +411,12 @@ fun SewMethodView(
                        query.value=it
                     },
                     label = {
+                        if (commentState.value.equals("firstComment"))
                         Text(text = "در باره پست نظر بدهید")
+
+                        else if(commentState.value.equals("editComment"))
+                            Text(text = "ویرایش نظر")
+
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -362,8 +424,8 @@ fun SewMethodView(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
-                          //  onExecuteSearch()
-                        }
+                          //  comment()
+                            focusManager.clearFocus()                        }
                     ),
 
                     colors = TextFieldDefaults.textFieldColors(
@@ -388,7 +450,8 @@ fun SewMethodView(
 @Composable
 fun CommentsList(
     comments:List<Comment>,
-    showDialog:() -> Unit
+    showReportDialog:(commentId:Int, text:String, userId:Int) -> Unit,
+    editComment: (comment:Comment) -> Unit
 
 ){
 
@@ -398,10 +461,15 @@ fun CommentsList(
             CommentCard(
                 comment=it,
                 edit={
-
+                     editComment(
+                        it
+                     )
                 },
                 report = {
-                   showDialog()
+                   showReportDialog( it.id,
+                       it.comment,
+                       it.userId
+                   )
                 }
 
             )

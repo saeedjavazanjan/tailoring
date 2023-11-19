@@ -209,12 +209,14 @@ fun provideUserData(
     fun provideUserActivityOnPost(
         sewMethodDao: SewMethodDao,
         userDataEntityMapper: UserDataEntityMapper,
-        retrofitService: RetrofitService
+        retrofitService: RetrofitService,
+        sewEntityMapper: SewEntityMapper
     ):UserActivityOnPost {
         return UserActivityOnPost(
             sewMethodDao = sewMethodDao,
             entityMapper = userDataEntityMapper,
-            retrofitService = retrofitService
+            retrofitService = retrofitService,
+            sewEntityMapper = sewEntityMapper
         )
     }
 

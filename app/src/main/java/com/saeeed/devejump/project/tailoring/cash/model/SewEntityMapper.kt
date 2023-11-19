@@ -45,7 +45,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
 
 
 
-    private fun convertCommentsListToString(comments: List<Comment>): String {
+     fun convertCommentsListToString(comments: List<Comment>): String {
         var gson = Gson()
         var jsonString= StringBuilder()
         for(item in comments){
@@ -56,7 +56,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
         return jsonString.toString()
     }
 
-    private fun convertCommentsStringToList(comments: String): List<Comment>{
+     fun convertCommentsStringToList(comments: String): List<Comment>{
         val list: ArrayList<Comment> = ArrayList()
         comments.let {
             for(item in comments.split("},")){

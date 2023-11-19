@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntity
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntity
+import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
 
@@ -25,6 +26,13 @@ interface SewMethodDao {
 
     @Query("UPDATE userData SET likes = :likedPostsId WHERE userid LIKE :userId ")
     suspend fun updateLikes(likedPostsId:String,userId:Int):Int
+
+    @Query("UPDATE userData SET comments = :comments WHERE userid LIKE :userId ")
+    suspend fun updateUserComments(comments:String,userId:Int):Int
+
+    @Query("UPDATE sewMethods SET comments = :comments WHERE id LIKE :postId ")
+    suspend fun updateCommentsOnPost(comments:String,postId:Int):Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
 

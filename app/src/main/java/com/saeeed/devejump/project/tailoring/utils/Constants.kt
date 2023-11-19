@@ -6,6 +6,9 @@ package com.saeeed.devejump.project.tailoring.utils
 
 const val USERID=1
 
+const val USER_AVATAR="https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg"
+const val USER_NAME="saeed"
+
 const val  GET_HOME_BANNERS="get_home_banners"
 
 const val BEST_OF_MONTH="best_of_month"

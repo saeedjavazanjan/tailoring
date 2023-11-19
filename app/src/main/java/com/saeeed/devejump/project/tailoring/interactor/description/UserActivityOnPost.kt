@@ -2,8 +2,11 @@ package com.saeeed.devejump.project.tailoring.interactor.description
 
 import android.annotation.SuppressLint
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
+import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
+import com.saeeed.devejump.project.tailoring.domain.model.Comment
+import com.saeeed.devejump.project.tailoring.domain.model.CommentOnSpecificPost
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
@@ -15,6 +18,7 @@ class UserActivityOnPost (
     private val sewMethodDao: SewMethodDao,
     private val retrofitService: RetrofitService,
     private val entityMapper: UserDataEntityMapper,
+    private val sewEntityMapper: SewEntityMapper
 
 ) {
 
@@ -153,5 +157,24 @@ class UserActivityOnPost (
         return entityMapper.convertStringToList(likes)
 
     }
+
+    suspend fun commentOnPost(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
+        try {
+
+
+        }catch (e:Exception){
+            e.printStackTrace()
+            emit(DataState.error(e.message.toString()))
+        }
+
+    }
+    suspend fun getPostComments(postId:Int):List<Comment>{
+
+        val comments=sewMethodDao.getSewById(postId)!!.comments
+
+        return sewEntityMapper.convertCommentsStringToList(comments)
+
+    }
+
 
 }
