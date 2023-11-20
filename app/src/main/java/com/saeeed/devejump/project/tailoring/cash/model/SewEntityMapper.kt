@@ -56,7 +56,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
         return jsonString.toString()
     }
 
-     fun convertCommentsStringToList(comments: String): List<Comment>{
+     fun convertCommentsStringToList(comments: String): MutableList<Comment>{
         val list: ArrayList<Comment> = ArrayList()
         comments.let {
             for(item in comments.split("},")){

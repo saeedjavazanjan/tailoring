@@ -8,6 +8,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ fun DescriptionScreen(
         val bookMarkState=viewModel.bookMarkState.value
         val likeState=viewModel.liKeState.value
         val likesCount =viewModel.likeCount.value
+        val comments=viewModel.comments.observeAsState()
         AppTheme(
             displayProgressBar = loading,
             darkTheme = isDarkTheme,
@@ -74,13 +76,14 @@ fun DescriptionScreen(
 
                                     SewMethodView(
                                         sewMethod = it,
-                                        bookMarkState=bookMarkState,
-                                        likeState=likeState,
+                                        bookMarkState =bookMarkState,
+                                        likeState =likeState,
                                         likesCount = likesCount,
+                                        comments =comments,
                                         save = {
                                             viewModel.bookMark(scaffoldState, composableScope)
                                         },
-                                        remove={
+                                        remove ={
                                             viewModel.removeFromBookMarkDataBase(scaffoldState,composableScope)
                                         },
                                         like = {
@@ -90,6 +93,7 @@ fun DescriptionScreen(
                                             viewModel.unLikePost()
                                         },
                                         Insertcomment = {
+                                         viewModel.commentOnPost(comment = it, postId = sewId)
 
                                         },
                                         editComment = {
@@ -97,12 +101,11 @@ fun DescriptionScreen(
                                         },
                                         report = {
 
-                                        },
-                                        sellItem = {
-
                                         }
 
-                                    )
+                                    ) {
+
+                                    }
 
 
                             }

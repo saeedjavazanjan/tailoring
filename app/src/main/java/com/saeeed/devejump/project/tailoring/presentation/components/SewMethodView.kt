@@ -35,7 +35,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -76,6 +77,7 @@ fun SewMethodView(
     bookMarkState: Boolean,
     likeState:Boolean,
     likesCount:Int,
+    comments: State<MutableList<Comment>?>,
     save:() -> Unit,
     remove:()-> Unit,
     like:() ->Unit,
@@ -307,7 +309,7 @@ fun SewMethodView(
 
                         text = "نظرات"
                     )
-                    CommentsList(comments = sewMethod.comments,
+                    CommentsList(comments = comments.value!!,
                         showReportDialog = { id,text,UsrId->
                             openDialog.value = true
 
@@ -449,7 +451,7 @@ fun SewMethodView(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CommentsList(
-    comments:List<Comment>,
+    comments:MutableList<Comment>,
     showReportDialog:(commentId:Int, text:String, userId:Int) -> Unit,
     editComment: (comment:Comment) -> Unit
 
