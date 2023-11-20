@@ -7,9 +7,7 @@ import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.CommentOnSpecificPost
-import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
-import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -158,8 +156,18 @@ class UserActivityOnPost (
 
     }
 
-    suspend fun commentOnPost(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
+     fun commentOnPost(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
         try {
+           val comments= getPostComments(postId)
+            comments.add(comment)
+            val result=sewMethodDao.
+            updateCommentsOnPost(sewEntityMapper.convertCommentsListToString(comments),postId)
+
+                val userCommentsOnPost=getUserComments(USERID,postId,comment)
+
+              val insertResult=  sewMethodDao.
+                updateUserComments(entityMapper.convertCommentListToString(userCommentsOnPost), USERID)
+            emit(DataState.success(result))
 
 
         }catch (e:Exception){
@@ -168,11 +176,43 @@ class UserActivityOnPost (
         }
 
     }
-    suspend fun getPostComments(postId:Int):List<Comment>{
+    suspend fun getPostComments(postId:Int):MutableList<Comment>{
 
         val comments=sewMethodDao.getSewById(postId)!!.comments
 
         return sewEntityMapper.convertCommentsStringToList(comments)
+
+    }
+
+    suspend fun getUserComments(userId:Int,postId: Int,comment: Comment):MutableList<CommentOnSpecificPost>{
+
+
+        val comments=sewMethodDao.getUserData(userId)!!.comments
+        val userCommentsOnPosts=entityMapper.convertStringToCommentList(comments)
+        var commentsOnThisPost:CommentOnSpecificPost?=null
+        try {
+            try {
+                commentsOnThisPost=userCommentsOnPosts.first {
+                    it.postId==postId.toString()
+                }
+            }catch (e:Exception){
+                userCommentsOnPosts.add(
+                    CommentOnSpecificPost(postId.toString(), mutableListOf(comment)))
+                commentsOnThisPost=userCommentsOnPosts[0]
+            }
+            commentsOnThisPost.let {
+                it!!.comments.add(comment)
+                userCommentsOnPosts.add(it)
+            }
+
+
+
+}catch (e:Exception){
+    e.printStackTrace()
+
+}
+
+        return userCommentsOnPosts
 
     }
 

@@ -6,9 +6,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
@@ -19,6 +22,7 @@ import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -44,6 +48,9 @@ constructor(
     val bookMarkState= mutableStateOf(false)
     val liKeState= mutableStateOf(false)
     val likeCount= mutableStateOf(0)
+    private val _comments = MutableLiveData<MutableList<Comment>>()
+     val comments: LiveData<MutableList<Comment>>
+        get() = _comments
 
     val dialogQueue=DialogQueue()
 
@@ -66,6 +73,10 @@ constructor(
 
                         //   }
                     }
+
+                    else -> {
+
+                    }
                 }
             }catch (e: Exception){
                 Log.e(TAG, "launchJob: Exception: ${e}, ${e.cause}")
@@ -83,6 +94,7 @@ constructor(
                 checkSewBookMarkState()
                 checkLikeState()
                 likeCount.value=data.like
+                _comments.value=data.comments.toMutableList()
             }
 
             dataState.error?.let { error ->
@@ -264,8 +276,19 @@ constructor(
 
     }
 
-    fun commentOnPost(){
+   @SuppressLint("SuspiciousIndentation")
+   fun commentOnPost(comment: Comment, postId:Int){
+        userActivityOnPost.commentOnPost(comment=comment,postId=postId).onEach { dataState ->
+            dataState.data.let {
+                if (it!!> 0)
+                _comments.value!!.add(0,comment)
+            }
 
+
+        }.catch {
+            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+
+        }.launchIn(viewModelScope)
 
     }
 

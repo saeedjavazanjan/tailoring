@@ -1,5 +1,6 @@
 package com.saeeed.devejump.project.tailoring.network
 
+import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
@@ -59,4 +60,11 @@ interface RetrofitService {
         @Field("postId") postId:Int
     ):Int
 
+    @POST("userData")
+    suspend fun commentOnPost(
+        // @Header("Authorization") token: String,
+        @Field("UserId") userId: Int,
+        @Field("postId") postId:Int,
+        @Field("comment") comment: String
+    ):Int
 }
