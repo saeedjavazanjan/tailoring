@@ -105,7 +105,6 @@ class UserActivityOnPost (
                 val likes= getUserLocalLikes()
                 likes.add(postId.toString())
                 val result= sewMethodDao.updateLikes(entityMapper.convertListToString(likes), USERID)
-
                     val insertResult=sewMethodDao.updatePostLikeCount(likeCount,postId)
                     emit(DataState.success(result))
 
@@ -139,8 +138,6 @@ class UserActivityOnPost (
                 val result= sewMethodDao.updateLikes(entityMapper.convertListToString(likes), USERID)
                     val insertResult=sewMethodDao.updatePostLikeCount(likeCount,postId)
                     emit(DataState.success(result))
-
-
 
             }catch (e:Exception){
                 e.printStackTrace()
