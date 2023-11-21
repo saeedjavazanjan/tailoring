@@ -95,7 +95,8 @@ class UserActivityOnPost (
 
     @SuppressLint("SuspiciousIndentation")
     fun likePost(
-        postId:Int
+        postId:Int,
+        likeCount:String
     ): Flow<DataState<Int>> = flow{
         try {
 
@@ -104,9 +105,16 @@ class UserActivityOnPost (
                 val likes= getUserLocalLikes()
                 likes.add(postId.toString())
                 val result= sewMethodDao.updateLikes(entityMapper.convertListToString(likes), USERID)
-                emit(DataState.success(result))
+
+                    val insertResult=sewMethodDao.updatePostLikeCount(likeCount,postId)
+                    emit(DataState.success(result))
+
+
+           //     emit(DataState.success(insertResult))
+
             }catch (e:Exception){
                 e.printStackTrace()
+                emit(DataState.error(e.message.toString()))
 
             }
 
@@ -119,7 +127,8 @@ class UserActivityOnPost (
 
     @SuppressLint("SuspiciousIndentation")
     fun unLikePost(
-        postId:Int
+        postId:Int,
+        likeCount: String
     ): Flow<DataState<Int>> = flow{
         try {
 
@@ -128,7 +137,11 @@ class UserActivityOnPost (
                 val likes= getUserLocalLikes()
                 likes.remove(postId.toString())
                 val result= sewMethodDao.updateLikes(entityMapper.convertListToString(likes), USERID)
-                emit(DataState.success(result))
+                    val insertResult=sewMethodDao.updatePostLikeCount(likeCount,postId)
+                    emit(DataState.success(result))
+
+
+
             }catch (e:Exception){
                 e.printStackTrace()
 
@@ -163,10 +176,10 @@ class UserActivityOnPost (
             val result=sewMethodDao.
             updateCommentsOnPost(sewEntityMapper.convertCommentsListToString(comments),postId)
 
-                val userCommentsOnPost=getUserComments(USERID,postId,comment)
+              //  val userCommentsOnPost=getUserComments(USERID,postId,comment)
 
-              val insertResult=  sewMethodDao.
-                updateUserComments(entityMapper.convertCommentListToString(userCommentsOnPost), USERID)
+           /*   val insertResult=  sewMethodDao.
+                updateUserComments(entityMapper.convertCommentListToString(userCommentsOnPost), USERID)*/
             emit(DataState.success(result))
 
 

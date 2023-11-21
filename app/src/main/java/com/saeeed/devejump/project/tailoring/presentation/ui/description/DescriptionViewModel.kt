@@ -218,7 +218,7 @@ constructor(
     @SuppressLint("SuspiciousIndentation")
     fun likePost() {
 
-        userActivityOnPost.likePost(sewMethod.value!!.id).onEach { dataState ->
+        userActivityOnPost.likePost(sewMethod.value!!.id, likeCount = (likeCount.value+1).toString()).onEach { dataState ->
             dataState.data?.let {
                     if (it> 0){
                         liKeState.value=true
@@ -245,7 +245,7 @@ constructor(
     @SuppressLint("SuspiciousIndentation")
     fun unLikePost() {
 
-        userActivityOnPost.unLikePost(sewMethod.value!!.id).onEach { dataState ->
+        userActivityOnPost.unLikePost(sewMethod.value!!.id, likeCount =(likeCount.value-1).toString()).onEach { dataState ->
             dataState.data?.let {
                 if (it> 0){
                     liKeState.value=false
