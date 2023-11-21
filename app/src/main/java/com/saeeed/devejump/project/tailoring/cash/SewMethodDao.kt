@@ -33,6 +33,9 @@ interface SewMethodDao {
     @Query("UPDATE sewMethods SET comments = :comments WHERE id LIKE :postId ")
     suspend fun updateCommentsOnPost(comments:String,postId:Int):Int
 
+    @Query("UPDATE sewMethods SET `like` = :likeCount WHERE id LIKE :postId ")
+    suspend fun updatePostLikeCount(likeCount:String,postId:Int):Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
 
