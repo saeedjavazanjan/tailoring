@@ -2,6 +2,7 @@ package com.saeeed.devejump.project.tailoring.network
 
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
+import com.saeeed.devejump.project.tailoring.network.model.CommentDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import com.saeeed.devejump.project.tailoring.network.response.SewMethodSearchResponse
@@ -45,6 +46,12 @@ interface RetrofitService {
         //  @Header("Authorization") token: String,
         @Query("query") query: Int
     ):UserDataDto
+
+    @GET("comments")
+    suspend fun SpecificPostComments(
+        //  @Header("Authorization") token: String,
+        @Query("query") postId: Int
+    ):List<CommentDto>
 
     @POST("userData")
     suspend fun bookMark(

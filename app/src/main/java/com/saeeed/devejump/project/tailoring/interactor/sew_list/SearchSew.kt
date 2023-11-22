@@ -39,6 +39,11 @@ class SearchSew(
                         query = query,
                     )
                     sewMethodDao.insertSewMethods(entityMapper.toEntityList(sewMethods))
+
+
+
+
+
              //   }
 
                 // insert into cache

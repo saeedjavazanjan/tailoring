@@ -36,7 +36,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,6 +57,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
+import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
+import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.utils.USERID
@@ -73,19 +74,22 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 @Composable
 fun SewMethodView(
+    loading:Boolean,
     sewMethod: SewMethod,
     bookMarkState: Boolean,
     likeState:Boolean,
     likesCount:Int,
-    comments: State<MutableList<Comment>?>,
+    comments:State<List<CommentEntity>?>,
     save:() -> Unit,
-    remove:()-> Unit,
+    removeBookMark:()-> Unit,
+    removeComment: (comment:Comment) -> Unit,
     like:() ->Unit,
     unlike:() ->Unit,
     Insertcomment:(comment:Comment) -> Unit,
     editComment:(comment:Comment)-> Unit,
     report:(comment:Comment) -> Unit,
-    sellItem: () -> Unit
+    sellItem: () -> Unit,
+    getComments: () -> Unit
 ) {
 
     val bookState= mutableStateOf(bookMarkState)
@@ -104,7 +108,7 @@ fun SewMethodView(
 
 
         var onEditComment  = remember {
-            mutableStateOf( Comment(0,"","","",0,""))
+            mutableStateOf( Comment(0,"","","",0,"",sewMethod.id))
         }
 
 
@@ -149,7 +153,7 @@ fun SewMethodView(
                             onCheckedChange = {
                                 if (bookState.value) {
                                     bookState.value = false
-                                    remove()
+                                    removeBookMark()
                                 } else {
                                     bookState.value = true
 
@@ -309,7 +313,8 @@ fun SewMethodView(
 
                         text = "نظرات"
                     )
-                    CommentsList(comments = comments.value!!,
+                    CommentsList(
+                        comments = comments.value!!,
                         showReportDialog = { id,text,UsrId->
                             openDialog.value = true
 
@@ -320,7 +325,15 @@ fun SewMethodView(
                             query.value=it.comment
                             onEditComment.value=it
 
-                        }
+                        },
+                        remove = {
+                            removeComment(it)
+
+                        },
+                        getComments = {
+                            getComments()
+                        },
+                        loading=loading
                         )
 
                     if(openDialog.value){
@@ -365,33 +378,34 @@ fun SewMethodView(
                 IconButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(5.dp),
+                        .padding(start = 3.dp)
+                        .fillMaxWidth(0.1f),
                     onClick = {
-                        if (commentState.value.equals("firstComment")) {
-                            Insertcomment(
-                                Comment(
-                                    sewMethod.comments.size,
-                                    query.value,
-                                    USER_AVATAR,
-                                    USER_NAME,
-                                    USERID,
-                                    "یکم آبان"
+                     /*   if (!query.value.equals("")) {
+                            if (commentState.value.equals("firstComment")) {
+                                Insertcomment(
+                                    Comment(
+                                        sewMethod.comments.size,
+                                        query.value,
+                                        USER_AVATAR,
+                                        USER_NAME,
+                                        USERID,
+                                        "یکم آبان"
+                                    )
                                 )
-                            )
-                        }else if (commentState.value.equals("editComment")){
-
-                            onEditComment.let {
-                                it.value.comment=query.value
-                                editComment(it.value)
-
                             }
-                            }
+                            else if (commentState.value.equals("editComment")) {
+                                onEditComment.let {
+                                    it.value.comment = query.value
+                                    editComment(it.value)
+                                    commentState.value = "firstComment"
 
+                                }
+                            }
+                        }
 
                         focusManager.clearFocus()
-                        query.value=""
-
-
+                        query.value=""*/
 
                     }
 
@@ -405,6 +419,7 @@ fun SewMethodView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
+                        .fillMaxWidth(0.9f)
                         .focusRequester(focusRequester),
                     value = query.value,
                     shape = MaterialTheme.shapes.medium,
@@ -451,32 +466,41 @@ fun SewMethodView(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CommentsList(
-    comments:MutableList<Comment>,
+    comments:List<CommentEntity>,
     showReportDialog:(commentId:Int, text:String, userId:Int) -> Unit,
-    editComment: (comment:Comment) -> Unit
+    editComment: (comment:Comment) -> Unit,
+    remove: (comment:Comment) -> Unit,
+    getComments:()->Unit,
+    loading: Boolean
+) {
+   // getComments()
+    if (!loading && comments != null) {
+        FlowColumn {
+            comments.forEach { commentEntity ->
+                CommentCard(
+                    comment = commentEntity,
+                    edit = {
+                        /* editComment(
+                            commentEntity
+                        )*/
+                    },
+                    report = {
+                        /*  showReportDialog( commentEntity.id,
+                            commentEntity.comment,
+                            commentEntity.userId
+                        )*/
+                    },
+                    removeComment = {
+                        /* remove(commentEntity)*/
+                    }
 
-){
+                )
 
-    FlowColumn {
 
-        comments.forEach{
-            CommentCard(
-                comment=it,
-                edit={
-                     editComment(
-                        it
-                     )
-                },
-                report = {
-                   showReportDialog( it.id,
-                       it.comment,
-                       it.userId
-                   )
-                }
-
-            )
+            }
         }
-        
+
+
     }
 }
 

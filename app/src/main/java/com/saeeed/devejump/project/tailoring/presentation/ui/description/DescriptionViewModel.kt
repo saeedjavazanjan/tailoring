@@ -11,6 +11,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
+import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
@@ -48,10 +50,11 @@ constructor(
     val bookMarkState= mutableStateOf(false)
     val liKeState= mutableStateOf(false)
     val likeCount= mutableStateOf(0)
-    private val _comments = MutableLiveData<MutableList<Comment>>()
-     val comments: LiveData<MutableList<Comment>>
+    private val _comments = MutableLiveData<List<CommentEntity>>()
+     val comments: LiveData<List<CommentEntity>>
         get() = _comments
 
+ //   var comments= emptyList<PostWitComment>()
     val dialogQueue=DialogQueue()
 
     init {
@@ -71,6 +74,7 @@ constructor(
                             getSewMethod(event.id)
                             Log.d(TAG, "sewId:${event.id}")
 
+                        getPostComments(event.id)
                         //   }
                     }
 
@@ -94,7 +98,8 @@ constructor(
                 checkSewBookMarkState()
                 checkLikeState()
                 likeCount.value=data.like
-                _comments.value=data.comments.toMutableList()
+
+              //  _comments.value=data.comments.toMutableList()
             }
 
             dataState.error?.let { error ->
@@ -268,15 +273,34 @@ constructor(
         }.launchIn(viewModelScope)
 
     }
+    @SuppressLint("SuspiciousIndentation")
+    fun getPostComments(postId:Int){
+        getSewMethod.getComments(postId, token,connectivityManager.isNetworkAvailable.value).onEach { dataState->
+            loading.value = dataState.loading
+            dataState.data.let {
+              /*  it!!.forEach { postWithCommnet->
+                  _comments.value = postWithCommnet.comments
+                }*/
+             //   comments=it!!
+            }
+            dataState.error.let {
+                dialogQueue.appendErrorMessage("An Error Occurred", it.toString())
 
-    fun getUserCommentComments(){
+            }
+
+        }.launchIn(viewModelScope)/*.catch {
+            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+
+
+        }*/
+
 
 
 
 
     }
 
-   @SuppressLint("SuspiciousIndentation")
+ /*  @SuppressLint("SuspiciousIndentation")
    fun commentOnPost(comment: Comment, postId:Int){
         userActivityOnPost.commentOnPost(comment=comment,postId=postId).onEach { dataState ->
             dataState.data.let {
@@ -291,7 +315,54 @@ constructor(
         }.launchIn(viewModelScope)
 
     }
+*/
+   /* @SuppressLint("SuspiciousIndentation")
+    fun editComment(comment: Comment, postId:Int){
+        userActivityOnPost.editComment(comment=comment,postId=postId).onEach { dataState ->
+            dataState.data.let {
+              //  if (it!!> 0)
+                   // _comments.value!!.add(0,comment)
+            }
 
 
+        }.catch {
+            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
 
+        }.launchIn(viewModelScope)
+
+    }*/
+
+   /* @OptIn(ExperimentalMaterialApi::class)
+    @SuppressLint("SuspiciousIndentation")
+    fun removeComment(comment: Comment, postId:Int,scaffoldState: ScaffoldState,scope:CoroutineScope){
+        val snackbarController=SnackbarController(scope)
+
+        userActivityOnPost.removeComment(comment=comment,postId=postId).onEach { dataState ->
+            dataState.data.let {
+                snackbarController.getScope().launch {
+                    if (it!! > 0){
+                        bookMarkState.value=false
+                        snackbarController.showSnackbar(
+                            scaffoldState = scaffoldState,
+                            message =  "کامنت شما حذف شد.",
+                            actionLabel ="Ok"
+                        )
+
+                    }else{
+                        snackbarController.showSnackbar(
+                            scaffoldState = scaffoldState,
+                            message =  "خطایی رخ داده است.",
+                            actionLabel ="Ok"
+                        )
+                    }
+
+                }
+            }
+
+        }.catch {
+            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+
+        }.launchIn(viewModelScope)
+
+    }*/
 }

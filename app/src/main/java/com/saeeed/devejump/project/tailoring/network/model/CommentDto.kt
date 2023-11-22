@@ -1,9 +1,9 @@
-package com.saeeed.devejump.project.tailoring.domain.model
+package com.saeeed.devejump.project.tailoring.network.model
 
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-data class Comment (
+data class CommentDto (
     @PrimaryKey(autoGenerate = false)
     var id: Int,
     var comment: String,

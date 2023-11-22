@@ -29,9 +29,6 @@ data class SewMethodDto(
     @SerializedName("description")
     var description: String,
 
-    @SerializedName("comments")
-    var comments: List<Comment> = emptyList(),
-
     @SerializedName("long_date_added")
     var longDateAdded: Long,
 

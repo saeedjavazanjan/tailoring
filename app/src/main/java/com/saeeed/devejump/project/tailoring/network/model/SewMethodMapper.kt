@@ -16,7 +16,6 @@ class SewMethodMapper : DomainMapper<SewMethodDto, SewMethod> {
             publisher = model.publisher,
             videoUrl = model.videoUrl,
             description = model.description,
-            comments=model.comments,
             dateAdded =DateUtils.longToDate(model.longDateAdded),
             dateUpdated = DateUtils.longToDate(model.longDateUpdated),
         )
@@ -32,7 +31,6 @@ class SewMethodMapper : DomainMapper<SewMethodDto, SewMethod> {
             publisher = domainModel.publisher,
             videoUrl = domainModel.videoUrl,
             description = domainModel.description,
-            comments=domainModel.comments,
             longDateAdded =  DateUtils.dateToLong(domainModel.dateAdded),
             longDateUpdated = DateUtils.dateToLong(domainModel.dateUpdated),
         )

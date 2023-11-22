@@ -18,7 +18,6 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
             publisher = model.publisher,
             videoUrl = model.video,
             description = model.description,
-            comments=convertCommentsStringToList(model.comments),
             dateAdded =DateUtils.longToDate(model.dateAdded),
             dateUpdated = DateUtils.longToDate(model.dateUpdated),
         )
@@ -35,7 +34,6 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
             publisher = domainModel.publisher,
             video = domainModel.videoUrl,
             description = domainModel.description,
-            comments=convertCommentsListToString(domainModel.comments),
             dateAdded = DateUtils.dateToLong(domainModel.dateAdded),
             dateUpdated = DateUtils.dateToLong(domainModel.dateUpdated),
             dateCached = DateUtils.dateToLong(DateUtils.createTimestamp())
@@ -45,7 +43,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
 
 
 
-     fun convertCommentsListToString(comments: List<Comment>): String {
+    /* fun convertCommentsListToString(comments: List<Comment>): String {
         var gson = Gson()
         var jsonString= StringBuilder()
         for(item in comments){
@@ -54,9 +52,9 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
 
         }
         return jsonString.toString()
-    }
+    }*/
 
-     fun convertCommentsStringToList(comments: String): MutableList<Comment>{
+   /*  fun convertCommentsStringToList(comments: String): MutableList<Comment>{
         val list: ArrayList<Comment> = ArrayList()
         comments.let {
             for(item in comments.split("},")){
@@ -71,7 +69,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
         }
 
         return list
-    }
+    }*/
 
     fun fromEntityList(initial: List<SewEntity>): List<SewMethod>{
         return initial.map { mapToDomainModel(it) }

@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder
 import com.saeeed.devejump.project.tailoring.BaseApplication
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
+import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
+import com.saeeed.devejump.project.tailoring.cash.model.CommentEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
@@ -18,6 +20,7 @@ import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMetho
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
+import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
@@ -57,6 +60,12 @@ object AppModule {
     @Provides
     fun provideBannerMapper(): BannerMapper {
         return BannerMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCommentMapper(): CommentMapper {
+        return CommentMapper()
     }
 
     @Singleton
@@ -111,6 +120,13 @@ object AppModule {
     fun provideCacheRecipeMapper(): SewEntityMapper {
         return SewEntityMapper()
     }
+
+    @Singleton
+    @Provides
+    fun provideCommentEntityMapper(): CommentEntityMapper {
+        return CommentEntityMapper()
+    }
+
 
     @Singleton
     @Provides
@@ -177,12 +193,16 @@ object AppModule {
         sewEntityMapper: SewEntityMapper,
         retrofitService: RetrofitService,
         sewDtoMapper: SewMethodMapper,
+        commentMapper: CommentMapper,
+        commentEntityMapper: CommentEntityMapper
     ): GetSewMethod {
         return GetSewMethod(
             sewMethodDao= sewMethodDao,
             entityMapper = sewEntityMapper,
             retrofitService= retrofitService,
             sewMethodMapper =  sewDtoMapper,
+            commentMapper = commentMapper,
+            commentEntityMapper = commentEntityMapper
         )
     }
 

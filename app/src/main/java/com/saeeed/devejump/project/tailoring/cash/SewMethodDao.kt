@@ -4,8 +4,11 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntity
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntity
+import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
@@ -17,6 +20,12 @@ interface SewMethodDao {
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserData(userData: UserDataEntity): Long
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertComment(comment: CommentEntity)
+
+    @Transaction
+    @Query("SELECT * FROM sewMethods WHERE id = :postId")
+    suspend fun getPostWithComment(postId: Int): List<PostWitComment>
 
     @Query("SELECT * FROM userData WHERE userid = :id")
     suspend fun getUserData(id: Int):UserDataEntity
@@ -30,14 +39,14 @@ interface SewMethodDao {
     @Query("UPDATE userData SET comments = :comments WHERE userid LIKE :userId ")
     suspend fun updateUserComments(comments:String,userId:Int):Int
 
-    @Query("UPDATE sewMethods SET comments = :comments WHERE id LIKE :postId ")
-    suspend fun updateCommentsOnPost(comments:String,postId:Int):Int
+ /*   @Query("UPDATE sewMethods SET comments = :comments WHERE id LIKE :postId ")
+    suspend fun updateCommentsOnPost(comments:String,postId:Int):Int*/
 
     @Query("UPDATE sewMethods SET `like` = :likeCount WHERE id LIKE :postId ")
     suspend fun updatePostLikeCount(likeCount:String,postId:Int):Int
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSewMethods(recipes: List<SewEntity>): LongArray
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSewMethods(post: List<SewEntity>): LongArray
 
 
 
