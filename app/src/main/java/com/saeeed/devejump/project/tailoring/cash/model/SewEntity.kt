@@ -38,8 +38,6 @@ data class SewEntity(
     @ColumnInfo(name = "description")
     var description: String = "",
 
-    @ColumnInfo(name = "comments")
-    var comments: String = "",
     /**
      * Value from API
      */

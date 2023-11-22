@@ -39,7 +39,6 @@ fun DescriptionScreen(
 
         LaunchedEffect(Unit){
             viewModel.onTriggerEvent(SewEvent.GetSewEvent(sewId))
-
         }
 
         val loading = viewModel.loading.value
@@ -80,10 +79,11 @@ fun DescriptionScreen(
                                         likeState =likeState,
                                         likesCount = likesCount,
                                         comments =comments,
+                                        loading=loading,
                                         save = {
                                             viewModel.bookMark(scaffoldState, composableScope)
                                         },
-                                        remove ={
+                                        removeBookMark ={
                                             viewModel.removeFromBookMarkDataBase(scaffoldState,composableScope)
                                         },
                                         like = {
@@ -93,19 +93,26 @@ fun DescriptionScreen(
                                             viewModel.unLikePost()
                                         },
                                         Insertcomment = {
-                                         viewModel.commentOnPost(comment = it, postId = sewId)
+                                    //     viewModel.commentOnPost(comment = it, postId = sewId)
 
                                         },
                                         editComment = {
-
+                                             //         viewModel.editComment(it,sewId)
                                         },
                                         report = {
 
+                                        },
+                                        removeComment = {
+                                          //  viewModel.removeComment(it,sewId,scaffoldState,composableScope)
+                                        },
+                                        getComments = {
+                                            viewModel.getPostComments(sewId)
+                                        },
+                                        sellItem = {
+
                                         }
 
-                                    ) {
-
-                                    }
+                                    )
 
 
                             }

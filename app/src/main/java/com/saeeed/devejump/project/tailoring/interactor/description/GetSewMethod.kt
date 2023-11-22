@@ -1,10 +1,15 @@
 package com.saeeed.devejump.project.tailoring.interactor.description
 
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
+import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.CommentEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
+import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
+import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,8 +17,10 @@ import kotlinx.coroutines.flow.flow
 class GetSewMethod (
     private val sewMethodDao: SewMethodDao,
     private val entityMapper: SewEntityMapper,
+    private val commentEntityMapper: CommentEntityMapper,
     private val retrofitService: RetrofitService,
     private val sewMethodMapper: SewMethodMapper,
+    private val commentMapper: CommentMapper
 ){
 
     fun execute(
@@ -63,13 +70,52 @@ class GetSewMethod (
         }
     }
 
+
+    fun getComments(
+        postId: Int,
+        token: String,
+        isNetworkAvailable: Boolean,
+    ):Flow<DataState<Int>> = flow {
+        try {
+            emit(DataState.loading())
+
+            var comments=getCommentsFromNetwork(token,postId)
+
+            try {
+                comments.forEach{
+                    sewMethodDao.insertComment(commentEntityMapper.mapFromDomainModel(it))
+                }
+            }catch (e:Exception){
+                e.printStackTrace()
+                emit(DataState.error(e.message.toString()))
+
+            }
+            emit(DataState.success(1))
+          //  emit(DataState.success(sewMethodDao.getPostWithComment(postId)))
+        }catch (e:Exception){
+            e.printStackTrace()
+            emit(DataState.error(e.message.toString()))
+        }
+
+
+    }
+
     private suspend fun getSewFromCache(postId: Int): SewMethod? {
         return sewMethodDao.getSewById(postId)?.let { sewEntity ->
             entityMapper.mapToDomainModel(sewEntity)
         }
     }
 
-    private suspend fun getSewFromNetwork(token: String, recipeId: Int): SewMethod {
-        return sewMethodMapper.mapToDomainModel(retrofitService.get(token, recipeId))
+    private suspend fun getSewFromNetwork(token: String, postId: Int): SewMethod {
+        return sewMethodMapper.mapToDomainModel(retrofitService.get(token, postId))
     }
+
+    private suspend fun getCommentsFromNetwork(token: String, postId: Int): List<Comment> {
+
+          val result=commentMapper.toDomainList(retrofitService.SpecificPostComments(postId))
+
+
+        return result
+    }
+
 }

@@ -27,15 +27,17 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
+import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.utils.USERID
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CommentCard(
-    comment: Comment,
+    comment: CommentEntity,
     edit:()->Unit,
-    report:()-> Unit
+    report:()-> Unit,
+    removeComment:()->Unit
     ){
     Card(
         shape = MaterialTheme.shapes.small,
@@ -122,26 +124,7 @@ fun CommentCard(
                             },
                         style = MaterialTheme.typography.bodySmall
                     )
-                    TextButton(
-                        modifier = Modifier
-                            .constrainAs(reportButton) {
-                                top.linkTo(commentText.bottom)
-                                bottom.linkTo(parent.bottom)
-                                end.linkTo(parent.end)
-                            },
 
-
-                        onClick = {
-                            report()
-                        }){
-                        Text(
-                            text = "گزارش این نظر",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-
-                        )
-
-                    }
                     if (comment.userId== USERID) {
                         TextButton(
                             modifier = Modifier
@@ -160,6 +143,47 @@ fun CommentCard(
                                 text = "ویرایش",
                                 style = MaterialTheme.typography.bodySmall
 
+
+                            )
+
+                        }
+                        TextButton(
+                            modifier = Modifier
+                                .constrainAs(reportButton) {
+                                    top.linkTo(commentText.bottom)
+                                    bottom.linkTo(parent.bottom)
+                                    end.linkTo(parent.end)
+                                },
+
+
+                            onClick = {
+                               removeComment()
+                            }){
+                            Text(
+                                text = "حذف نظر",
+                                style = MaterialTheme.typography.bodySmall,
+
+                            )
+
+                        }
+
+                    }else{
+                        TextButton(
+                            modifier = Modifier
+                                .constrainAs(reportButton) {
+                                    top.linkTo(commentText.bottom)
+                                    bottom.linkTo(parent.bottom)
+                                    end.linkTo(parent.end)
+                                },
+
+
+                            onClick = {
+                                report()
+                            }){
+                            Text(
+                                text = "گزارش این نظر",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
 
                             )
 
