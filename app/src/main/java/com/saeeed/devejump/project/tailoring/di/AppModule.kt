@@ -12,6 +12,7 @@ import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.interactor.Splash.GetUserStuffsFromServer
+import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
@@ -30,8 +31,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 @Module
@@ -68,14 +72,36 @@ object AppModule {
         return CommentMapper()
     }
 
+    @Provides
+    @Singleton
+    fun provideInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor()
+            .setLevel(HttpLoggingInterceptor.Level.BODY)
+    }
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        interceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient()
+            .newBuilder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(interceptor).build()
+    }
     @Singleton
     @Provides
-    fun provideRetrofitService(): RetrofitService {
+    fun provideRetrofitService(
+        client: OkHttpClient
+    ): RetrofitService {
         return Retrofit.Builder()
             .baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
          //  .baseUrl("https://food2fork.ca/api/recipe/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .client(client)
             .build()
+
             .create(RetrofitService::class.java)
     }
 
@@ -193,14 +219,27 @@ object AppModule {
         sewEntityMapper: SewEntityMapper,
         retrofitService: RetrofitService,
         sewDtoMapper: SewMethodMapper,
-        commentMapper: CommentMapper,
-        commentEntityMapper: CommentEntityMapper
     ): GetSewMethod {
         return GetSewMethod(
             sewMethodDao= sewMethodDao,
             entityMapper = sewEntityMapper,
             retrofitService= retrofitService,
             sewMethodMapper =  sewDtoMapper,
+
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetComments(
+        sewMethodDao: SewMethodDao,
+        retrofitService: RetrofitService,
+        commentMapper: CommentMapper,
+        commentEntityMapper: CommentEntityMapper
+    ): GetComments {
+        return GetComments(
+            sewMethodDao=sewMethodDao,
+            retrofitService= retrofitService,
             commentMapper = commentMapper,
             commentEntityMapper = commentEntityMapper
         )

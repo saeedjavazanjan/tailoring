@@ -48,7 +48,7 @@ fun DescriptionScreen(
         val bookMarkState=viewModel.bookMarkState.value
         val likeState=viewModel.liKeState.value
         val likesCount =viewModel.likeCount.value
-        val comments=viewModel.comments.observeAsState()
+        val comments=viewModel.comments.value
         AppTheme(
             displayProgressBar = loading,
             darkTheme = isDarkTheme,
@@ -106,7 +106,7 @@ fun DescriptionScreen(
                                           //  viewModel.removeComment(it,sewId,scaffoldState,composableScope)
                                         },
                                         getComments = {
-                                            viewModel.getPostComments(sewId)
+                                           // viewModel.getPostComments(sewId)
                                         },
                                         sellItem = {
 

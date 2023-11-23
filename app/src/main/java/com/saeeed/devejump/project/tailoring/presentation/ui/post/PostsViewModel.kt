@@ -78,10 +78,10 @@ class ListViewModel
                         newSearch()
                     }
                     is PostsEvent.NextPageEvent -> {
-                        nextPage()
+                     //   nextPage()
                     }
                     is PostsEvent.RestoreStateEvent -> {
-                        restoreState()
+                     //   restoreState()
                     }
                 }
             }catch (e: Exception){
