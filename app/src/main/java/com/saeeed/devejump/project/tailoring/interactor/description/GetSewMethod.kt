@@ -17,10 +17,8 @@ import kotlinx.coroutines.flow.flow
 class GetSewMethod (
     private val sewMethodDao: SewMethodDao,
     private val entityMapper: SewEntityMapper,
-    private val commentEntityMapper: CommentEntityMapper,
     private val retrofitService: RetrofitService,
     private val sewMethodMapper: SewMethodMapper,
-    private val commentMapper: CommentMapper
 ){
 
     fun execute(
@@ -71,34 +69,7 @@ class GetSewMethod (
     }
 
 
-    fun getComments(
-        postId: Int,
-        token: String,
-        isNetworkAvailable: Boolean,
-    ):Flow<DataState<Int>> = flow {
-        try {
-            emit(DataState.loading())
 
-            var comments=getCommentsFromNetwork(token,postId)
-
-            try {
-                comments.forEach{
-                    sewMethodDao.insertComment(commentEntityMapper.mapFromDomainModel(it))
-                }
-            }catch (e:Exception){
-                e.printStackTrace()
-                emit(DataState.error(e.message.toString()))
-
-            }
-            emit(DataState.success(1))
-          //  emit(DataState.success(sewMethodDao.getPostWithComment(postId)))
-        }catch (e:Exception){
-            e.printStackTrace()
-            emit(DataState.error(e.message.toString()))
-        }
-
-
-    }
 
     private suspend fun getSewFromCache(postId: Int): SewMethod? {
         return sewMethodDao.getSewById(postId)?.let { sewEntity ->
@@ -110,12 +81,5 @@ class GetSewMethod (
         return sewMethodMapper.mapToDomainModel(retrofitService.get(token, postId))
     }
 
-    private suspend fun getCommentsFromNetwork(token: String, postId: Int): List<Comment> {
-
-          val result=commentMapper.toDomainList(retrofitService.SpecificPostComments(postId))
-
-
-        return result
-    }
 
 }

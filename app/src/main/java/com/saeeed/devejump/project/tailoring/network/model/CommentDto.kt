@@ -2,15 +2,27 @@ package com.saeeed.devejump.project.tailoring.network.model
 
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+data class CommentDto(
 
-data class CommentDto (
-    @PrimaryKey(autoGenerate = false)
-    var id: Int,
-    var comment: String,
-    var avatar: String,
-    var userName: String,
-    @SerializedName("user_id")
-    var userId:Int,
-    var date:String,
-    var postId:Int
+    @field:SerializedName("date")
+    val date: String? = null,
+
+    @field:SerializedName("user_id")
+    val userId: Int? = null,
+
+    @field:SerializedName("comment")
+    val comment: String? = null,
+
+    @field:SerializedName("id")
+    val id: Int? = null,
+
+    @field:SerializedName("avatar")
+    val avatar: String? = null,
+
+    @field:SerializedName("postId")
+    val postId: Int? = null,
+
+    @field:SerializedName("userName")
+    val userName: String? = null
 )
+

@@ -79,7 +79,7 @@ fun SewMethodView(
     bookMarkState: Boolean,
     likeState:Boolean,
     likesCount:Int,
-    comments:State<List<CommentEntity>?>,
+    comments:List<Comment>,
     save:() -> Unit,
     removeBookMark:()-> Unit,
     removeComment: (comment:Comment) -> Unit,
@@ -314,7 +314,7 @@ fun SewMethodView(
                         text = "نظرات"
                     )
                     CommentsList(
-                        comments = comments.value!!,
+                        comments = comments,
                         showReportDialog = { id,text,UsrId->
                             openDialog.value = true
 
@@ -331,7 +331,7 @@ fun SewMethodView(
 
                         },
                         getComments = {
-                            getComments()
+                           // getComments()
                         },
                         loading=loading
                         )
@@ -466,7 +466,7 @@ fun SewMethodView(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CommentsList(
-    comments:List<CommentEntity>,
+    comments:List<Comment>,
     showReportDialog:(commentId:Int, text:String, userId:Int) -> Unit,
     editComment: (comment:Comment) -> Unit,
     remove: (comment:Comment) -> Unit,
@@ -476,9 +476,9 @@ fun CommentsList(
    // getComments()
     if (!loading && comments != null) {
         FlowColumn {
-            comments.forEach { commentEntity ->
+            comments.forEach { comment->
                 CommentCard(
-                    comment = commentEntity,
+                    comment = comment,
                     edit = {
                         /* editComment(
                             commentEntity

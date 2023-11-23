@@ -9,13 +9,13 @@ class CommentMapper : DomainMapper<CommentDto, Comment> {
 
     override fun mapToDomainModel(model: CommentDto): Comment {
         return Comment(
-            id=model.id,
-            comment = model.comment,
-            avatar = model.avatar,
-            userName = model.userName,
-            userId=model.userId,
-            date=model.date,
-            postId=model.postId
+            id=model.id!!,
+            comment = model.comment!!,
+            avatar = model.avatar!!,
+            userName = model.userName!!,
+            userId=model.userId!!,
+            date=model.date!!,
+            postId=model.postId!!
         )
     }
 

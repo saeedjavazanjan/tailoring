@@ -34,7 +34,7 @@ import com.saeeed.devejump.project.tailoring.utils.USERID
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CommentCard(
-    comment: CommentEntity,
+    comment: Comment,
     edit:()->Unit,
     report:()-> Unit,
     removeComment:()->Unit

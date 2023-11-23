@@ -15,6 +15,7 @@ import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarController
@@ -39,6 +40,7 @@ class DescriptionViewModel
 @Inject
 constructor(
     private val getSewMethod: GetSewMethod,
+    private val getComments: GetComments,
     private val connectivityManager: ConnectivityManager,
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
@@ -50,11 +52,13 @@ constructor(
     val bookMarkState= mutableStateOf(false)
     val liKeState= mutableStateOf(false)
     val likeCount= mutableStateOf(0)
-    private val _comments = MutableLiveData<List<CommentEntity>>()
-     val comments: LiveData<List<CommentEntity>>
+   /* private val _comments = MutableLiveData<List<Comment>>()
+     val comments: LiveData<List<Comment>>
         get() = _comments
+*/
+   val comments: MutableState<List<Comment>> = mutableStateOf(ArrayList())
 
- //   var comments= emptyList<PostWitComment>()
+    //   var comments= emptyList<PostWitComment>()
     val dialogQueue=DialogQueue()
 
     init {
@@ -71,10 +75,10 @@ constructor(
                 when(event){
                     is SewEvent.GetSewEvent -> {
                       //  if(sewMethod.value == null){
-                            getSewMethod(event.id)
+
+                        getSewMethod(event.id)
                             Log.d(TAG, "sewId:${event.id}")
 
-                        getPostComments(event.id)
                         //   }
                     }
 
@@ -97,6 +101,7 @@ constructor(
                 state.set(STATE_KEY_SEW, data.id)
                 checkSewBookMarkState()
                 checkLikeState()
+                getPostComments(data.id)
                 likeCount.value=data.like
 
               //  _comments.value=data.comments.toMutableList()
@@ -273,30 +278,32 @@ constructor(
         }.launchIn(viewModelScope)
 
     }
-    @SuppressLint("SuspiciousIndentation")
     fun getPostComments(postId:Int){
-        getSewMethod.getComments(postId, token,connectivityManager.isNetworkAvailable.value).onEach { dataState->
-            loading.value = dataState.loading
+        getComments.getPostComments(
+            postId,
+            token,
+            connectivityManager.isNetworkAvailable.value)
+            .onEach { dataState->
+           // loading.value = dataState.loading
             dataState.data.let {
-              /*  it!!.forEach { postWithCommnet->
-                  _comments.value = postWithCommnet.comments
-                }*/
-             //   comments=it!!
+
+
+                    comments.value = it!!
+
+               // }
+
             }
             dataState.error.let {
                 dialogQueue.appendErrorMessage("An Error Occurred", it.toString())
+                Log.e(TAG, "postComment ${it}")
 
             }
 
-        }.launchIn(viewModelScope)/*.catch {
+        }.catch {
             dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
 
 
-        }*/
-
-
-
-
+        }.launchIn(viewModelScope)
 
     }
 

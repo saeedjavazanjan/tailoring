@@ -19,6 +19,9 @@ val banner ="\n      [\n        { \n       " +
         "  \"click_destination\" : \"00\"\n        }\n   " +
         "   ]\n    "
 
+val comments=       "[{\"id\":0,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"saeed\",\"user_id\":1,\"date\":\"یکمهر\",\"postId\":1},{\"id\":1,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"mehdi\",\"user_id\":5,\"date\":\"یکمهر\",\"postId\":1},{\"id\":2,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":2},{\"id\":3,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":2},{\"id\":4,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":2},{\"id\":5,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":4},{\"id\":6,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":4}]"
+
+
 val userData ="{\"userid\":1," +
         "\"user_name\":\"fati\"," +
         "\"phone_number\":\"09193480263\","+
