@@ -2,6 +2,7 @@ package com.saeeed.devejump.project.tailoring.presentation.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -27,6 +29,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -57,8 +59,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
-import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
-import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.utils.USERID
@@ -67,7 +67,7 @@ import com.saeeed.devejump.project.tailoring.utils.USER_NAME
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
-@SuppressLint("SuspiciousIndentation", "UnrememberedMutableState")
+@SuppressLint("SuspiciousIndentation", "UnrememberedMutableState", "MutableCollectionMutableState")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class,
     ExperimentalMaterial3Api::class
 )
@@ -79,7 +79,7 @@ fun SewMethodView(
     bookMarkState: Boolean,
     likeState:Boolean,
     likesCount:Int,
-    comments:List<Comment>,
+    comments:MutableList<Comment>,
     save:() -> Unit,
     removeBookMark:()-> Unit,
     removeComment: (comment:Comment) -> Unit,
@@ -89,8 +89,10 @@ fun SewMethodView(
     editComment:(comment:Comment)-> Unit,
     report:(comment:Comment) -> Unit,
     sellItem: () -> Unit,
-    getComments: () -> Unit
+    commentSendLoading:Boolean
 ) {
+    val listOfComments= mutableStateOf(comments)
+
 
     val bookState= mutableStateOf(bookMarkState)
     val likeIconState= mutableStateOf(likeState)
@@ -110,6 +112,10 @@ fun SewMethodView(
         var onEditComment  = remember {
             mutableStateOf( Comment(0,"","","",0,"",sewMethod.id))
         }
+
+    var onReportComment= remember {
+        mutableStateOf( Comment(0,"","","",0,"",sewMethod.id))
+    }
 
 
     LazyColumn(
@@ -314,9 +320,10 @@ fun SewMethodView(
                         text = "نظرات"
                     )
                     CommentsList(
-                        comments = comments,
-                        showReportDialog = { id,text,UsrId->
+                        comments = listOfComments.value,
+                        showReportDialog = {
                             openDialog.value = true
+                            onReportComment.value=it
 
                         },
                         editComment={
@@ -329,10 +336,9 @@ fun SewMethodView(
                         remove = {
                             removeComment(it)
 
+
                         },
-                        getComments = {
-                           // getComments()
-                        },
+
                         loading=loading
                         )
 
@@ -341,6 +347,7 @@ fun SewMethodView(
                             ok={
                                 openDialog.value = false
 
+                                report(onReportComment.value)
 
                             },
                             cancle = {
@@ -381,7 +388,7 @@ fun SewMethodView(
                         .padding(start = 3.dp)
                         .fillMaxWidth(0.1f),
                     onClick = {
-                     /*   if (!query.value.equals("")) {
+                        if (!query.value.equals("")) {
                             if (commentState.value.equals("firstComment")) {
                                 Insertcomment(
                                     Comment(
@@ -390,7 +397,8 @@ fun SewMethodView(
                                         USER_AVATAR,
                                         USER_NAME,
                                         USERID,
-                                        "یکم آبان"
+                                        "یکم آبان",
+                                        postId = sewMethod.id
                                     )
                                 )
                             }
@@ -405,13 +413,19 @@ fun SewMethodView(
                         }
 
                         focusManager.clearFocus()
-                        query.value=""*/
+                        query.value=""
 
                     }
 
                     ){
-                    Icon( Icons.Filled.Send,
-                        contentDescription = null)
+                    if(!commentSendLoading){
+                        Icon( Icons.Filled.Send,
+                            contentDescription = null)
+                    }else{
+                        Icon( Icons.Filled.Done,
+                            contentDescription = null)
+                    }
+
                     // painter = painterResource(R.drawable.ic_baseline_print_24),
                 }
 
@@ -463,35 +477,34 @@ fun SewMethodView(
 }
 
 
+@SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CommentsList(
-    comments:List<Comment>,
-    showReportDialog:(commentId:Int, text:String, userId:Int) -> Unit,
+    comments:MutableList<Comment>,
+    showReportDialog:(comment:Comment) -> Unit,
     editComment: (comment:Comment) -> Unit,
     remove: (comment:Comment) -> Unit,
-    getComments:()->Unit,
     loading: Boolean
 ) {
-   // getComments()
-    if (!loading && comments != null) {
+
+
+
+    if (!loading ) {
         FlowColumn {
             comments.forEach { comment->
                 CommentCard(
                     comment = comment,
                     edit = {
-                        /* editComment(
-                            commentEntity
-                        )*/
+                         editComment(
+                            comment
+                        )
                     },
                     report = {
-                        /*  showReportDialog( commentEntity.id,
-                            commentEntity.comment,
-                            commentEntity.userId
-                        )*/
+                          showReportDialog(comment)
                     },
                     removeComment = {
-                        /* remove(commentEntity)*/
+                       remove(comment)
                     }
 
                 )
