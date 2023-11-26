@@ -73,4 +73,20 @@ interface RetrofitService {
         @Field("postId") postId:Int,
         @Field("comment") comment: String
     ):Int
+
+    @POST("userData")
+    suspend fun editComment(
+        // @Header("Authorization") token: String,
+        @Field("UserId") userId: Int,
+        @Field("postId") postId:Int,
+        @Field("comment") comment: String
+    ):Int
+
+    @POST("userData")
+    suspend fun removeComment(
+        // @Header("Authorization") token: String,
+        @Field("UserId") userId: Int,
+        @Field("postId") postId:Int,
+        @Field("comment") comment: String
+    ):Int
 }

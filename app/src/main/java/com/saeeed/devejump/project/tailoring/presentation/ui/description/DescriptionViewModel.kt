@@ -25,6 +25,7 @@ import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -49,6 +50,7 @@ constructor(
     val sewMethod: MutableState<SewMethod?> = mutableStateOf(null)
 
     val loading = mutableStateOf(false)
+    val commentSendLoading= mutableStateOf(false)
     val bookMarkState= mutableStateOf(false)
     val liKeState= mutableStateOf(false)
     val likeCount= mutableStateOf(0)
@@ -56,7 +58,7 @@ constructor(
      val comments: LiveData<List<Comment>>
         get() = _comments
 */
-   val comments: MutableState<List<Comment>> = mutableStateOf(ArrayList())
+   val comments: MutableState<MutableList<Comment>> = mutableStateOf(ArrayList())
 
     //   var comments= emptyList<PostWitComment>()
     val dialogQueue=DialogQueue()
@@ -285,20 +287,19 @@ constructor(
             connectivityManager.isNetworkAvailable.value)
             .onEach { dataState->
            // loading.value = dataState.loading
-            dataState.data.let {
+            dataState.data?.let {
 
 
-                    comments.value = it!!
+                    comments.value = it.toMutableList()
 
                // }
 
             }
-            dataState.error.let {
+         /*   dataState.error?.let {
                 dialogQueue.appendErrorMessage("An Error Occurred", it.toString())
                 Log.e(TAG, "postComment ${it}")
 
-            }
-
+            }*/
         }.catch {
             dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
 
@@ -307,12 +308,17 @@ constructor(
 
     }
 
- /*  @SuppressLint("SuspiciousIndentation")
+   @SuppressLint("SuspiciousIndentation")
    fun commentOnPost(comment: Comment, postId:Int){
+
         userActivityOnPost.commentOnPost(comment=comment,postId=postId).onEach { dataState ->
-            dataState.data.let {
-                if (it!!> 0)
-                _comments.value!!.add(0,comment)
+            dataState.loading.let {
+                commentSendLoading.value=it
+
+            }
+            dataState.data?.let {
+                if (it> 0)
+               comments.value.add(0,comment)
             }
 
 
@@ -322,13 +328,14 @@ constructor(
         }.launchIn(viewModelScope)
 
     }
-*/
-   /* @SuppressLint("SuspiciousIndentation")
+    @SuppressLint("SuspiciousIndentation")
     fun editComment(comment: Comment, postId:Int){
         userActivityOnPost.editComment(comment=comment,postId=postId).onEach { dataState ->
-            dataState.data.let {
-              //  if (it!!> 0)
-                   // _comments.value!!.add(0,comment)
+            dataState.data?.let {
+              comments.value.firstOrNull(){
+                it.id== comment.id
+                }?.comment=comment.comment
+
             }
 
 
@@ -337,18 +344,32 @@ constructor(
 
         }.launchIn(viewModelScope)
 
-    }*/
+    }
 
-   /* @OptIn(ExperimentalMaterialApi::class)
+    fun reportCommenet(comment: Comment, postId:Int){
+        userActivityOnPost.reportComment(comment, postId =postId ).onEach {dataState ->
+
+            dataState.data?.let {
+
+
+
+            }
+        }.catch {
+
+        }.launchIn(viewModelScope)
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("SuspiciousIndentation")
     fun removeComment(comment: Comment, postId:Int,scaffoldState: ScaffoldState,scope:CoroutineScope){
         val snackbarController=SnackbarController(scope)
 
         userActivityOnPost.removeComment(comment=comment,postId=postId).onEach { dataState ->
             dataState.data.let {
+                comments.value.removeAt(0)
                 snackbarController.getScope().launch {
                     if (it!! > 0){
-                        bookMarkState.value=false
+                        comments.value.remove(comment)
                         snackbarController.showSnackbar(
                             scaffoldState = scaffoldState,
                             message =  "کامنت شما حذف شد.",
@@ -371,5 +392,5 @@ constructor(
 
         }.launchIn(viewModelScope)
 
-    }*/
+    }
 }

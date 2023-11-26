@@ -42,13 +42,14 @@ fun DescriptionScreen(
         }
 
         val loading = viewModel.loading.value
+        val commentSendLoading=viewModel.commentSendLoading.value
         val sewMethod = viewModel.sewMethod.value
         val dialogQueue = viewModel.dialogQueue
         val composableScope = rememberCoroutineScope()
         val bookMarkState=viewModel.bookMarkState.value
         val likeState=viewModel.liKeState.value
         val likesCount =viewModel.likeCount.value
-        val comments=viewModel.comments.value
+        val comments=viewModel.comments
         AppTheme(
             displayProgressBar = loading,
             darkTheme = isDarkTheme,
@@ -78,8 +79,9 @@ fun DescriptionScreen(
                                         bookMarkState =bookMarkState,
                                         likeState =likeState,
                                         likesCount = likesCount,
-                                        comments =comments,
+                                        comments =comments.value,
                                         loading=loading,
+                                        commentSendLoading=commentSendLoading,
                                         save = {
                                             viewModel.bookMark(scaffoldState, composableScope)
                                         },
@@ -93,21 +95,20 @@ fun DescriptionScreen(
                                             viewModel.unLikePost()
                                         },
                                         Insertcomment = {
-                                    //     viewModel.commentOnPost(comment = it, postId = sewId)
+                                         viewModel.commentOnPost(comment = it, postId = sewId)
 
                                         },
                                         editComment = {
-                                             //         viewModel.editComment(it,sewId)
+                                                     viewModel.editComment(it,sewId)
                                         },
                                         report = {
+                                                 viewModel.reportCommenet(it,sewId)
 
                                         },
                                         removeComment = {
-                                          //  viewModel.removeComment(it,sewId,scaffoldState,composableScope)
+                                           viewModel.removeComment(it,sewId,scaffoldState,composableScope)
                                         },
-                                        getComments = {
-                                           // viewModel.getPostComments(sewId)
-                                        },
+
                                         sellItem = {
 
                                         }

@@ -34,20 +34,21 @@ class GetComments(
 
 
               val comments= commentMapper.toDomainList(getCommentsFromNetwork(token,postId))
-        try {
+      //  try {
             comments.forEach{
                 sewMethodDao.insertComment(commentEntityMapper.mapFromDomainModel(it))
             }
-        }catch (e:Exception){
-            e.printStackTrace()
-            emit(DataState.error(e.message.toString()))
-
-        }
         val cashResult=sewMethodDao.getPostWithComment(postId)
 
         cashResult.forEach {
             emit(DataState.success( commentEntityMapper.fromEntityList(it.comments)))
         }
+     /*   }catch (e:Exception){
+            e.printStackTrace()
+            emit(DataState.error(e.message.toString()))
+
+        }*/
+
 
 
 

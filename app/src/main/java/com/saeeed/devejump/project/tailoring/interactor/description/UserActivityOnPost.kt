@@ -9,6 +9,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.CommentOnSpecificPost
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.utils.USERID
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -166,21 +167,12 @@ class UserActivityOnPost (
 
     }
 
-/*
      fun commentOnPost(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
         try {
-           val comments= getPostComments(postId)
-            comments.add(comment)
-            val result=sewMethodDao.
-            updateCommentsOnPost(sewEntityMapper.convertCommentsListToString(comments),postId)
+            emit (DataState.loading())
           //  retrofitService.commentOnPost(USERID,postId,comment.comment)
-              //  val userCommentsOnPost=getUserComments(USERID,postId,comment)
-
-           */
-/*   val insertResult=  sewMethodDao.
-                updateUserComments(entityMapper.convertCommentListToString(userCommentsOnPost), USERID)*//*
-
-            emit(DataState.success(result))
+             delay(2000)
+            emit(DataState.success(1))
 
 
         }catch (e:Exception){
@@ -189,61 +181,41 @@ class UserActivityOnPost (
         }
 
     }
-*/
 
-/*
     fun editComment(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
-        try {
-            val comments= getPostComments(postId)
-             var onEditComment=comments.find {
-                 it.id==comment.id
-             }
-           comments.remove(onEditComment)
-            comments.add(comment)
 
-            val result=sewMethodDao.
-            updateCommentsOnPost(sewEntityMapper.convertCommentsListToString(comments),postId)
-            //  retrofitService.commentOnPost(USERID,postId,comment.comment)
-
-            //  val userCommentsOnPost=getUserComments(USERID,postId,comment)
-
-            */
-/*   val insertResult=  sewMethodDao.
-                 updateUserComments(entityMapper.convertCommentListToString(userCommentsOnPost), USERID)*//*
-
-            emit(DataState.success(result))
+           //   retrofitService.editComment(USERID,postId,comment.comment)
 
 
-        }catch (e:Exception){
-            e.printStackTrace()
-            emit(DataState.error(e.message.toString()))
-        }
+            emit(DataState.success(1))
+
 
     }
-*/
 
- /*   fun removeComment(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
-        try {
-            val comments= getPostComments(postId)
-            comments.remove(comment)
-            val result=sewMethodDao.
-            updateCommentsOnPost(sewEntityMapper.convertCommentsListToString(comments),postId)
-            //  retrofitService.commentOnPost(USERID,postId,comment.comment)
+    fun reportComment(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
 
-            //  val userCommentsOnPost=getUserComments(USERID,postId,comment)
-
-            *//*   val insertResult=  sewMethodDao.
-                 updateUserComments(entityMapper.convertCommentListToString(userCommentsOnPost), USERID)*//*
-            emit(DataState.success(result))
+        //   retrofitService.editComment(USERID,postId,comment.comment)
 
 
-        }catch (e:Exception){
-            e.printStackTrace()
-            emit(DataState.error(e.message.toString()))
-        }
+        emit(DataState.success(1))
+
 
     }
-    suspend fun getPostComments(postId:Int):MutableList<Comment>{
+
+    fun removeComment(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
+             // retrofitService.removeComment(USERID,postId,comment.comment)
+try {
+    emit(DataState.success(1))
+
+}catch (e:Exception){
+    e.printStackTrace()
+    emit(DataState.error(e.message.toString()))
+}
+
+
+
+    }
+  /*  suspend fun getPostComments(postId:Int):MutableList<Comment>{
 
         val comments=sewMethodDao.getSewById(postId)!!.comments
 
@@ -283,5 +255,4 @@ class UserActivityOnPost (
 
     }
 */
-
 }

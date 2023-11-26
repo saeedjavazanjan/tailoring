@@ -11,6 +11,7 @@ data class SewMethod (
     val like: Int = 0,
     val videoUrl: String,
     val description:String,
+    val comments: List<Comment> = listOf(),
     val dateAdded: Date,
     val dateUpdated: Date,
 )

@@ -43,7 +43,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
 
 
 
-    /* fun convertCommentsListToString(comments: List<Comment>): String {
+     fun convertCommentsListToString(comments: List<Comment>): String {
         var gson = Gson()
         var jsonString= StringBuilder()
         for(item in comments){
@@ -52,9 +52,9 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
 
         }
         return jsonString.toString()
-    }*/
+    }
 
-   /*  fun convertCommentsStringToList(comments: String): MutableList<Comment>{
+     fun convertCommentsStringToList(comments: String): MutableList<Comment>{
         val list: ArrayList<Comment> = ArrayList()
         comments.let {
             for(item in comments.split("},")){
@@ -69,7 +69,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
         }
 
         return list
-    }*/
+    }
 
     fun fromEntityList(initial: List<SewEntity>): List<SewMethod>{
         return initial.map { mapToDomainModel(it) }
