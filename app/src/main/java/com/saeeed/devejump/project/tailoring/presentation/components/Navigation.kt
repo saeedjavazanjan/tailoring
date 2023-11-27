@@ -83,7 +83,6 @@ fun Navigation(
                         sewId = navBackStackEntry.arguments?.getInt("sewId"),
                         viewModel = descriptionViewModel,
                         scaffoldState = scaffoldState,
-                        navController= navController,
 
                         )
 
