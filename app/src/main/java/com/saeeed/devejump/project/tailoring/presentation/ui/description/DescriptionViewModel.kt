@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarResult
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -11,8 +12,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
-import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
@@ -25,7 +24,6 @@ import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -54,11 +52,10 @@ constructor(
     val bookMarkState= mutableStateOf(false)
     val liKeState= mutableStateOf(false)
     val likeCount= mutableStateOf(0)
-   /* private val _comments = MutableLiveData<List<Comment>>()
-     val comments: LiveData<List<Comment>>
+    private val _comments = MutableLiveData<MutableList<Comment>>()
+     val comments: LiveData<MutableList<Comment>>
         get() = _comments
-*/
-   val comments: MutableState<MutableList<Comment>> = mutableStateOf(ArrayList())
+ //  val comments: MutableState<MutableList<Comment>> = mutableStateOf(ArrayList())
 
     //   var comments= emptyList<PostWitComment>()
     val dialogQueue=DialogQueue()
@@ -290,7 +287,7 @@ constructor(
             dataState.data?.let {
 
 
-                    comments.value = it.toMutableList()
+                    _comments.value= it.toMutableList()
 
                // }
 
@@ -310,7 +307,6 @@ constructor(
 
    @SuppressLint("SuspiciousIndentation")
    fun commentOnPost(comment: Comment, postId:Int){
-
         userActivityOnPost.commentOnPost(comment=comment,postId=postId).onEach { dataState ->
             dataState.loading.let {
                 commentSendLoading.value=it
@@ -318,7 +314,7 @@ constructor(
             }
             dataState.data?.let {
                 if (it> 0)
-               comments.value.add(0,comment)
+               _comments.value!!.add(0,comment)
             }
 
 
@@ -332,7 +328,7 @@ constructor(
     fun editComment(comment: Comment, postId:Int){
         userActivityOnPost.editComment(comment=comment,postId=postId).onEach { dataState ->
             dataState.data?.let {
-              comments.value.firstOrNull(){
+              _comments.value!!.firstOrNull(){
                 it.id== comment.id
                 }?.comment=comment.comment
 
@@ -361,36 +357,44 @@ constructor(
 
     @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("SuspiciousIndentation")
-    fun removeComment(comment: Comment, postId:Int,scaffoldState: ScaffoldState,scope:CoroutineScope){
-        val snackbarController=SnackbarController(scope)
+     fun removeComment(comment: Comment, postId:Int, scaffoldState: ScaffoldState, scope:CoroutineScope) {
+        val snackbarController = SnackbarController(scope)
+        snackbarController.getScope().launch {
+            _comments.value!!.remove(comment)
+            val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
+                //  scaffoldState = scaffoldState,
+                message = "کامنت شما حذف شد.",
+                actionLabel = "UNDO"
+            )
+            when (snackbarResult) {
+                SnackbarResult.Dismissed ->
+                    userActivityOnPost.removeComment(comment = comment, postId = postId)
+                        .onEach { dataState ->
+                            dataState.data?.let {
+                                snackbarController.getScope().launch {
+                                    if (it <= 0) {
 
-        userActivityOnPost.removeComment(comment=comment,postId=postId).onEach { dataState ->
-            dataState.data.let {
-                comments.value.removeAt(0)
-                snackbarController.getScope().launch {
-                    if (it!! > 0){
-                        comments.value.remove(comment)
-                        snackbarController.showSnackbar(
-                            scaffoldState = scaffoldState,
-                            message =  "کامنت شما حذف شد.",
-                            actionLabel ="Ok"
-                        )
+                                        snackbarController.showSnackbar(
+                                            scaffoldState = scaffoldState,
+                                            message = "خطایی رخ داده است.",
+                                            actionLabel = "Ok"
+                                        )
+                                    }
 
-                    }else{
-                        snackbarController.showSnackbar(
-                            scaffoldState = scaffoldState,
-                            message =  "خطایی رخ داده است.",
-                            actionLabel ="Ok"
-                        )
-                    }
+                                }
+                            }
 
-                }
+                        }.catch {
+                            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+
+                        }.launchIn(viewModelScope)
+                SnackbarResult.ActionPerformed -> _comments.value!!.add(0,comment)
             }
 
-        }.catch {
-            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
 
-        }.launchIn(viewModelScope)
+        }
 
-    }
+
+        }
+
 }

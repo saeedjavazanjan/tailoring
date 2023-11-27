@@ -319,7 +319,7 @@ fun SewMethodView(
 
                         text = "نظرات"
                     )
-                    CommentsList(
+               /*     CommentsList(
                         comments = listOfComments.value,
                         showReportDialog = {
                             openDialog.value = true
@@ -341,7 +341,7 @@ fun SewMethodView(
 
                         loading=loading
                         )
-
+*/
                     if(openDialog.value){
                         ReportAlertDialog(
                             ok={
@@ -477,44 +477,6 @@ fun SewMethodView(
 }
 
 
-@SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun CommentsList(
-    comments:MutableList<Comment>,
-    showReportDialog:(comment:Comment) -> Unit,
-    editComment: (comment:Comment) -> Unit,
-    remove: (comment:Comment) -> Unit,
-    loading: Boolean
-) {
 
-
-
-    if (!loading ) {
-        FlowColumn {
-            comments.forEach { comment->
-                CommentCard(
-                    comment = comment,
-                    edit = {
-                         editComment(
-                            comment
-                        )
-                    },
-                    report = {
-                          showReportDialog(comment)
-                    },
-                    removeComment = {
-                       remove(comment)
-                    }
-
-                )
-
-
-            }
-        }
-
-
-    }
-}
 
 
