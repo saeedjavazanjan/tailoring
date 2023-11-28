@@ -42,6 +42,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -69,6 +70,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -80,6 +82,7 @@ import com.saeeed.devejump.project.tailoring.presentation.components.BannerCard
 import com.saeeed.devejump.project.tailoring.presentation.components.CommentCard
 import com.saeeed.devejump.project.tailoring.presentation.components.ReportAlertDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
+import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
@@ -99,6 +102,7 @@ fun DescriptionScreen(
     sewId: Int?,
     viewModel: DescriptionViewModel,
     scaffoldState: ScaffoldState,
+    onNavigateToProfile: (String)->Unit
 ){
     if (sewId == null){
        // TODO("Show Invalid Recipe")
@@ -215,6 +219,9 @@ fun DescriptionScreen(
                                                unlike = {
                                                    viewModel.unLikePost()
 
+                                               },
+                                               onNavigateToProfile={route->
+                                                   onNavigateToProfile(route)
                                                }
 
                                            )
@@ -403,7 +410,8 @@ fun imageAndVideoHolder(
             Row(
                 Modifier
                     .height(50.dp)
-                    .fillMaxWidth().align(Alignment.BottomCenter),
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
                 horizontalArrangement = Arrangement.Center
             ) {
                 repeat(pagerState.pageCount) { iteration ->
@@ -459,6 +467,8 @@ fun detail(
     likeState:Boolean,
     like:() ->Unit,
     unlike:() ->Unit,
+    onNavigateToProfile: (String)->Unit
+
 ) {
     val likes = mutableStateOf( likesCount)
     val likeIconState= mutableStateOf(likeState)
@@ -555,8 +565,8 @@ fun detail(
             contentScale = ContentScale.Crop,
         )
         val author = sewMethod.publisher
-        Text(
-            text = author,
+
+        TextButton(
             modifier = Modifier
                 .wrapContentWidth(Alignment.Start)
                 .padding(10.dp)
@@ -565,8 +575,17 @@ fun detail(
                     bottom.linkTo(avatarHolder.bottom)
                     top.linkTo(avatarHolder.top)
                 },
-            style = MaterialTheme.typography.bodyMedium
-        )
+            onClick = {
+                val route = Screen.Profile.route + "/${sewMethod.publisher}"
+                onNavigateToProfile(route)
+
+            }
+        ){
+            Text(
+                text = author,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
 
     }
     val updated = sewMethod.dateUpdated

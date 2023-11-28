@@ -26,6 +26,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.school.SchoolScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewModel
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
@@ -83,17 +84,27 @@ fun Navigation(
                         sewId = navBackStackEntry.arguments?.getInt("sewId"),
                         viewModel = descriptionViewModel,
                         scaffoldState = scaffoldState,
+                        onNavigateToProfile = navController::navigate
 
                         )
 
 
             }
 
-        composable(Screen.Profile.route){
-            ProfileScreen()
+        composable(
+            route = Screen.Profile.route + "/{authorID}",
+            arguments = listOf(navArgument("authorID") {
+                type = NavType.StringType
+            })
+        ){navBackStackEntry ->
+            navBackStackEntry.arguments?.getString("authorID")?.let { ProfileScreen(author = it) }
         }
         composable(Screen.Courses.route){
             CoursesScreen()
+
+        }
+        composable(Screen.School.route){
+            SchoolScreen()
 
         }
         composable(Screen.Posts.route){

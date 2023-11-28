@@ -12,4 +12,6 @@ sealed class Screen(
     object MoreOfBests : Screen("moreOfBests")
     object Home : Screen("home")
     object Profile : Screen("profile")
+    object School : Screen("school")
+
 }

@@ -96,6 +96,12 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
+                Screen.Profile.route+ "/{authorID}"-> {
+                    // Show BottomBar and TopBar
+                    bottomBarState.value = false
+                    // topBarState.value = true
+
+                }
                 Screen.Courses.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
@@ -143,8 +149,8 @@ class MainActivity : ComponentActivity() {
                                 icon = Icons.Default.MailOutline
                             ),
                             BottomNavItem(
-                                name = "Profile",
-                                route = Screen.Profile.route,
+                                name = "school",
+                                route = Screen.School.route,
                                 icon = Icons.Default.Person
                             )
 

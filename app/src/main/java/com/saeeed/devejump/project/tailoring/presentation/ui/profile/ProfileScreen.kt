@@ -8,10 +8,12 @@ import androidx.compose.ui.Modifier
 
 
 @Composable
-fun ProfileScreen(){
+fun ProfileScreen(
+    author:String=""
+){
     Box(
         modifier = Modifier.fillMaxSize()
     ){
-        Text(text = "profile screen")
+        Text(text = author.toString())
     }
 }
