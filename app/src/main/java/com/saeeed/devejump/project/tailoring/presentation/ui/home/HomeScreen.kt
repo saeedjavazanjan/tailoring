@@ -18,9 +18,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.manager.Lifecycle
 import com.saeeed.devejump.project.tailoring.presentation.components.BestsRowsOfHome
-import com.saeeed.devejump.project.tailoring.presentation.components.HomeBannersViewPager
+import com.saeeed.devejump.project.tailoring.presentation.components.BannerViewPager
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -87,7 +86,7 @@ fun HomeScreen(
                 ) {
 
 
-                    HomeBannersViewPager(banners)
+                    BannerViewPager(banners)
                     Spacer(modifier = Modifier.size(200.dp))
 
                     if (!loading) {

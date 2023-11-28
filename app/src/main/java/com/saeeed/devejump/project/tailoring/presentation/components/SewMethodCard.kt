@@ -69,7 +69,7 @@ fun SewMethodCard(
 
                 if (method.postType.equals("image")){
                     GlideImage(
-                        model = method.featuredImage,
+                        model = method.featuredImage[0],
                         loading =  placeholder(R.drawable.empty_plate),
                         contentDescription = "",
                         modifier = Modifier
