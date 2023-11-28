@@ -5,12 +5,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -19,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
@@ -29,9 +30,6 @@ import com.saeeed.devejump.project.tailoring.presentation.components.Navigation
 import com.saeeed.devejump.project.tailoring.presentation.components.currentRoute
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.components.BottomNavItem
-import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListViewModel
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -96,13 +94,19 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
+                Screen.Profile.route+ "/{authorID}"-> {
+                    // Show BottomBar and TopBar
+                    bottomBarState.value = false
+                    // topBarState.value = true
+
+                }
                 Screen.Courses.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
                     // topBarState.value = true
 
                 }
-                Screen.Posts.route-> {
+                Screen.Search.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
                     // topBarState.value = true
@@ -111,6 +115,12 @@ class MainActivity : ComponentActivity() {
                 Screen.Splash.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = false
+                    // topBarState.value = true
+
+                }
+                Screen.TimeLine.route-> {
+                    // Show BottomBar and TopBar
+                    bottomBarState.value = true
                     // topBarState.value = true
 
                 }
@@ -128,24 +138,29 @@ class MainActivity : ComponentActivity() {
                     BottomNavigationBar(
                         items = listOf(
                             BottomNavItem(
-                                name = "Home",
+                                name = "کاربران",
+                                route = Screen.TimeLine.route,
+                                icon = Icons.Default.Face
+                            ),
+                            BottomNavItem(
+                                name = "فروشگاه",
+                                route = Screen.Courses.route,
+                                icon = Icons.Default.ShoppingCart
+                            ),
+                            BottomNavItem(
+                                name = "خانه",
                                 route = Screen.Home.route,
                                 icon = Icons.Default.Home
                             ),
                             BottomNavItem(
-                                name = "Courses",
-                                route = Screen.Courses.route,
+                                name = "جست و جو",
+                                route = Screen.Search.route,
+                                icon = Icons.Default.Search
+                            ),
+                            BottomNavItem(
+                                name = "آموزشگاه",
+                                route = Screen.School.route,
                                 icon = Icons.Default.DateRange
-                            ),
-                            BottomNavItem(
-                                name = "Posts",
-                                route = Screen.Posts.route,
-                                icon = Icons.Default.MailOutline
-                            ),
-                            BottomNavItem(
-                                name = "Profile",
-                                route = Screen.Profile.route,
-                                icon = Icons.Default.Person
                             )
 
                         ),

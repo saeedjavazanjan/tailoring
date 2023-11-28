@@ -17,6 +17,10 @@ data class SewMethodDto(
     @SerializedName("publisher")
     var publisher: String,
 
+    @SerializedName("author_id")
+    var authorId:Int,
+
+
     @SerializedName("featured_image")
     var featuredImage: List<String> = emptyList(),
     @SerializedName("like")

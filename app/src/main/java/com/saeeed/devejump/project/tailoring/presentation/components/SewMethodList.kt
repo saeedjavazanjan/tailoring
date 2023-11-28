@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
-import com.saeeed.devejump.project.tailoring.presentation.ui.post.PAGE_SIZE
+import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 @Composable
 fun SewMethodList(
     loading: Boolean,
