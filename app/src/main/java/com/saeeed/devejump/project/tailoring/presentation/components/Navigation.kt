@@ -2,19 +2,13 @@ package com.saeeed.devejump.project.tailoring.presentation.components
 
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.saeeed.devejump.project.tailoring.MainActivity
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.bests.BestsScreen
@@ -23,14 +17,14 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.description.Descrip
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListScreen
-import com.saeeed.devejump.project.tailoring.presentation.ui.post.ListViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.search.ListScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.search.ListViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.school.SchoolScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.time_line.TimeLineScreen
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalCoroutinesApi::class)
@@ -46,7 +40,7 @@ fun Navigation(
     val descriptionViewModel: DescriptionViewModel = viewModel()
     val homeViewModel: HomeViewModel = viewModel()
     val splashViewModel:SplashViewModel= viewModel()
-    NavHost(navController = navController, startDestination = Screen.Splash.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route){
             SplashScreen(
@@ -94,10 +88,10 @@ fun Navigation(
         composable(
             route = Screen.Profile.route + "/{authorID}",
             arguments = listOf(navArgument("authorID") {
-                type = NavType.StringType
+                type = NavType.IntType
             })
         ){navBackStackEntry ->
-            navBackStackEntry.arguments?.getString("authorID")?.let { ProfileScreen(author = it) }
+            navBackStackEntry.arguments?.getInt("authorID")?.let { ProfileScreen(userId = it) }
         }
         composable(Screen.Courses.route){
             CoursesScreen()
@@ -107,7 +101,11 @@ fun Navigation(
             SchoolScreen()
 
         }
-        composable(Screen.Posts.route){
+        composable(Screen.TimeLine.route){
+            TimeLineScreen()
+
+        }
+        composable(Screen.Search.route){
             ListScreen(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,

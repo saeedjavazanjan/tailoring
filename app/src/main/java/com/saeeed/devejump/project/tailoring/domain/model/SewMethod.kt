@@ -7,6 +7,7 @@ data class SewMethod (
     val title: String,
     val postType:String,
     val publisher: String,
+    val authorId:Int,
     val featuredImage: List<String> = listOf(),
     val like: Int = 0,
     val videoUrl: String,

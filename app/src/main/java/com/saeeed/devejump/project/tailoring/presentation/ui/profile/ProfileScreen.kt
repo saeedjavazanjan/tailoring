@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun ProfileScreen(
-    author:String=""
+    userId:Int
 ){
     Box(
         modifier = Modifier.fillMaxSize()
     ){
-        Text(text = author.toString())
+        Text(text = userId.toString())
     }
 }

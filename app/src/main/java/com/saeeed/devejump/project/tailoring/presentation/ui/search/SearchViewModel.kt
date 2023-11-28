@@ -1,4 +1,4 @@
-package com.saeeed.devejump.project.tailoring.presentation.ui.post
+package com.saeeed.devejump.project.tailoring.presentation.ui.search
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -63,24 +63,24 @@ class ListViewModel
         }
 
         if(categoryScrollPosition != 0){
-            onTriggerEvent(PostsEvent.RestoreStateEvent)
+            onTriggerEvent(SearchEvent.RestoreStateEvent)
         }
         else{
-            onTriggerEvent(PostsEvent.NewSearchEvent)
+            onTriggerEvent(SearchEvent.NewSearchEvent)
         }
     }
 
-    fun onTriggerEvent(event: PostsEvent){
+    fun onTriggerEvent(event: SearchEvent){
         viewModelScope.launch {
             try {
                 when(event){
-                    is PostsEvent.NewSearchEvent -> {
+                    is SearchEvent.NewSearchEvent -> {
                         newSearch()
                     }
-                    is PostsEvent.NextPageEvent -> {
+                    is SearchEvent.NextPageEvent -> {
                      //   nextPage()
                     }
-                    is PostsEvent.RestoreStateEvent -> {
+                    is SearchEvent.RestoreStateEvent -> {
                      //   restoreState()
                     }
                 }

@@ -22,6 +22,8 @@ data class SewEntity(
     @ColumnInfo(name = "publisher")
     var publisher: String,
 
+    @ColumnInfo(name = "author_id")
+    var authorId: Int,
 // Value from API
     @ColumnInfo(name = "featured_image")
     var featuredImage: String,

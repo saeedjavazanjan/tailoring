@@ -1,4 +1,4 @@
-package com.saeeed.devejump.project.tailoring.presentation.ui.post
+package com.saeeed.devejump.project.tailoring.presentation.ui.search
 
 enum class Category(val value: String){
     TAILORING("خیاطی"),

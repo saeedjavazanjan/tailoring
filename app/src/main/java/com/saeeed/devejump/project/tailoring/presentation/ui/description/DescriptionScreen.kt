@@ -576,7 +576,7 @@ fun detail(
                     top.linkTo(avatarHolder.top)
                 },
             onClick = {
-                val route = Screen.Profile.route + "/${sewMethod.publisher}"
+                val route = Screen.Profile.route + "/${sewMethod.authorId}"
                 onNavigateToProfile(route)
 
             }

@@ -31,7 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.saeeed.devejump.project.tailoring.presentation.ui.post.Category
+import com.saeeed.devejump.project.tailoring.presentation.ui.search.Category
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable

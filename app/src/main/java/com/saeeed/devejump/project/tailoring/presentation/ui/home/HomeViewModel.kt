@@ -54,10 +54,10 @@ constructor(
     fun onTriggerEvent() {
         viewModelScope.launch {
             try {
-              //  getBanners()
-              //  getBestsOfMonth()
-              //  getBestsOfWeek()
-              //  getBestsOfDay()
+                getBanners()
+                getBestsOfMonth()
+               getBestsOfWeek()
+                getBestsOfDay()
 
             } catch (e: Exception) {
                 Log.e(TAG, "launchJob: Exception: ${e}, ${e.cause}")
