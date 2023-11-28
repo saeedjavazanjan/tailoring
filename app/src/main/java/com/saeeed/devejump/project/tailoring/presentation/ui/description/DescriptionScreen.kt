@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.description
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,6 +24,9 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -71,6 +76,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.presentation.components.BannerCard
 import com.saeeed.devejump.project.tailoring.presentation.components.CommentCard
 import com.saeeed.devejump.project.tailoring.presentation.components.ReportAlertDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
@@ -78,6 +84,7 @@ import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
 import com.saeeed.devejump.project.tailoring.utils.USER_NAME
+import com.saeeed.devejump.project.tailoring.utils.comments
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -100,7 +107,7 @@ fun DescriptionScreen(
         LaunchedEffect(Unit){
             viewModel.onTriggerEvent(SewEvent.GetSewEvent(sewId))
         }
-        val comments=viewModel.comments.observeAsState()
+        val comments=viewModel.comments.value
 
         val loading = viewModel.loading.value
         val commentSendLoading=viewModel.commentSendLoading.value
@@ -222,7 +229,7 @@ fun DescriptionScreen(
 
 
                                            CommentsList(
-                                               comments = comments.value,
+                                               comments = comments,
                                                showReportDialog = { comment->
                                                    openDialog.value = true
                                                    onReportComment.value=comment
@@ -285,7 +292,8 @@ fun DescriptionScreen(
 
                                     commentSendLoading =commentSendLoading ,
                                     onEditComment =onEditComment ,
-                                    focusRequester =focusRequester
+                                    focusRequester =focusRequester,
+                                    comments = comments
                                 )
 
 
@@ -346,6 +354,7 @@ fun DescriptionScreen(
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun imageAndVideoHolder(
@@ -371,16 +380,46 @@ fun imageAndVideoHolder(
             )
 
         } else {
-            AsyncImage(
-                model = sewMethod.featuredImage,
-                contentDescription = sewMethod.title,
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentScale = ContentScale.Crop,
-            )
+            val pagerState = rememberPagerState(pageCount = {
+                sewMethod.featuredImage.size
+            })
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+                pageSpacing = 15.dp,
+                contentPadding = PaddingValues(
+                    vertical = 5.dp
+                )
+
+            ) { page ->
+    AsyncImage(
+        model = sewMethod.featuredImage[page],
+        contentDescription = sewMethod.title,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+    )
+
+            }
+            Row(
+                Modifier
+                    .height(50.dp)
+                    .fillMaxWidth().align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(pagerState.pageCount) { iteration ->
+                    val color =
+                        if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                    Box(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .background(color, CircleShape)
+                            .size(10.dp)
+                    )
+                }
+
+            }
         }
 
-        //  if (bookMarkState){
         IconToggleButton(
             checked = bookMarkState,
             onCheckedChange = {
@@ -573,11 +612,11 @@ fun CommentsList(
     loading: Boolean
 ) {
 
-   // val listOfComments= mutableStateOf(comments)
+    val listOfComments= mutableStateOf(comments)
 
     if (!loading ) {
         FlowColumn {
-            comments!!.forEach { comment->
+            listOfComments.value!!.forEach { comment->
                 CommentCard(
                     comment = comment,
                     edit = {
@@ -605,6 +644,7 @@ fun CommentsList(
 @Composable
 fun commentTextField(
     sewMethod:SewMethod,
+    comments: MutableList<Comment>,
     scrollState:LazyListState,
     query:MutableState<String>,
     commentState:MutableState<String>,
@@ -642,7 +682,7 @@ fun commentTextField(
                             if (commentState.value.equals("firstComment")) {
                                 insertComment(
                                     Comment(
-                                        sewMethod.comments.size,
+                                        comments.size,
                                         query.value,
                                         USER_AVATAR,
                                         USER_NAME,

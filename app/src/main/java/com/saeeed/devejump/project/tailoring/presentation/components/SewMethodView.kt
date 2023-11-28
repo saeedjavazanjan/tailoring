@@ -392,7 +392,7 @@ fun SewMethodView(
                             if (commentState.value.equals("firstComment")) {
                                 Insertcomment(
                                     Comment(
-                                        sewMethod.comments.size,
+                                        1,
                                         query.value,
                                         USER_AVATAR,
                                         USER_NAME,

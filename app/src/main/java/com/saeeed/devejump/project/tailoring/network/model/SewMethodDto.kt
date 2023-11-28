@@ -18,8 +18,7 @@ data class SewMethodDto(
     var publisher: String,
 
     @SerializedName("featured_image")
-    var featuredImage: String,
-
+    var featuredImage: List<String> = emptyList(),
     @SerializedName("like")
     var like: Int = 0,
 

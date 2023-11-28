@@ -1,7 +1,5 @@
 package com.saeeed.devejump.project.tailoring.cash.model
 
-import com.google.gson.Gson
-import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
 import com.saeeed.devejump.project.tailoring.utils.DateUtils
@@ -13,7 +11,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
             id = model.id,
             title = model.title,
             postType=model.postType,
-            featuredImage = model.featuredImage,
+            featuredImage = convertStringToList(model.featuredImage),
             like = model.like,
             publisher = model.publisher,
             videoUrl = model.video,
@@ -29,7 +27,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
             id = domainModel.id,
             title = domainModel.title,
             postType=domainModel.postType,
-            featuredImage = domainModel.featuredImage,
+            featuredImage =convertListToString( domainModel.featuredImage),
             like = domainModel.like,
             publisher = domainModel.publisher,
             video = domainModel.videoUrl,
@@ -40,10 +38,29 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
         )
     }
 
+    private fun convertListToString(list: List<String>): String {
+        val string = StringBuilder()
+        for(item in list){
+            string.append("$item,")
+        }
+        return string.toString()
+    }
+
+    private fun convertStringToList(string: String?): MutableList<String>{
+        val list: ArrayList<String> = ArrayList()
+        string?.let {
+            for(item in it.split(",")){
+                if (!item.equals("")){
+                    list.add(item)
+
+                }
+            }
+        }
+        return list
+    }
 
 
-
-     fun convertCommentsListToString(comments: List<Comment>): String {
+   /*  fun convertCommentsListToString(comments: List<Comment>): String {
         var gson = Gson()
         var jsonString= StringBuilder()
         for(item in comments){
@@ -70,7 +87,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
 
         return list
     }
-
+*/
     fun fromEntityList(initial: List<SewEntity>): List<SewMethod>{
         return initial.map { mapToDomainModel(it) }
     }
