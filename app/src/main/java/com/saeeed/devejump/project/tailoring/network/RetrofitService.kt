@@ -1,5 +1,6 @@
 package com.saeeed.devejump.project.tailoring.network
 
+import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
@@ -19,6 +20,14 @@ interface RetrofitService {
       //  @Query("page") page: Int,
       //  @Query("query") query: String
     ): SewMethodSearchResponse
+
+
+    @GET("followings-post")
+    suspend fun followingsPosts(
+        // @Header("Authorization") token: String,
+        //  @Query("page") page: Int,
+        //  @Query("userId") userId: Int
+    ): List<SewMethodDto>
 
     @GET("get")
     suspend fun get(

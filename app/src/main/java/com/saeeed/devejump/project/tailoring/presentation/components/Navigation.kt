@@ -59,7 +59,8 @@ fun Navigation(
                     isDarkTheme = appDataStore.isDark.value,
                     isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                     viewModel = homeViewModel,
-                    onNavigateToDescriptionScreen = navController::navigate
+                    onNavigateToDescriptionScreen = navController::navigate,
+                    onNavigateToBannerDestination = navController::navigate
 
                     )
 

@@ -49,7 +49,9 @@ fun BannerCard(
             )
             .fillMaxWidth()
             .height(225.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = {
+                onClick()
+            }),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
 
