@@ -314,7 +314,7 @@ constructor(
             }
             dataState.data?.let {
                 if (it> 0)
-               comments.value!!.add(0,comment)
+               comments.value.add(0,comment)
             }
 
 
@@ -328,8 +328,8 @@ constructor(
     fun editComment(comment: Comment, postId:Int){
         userActivityOnPost.editComment(comment=comment,postId=postId).onEach { dataState ->
             dataState.data?.let {
-              comments.value!!.firstOrNull(){
-                it.id== comment.id
+              comments.value.firstOrNull(){
+                comments.value.indexOf(it)== comments.value.indexOf(comment)
                 }?.comment=comment.comment
 
             }
@@ -360,7 +360,7 @@ constructor(
      fun removeComment(comment: Comment, postId:Int, scaffoldState: ScaffoldState, scope:CoroutineScope) {
         val snackbarController = SnackbarController(scope)
         snackbarController.getScope().launch {
-            comments.value!!.remove(comment)
+            comments.value.remove(comment)
             val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
                 //  scaffoldState = scaffoldState,
                 message = "کامنت شما حذف شد.",
@@ -388,7 +388,7 @@ constructor(
                             dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
 
                         }.launchIn(viewModelScope)
-                SnackbarResult.ActionPerformed -> comments.value!!.add(0,comment)
+                SnackbarResult.ActionPerformed -> comments.value.add(0,comment)
             }
 
 
