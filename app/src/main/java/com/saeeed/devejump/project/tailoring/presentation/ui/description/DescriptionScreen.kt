@@ -246,6 +246,7 @@ fun DescriptionScreen(
                                                    focusRequester.requestFocus()
                                                    commentState.value = "editComment"
                                                    query.value=comment.comment
+                                                   onEditComment.value=comment
 
                                                },
                                                remove = {comment->
@@ -289,7 +290,7 @@ fun DescriptionScreen(
                                     commentState = commentState,
                                     editComment ={comment->
                                        // viewModel.editComment(comment = comment, postId = sewId)
-                                        onEditComment.value=comment
+                                       // onEditComment.value=comment
                                         editState.value=true
                                     } ,
                                     insertComment ={ comment->
@@ -701,7 +702,7 @@ fun commentTextField(
                             if (commentState.value.equals("firstComment")) {
                                 insertComment(
                                     Comment(
-                                        comments.size,
+                                        comments.last().id+1,
                                         query.value,
                                         USER_AVATAR,
                                         USER_NAME,
