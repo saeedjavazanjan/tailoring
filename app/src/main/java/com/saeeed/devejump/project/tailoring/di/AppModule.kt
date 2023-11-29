@@ -6,17 +6,15 @@ import com.google.gson.GsonBuilder
 import com.saeeed.devejump.project.tailoring.BaseApplication
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
-import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.cash.model.CommentEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
-import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.interactor.Splash.GetUserStuffsFromServer
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
-import com.saeeed.devejump.project.tailoring.interactor.home.GetBanners
+import com.saeeed.devejump.project.tailoring.interactor.home.GetHomeData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
@@ -177,13 +175,16 @@ object AppModule {
     }
     @Singleton
     @Provides
-    fun provideGetBanners(
+    fun provideGetHomeData(
         retrofitService: RetrofitService,
         bannerMapper: BannerMapper,
-    ): GetBanners {
-        return GetBanners(
+        dtoMapper: SewMethodMapper
+    ): GetHomeData {
+        return GetHomeData(
             retrofitService = retrofitService,
-            dtoMapper = bannerMapper
+            bannerMapper = bannerMapper,
+            dtoMapper = dtoMapper
+
         )
     }
 

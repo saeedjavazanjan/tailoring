@@ -16,11 +16,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import com.saeeed.devejump.project.tailoring.presentation.components.BestsRowsOfHome
 import com.saeeed.devejump.project.tailoring.presentation.components.BannerViewPager
+import com.saeeed.devejump.project.tailoring.presentation.components.SewMethodList
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
+import com.saeeed.devejump.project.tailoring.presentation.ui.search.SearchEvent
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -33,14 +36,20 @@ fun HomeScreen(
     isNetworkAvailable: Boolean,
     viewModel: HomeViewModel,
     onNavigateToDescriptionScreen: (String) -> Unit,
+    onNavigateToBannerDestination:(String)->Unit
+
 
     ) {
+
+    val sewMethods = viewModel.methods.value
+    val page = viewModel.page.value
+
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val banners=viewModel.banners
-    val bestOfMonthMethods=viewModel.bestOfMonthMethods
-    val bestOfWeekMethods=viewModel.bestOfWeekMethods
-    val bestOfDayMethods=viewModel.bestOfDayMethods
+  //  val bestOfMonthMethods=viewModel.bestOfMonthMethods
+   // val bestOfWeekMethods=viewModel.bestOfWeekMethods
+ //   val bestOfDayMethods=viewModel.bestOfDayMethods
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
@@ -59,12 +68,12 @@ fun HomeScreen(
         LaunchedEffect(lifecycleState) {
             when (lifecycleState) {
                 androidx.lifecycle.Lifecycle.State.RESUMED -> {
-                    if(bestOfMonthMethods.value.isEmpty() ||
+                  /*  if(bestOfMonthMethods.value.isEmpty() ||
                         bestOfWeekMethods.value.isEmpty() ||
                         bestOfDayMethods.value.isEmpty()
                         ){
-                        viewModel.onTriggerEvent()
-                    }
+                     //   viewModel.onTriggerEvent()
+                    }*/
                 }
                 else -> {
 
@@ -81,23 +90,45 @@ fun HomeScreen(
 
                 Column(
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState())
+                     //   .verticalScroll(rememberScrollState())
                         .padding(it)
                 ) {
 
 
-                    BannerViewPager(banners)
-                    Spacer(modifier = Modifier.size(200.dp))
+                    BannerViewPager(
+                        banners,
+                        onNavigateToBannerDestination = {route->
+                            try {
+                                onNavigateToBannerDestination(route)
+
+                            }catch (e:Exception){
+                                dialogQueue.appendErrorMessage("Error","صفحه مورد نظر یافت نشد.")
+                            }
+                        },
+                        context = LocalContext.current
+                        )
+                    Spacer(modifier = Modifier.size(50.dp))
 
                     if (!loading) {
-                        BestsRowsOfHome(
+                        SewMethodList(
+                            loading = loading,
+                            sewMethods = sewMethods,
+                            onChangeScrollPosition = viewModel::onChangeScrollPosition,
+                            page = page,
+                            onTriggerNextPage = { viewModel.onTriggerEvent(FollowingsPostsEvent.NextPageEvent) },
+                            onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
+
+                            )
+                       /* BestsRowsOfHome(
                             onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
                             loading = loading,
                             bestOfMonthMethods = bestOfMonthMethods,
                             bestOfWeekMethods = bestOfWeekMethods,
                             bestOfDayMethods = bestOfDayMethods,
 
-                        )
+                        )*/
+
+
                         Spacer(modifier = Modifier.size(70.dp))
                     }
                 }
