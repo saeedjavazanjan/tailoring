@@ -1,8 +1,11 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +17,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 @Composable
 fun SewMethodList(
     loading: Boolean,
+    scrollState: LazyGridState,
     sewMethods: List<SewMethod>,
     onChangeScrollPosition: (Int) -> Unit,
     page: Int,
@@ -27,7 +31,9 @@ fun SewMethodList(
     } else if (sewMethods.isEmpty()) {
      //   NothingHere()
     } else {
-        LazyVerticalGrid(columns = GridCells.Fixed(2) ) {
+        LazyVerticalGrid(
+            state=scrollState,
+            columns = GridCells.Fixed(2) ) {
 
             itemsIndexed(
                 items = sewMethods
