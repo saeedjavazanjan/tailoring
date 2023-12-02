@@ -70,6 +70,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0-alpha02")
     implementation ("androidx.compose.foundation:foundation:1.5.4")
     implementation ("androidx.compose.runtime:runtime-livedata:1.5.4")
+    implementation("me.onebone:toolbar-compose:2.3.5")
 
 
     testImplementation("junit:junit:4.13.2")
