@@ -13,6 +13,6 @@ sealed class Screen(
     object Home : Screen("home")
     object Profile : Screen("profile")
     object School : Screen("school")
-    object TimeLine : Screen("timeLine")
+    object UserProfile : Screen("timeLine")
 
 }

@@ -23,7 +23,8 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileScre
 import com.saeeed.devejump.project.tailoring.presentation.ui.school.SchoolScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.time_line.TimeLineScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.user_profile.UserProfileScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.user_profile.UserProfileViewModel
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -40,6 +41,7 @@ fun Navigation(
     val descriptionViewModel: DescriptionViewModel = viewModel()
     val homeViewModel: HomeViewModel = viewModel()
     val splashViewModel:SplashViewModel= viewModel()
+    val userProfileViewModel:UserProfileViewModel= viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route){
@@ -102,8 +104,13 @@ fun Navigation(
             SchoolScreen()
 
         }
-        composable(Screen.TimeLine.route){
-            TimeLineScreen()
+        composable(Screen.UserProfile.route){
+            UserProfileScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                onNavigateToDescriptionScreen = navController::navigate,
+                viewModel =userProfileViewModel
+            )
 
         }
         composable(Screen.Search.route){

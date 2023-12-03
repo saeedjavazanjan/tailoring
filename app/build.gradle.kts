@@ -71,7 +71,8 @@ dependencies {
     implementation ("androidx.compose.foundation:foundation:1.5.4")
     implementation ("androidx.compose.runtime:runtime-livedata:1.5.4")
     implementation("me.onebone:toolbar-compose:2.3.5")
-
+    implementation ("com.google.accompanist:accompanist-pager:0.13.0")
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.13.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -7,9 +7,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -88,7 +86,7 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
-                Screen.Profile.route-> {
+                Screen.UserProfile.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
                     // topBarState.value = true
@@ -118,12 +116,7 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
-                Screen.TimeLine.route-> {
-                    // Show BottomBar and TopBar
-                    bottomBarState.value = true
-                    // topBarState.value = true
 
-                }
             }
 
 
@@ -138,9 +131,9 @@ class MainActivity : ComponentActivity() {
                     BottomNavigationBar(
                         items = listOf(
                             BottomNavItem(
-                                name = "کاربران",
-                                route = Screen.TimeLine.route,
-                                icon = Icons.Default.Face
+                                name = "پروفایل",
+                                route = Screen.UserProfile.route,
+                                icon = Icons.Default.Person
                             ),
                             BottomNavItem(
                                 name = "فروشگاه",
