@@ -17,6 +17,7 @@ import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetHomeData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
+import com.saeeed.devejump.project.tailoring.interactor.user_profile.GetUserProfileData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
@@ -184,6 +185,27 @@ object AppModule {
             retrofitService = retrofitService,
             bannerMapper = bannerMapper,
             dtoMapper = dtoMapper
+
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetUserProfileData(
+        retrofitService: RetrofitService,
+        dtoMapper: SewMethodMapper,
+        entityMapper: SewEntityMapper,
+        userDataEntityMapper: UserDataEntityMapper,
+        sewMethodDao: SewMethodDao,
+
+    ): GetUserProfileData {
+        return GetUserProfileData(
+            retrofitService = retrofitService,
+            dtoMapper = dtoMapper,
+            entityMapper = entityMapper,
+            userDataEntityMapper = userDataEntityMapper,
+            sewMethodDao = sewMethodDao
+
 
         )
     }

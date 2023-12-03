@@ -28,6 +28,12 @@ interface RetrofitService {
         //  @Query("page") page: Int,
         //  @Query("userId") userId: Int
     ): List<SewMethodDto>
+    @GET("followings-post")
+    suspend fun userPosts(
+        // @Header("Authorization") token: String,
+        //  @Query("page") page: Int,
+        //  @Query("userId") userId: Int
+    ): List<SewMethodDto>
 
     @GET("get")
     suspend fun get(
