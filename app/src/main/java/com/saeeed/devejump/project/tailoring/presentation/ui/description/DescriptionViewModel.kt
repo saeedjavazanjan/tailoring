@@ -314,7 +314,12 @@ constructor(
             }
             dataState.data?.let {
                 if (it> 0)
-               comments.value.add(0,comment)
+                    try {
+                        comments.value.add(0,comment)
+
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                    }
             }
 
 

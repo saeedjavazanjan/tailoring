@@ -700,9 +700,15 @@ fun commentTextField(
                     onClick = {
                         if (!query.equals("")) {
                             if (commentState.value.equals("firstComment")) {
+                                var id=0
+
+                                if (comments.size !=0){
+                                    id=comments.last().id+1
+                                }
                                 insertComment(
+
                                     Comment(
-                                        comments.last().id+1,
+                                        id,
                                         query.value,
                                         USER_AVATAR,
                                         USER_NAME,
