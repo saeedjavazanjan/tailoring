@@ -45,11 +45,17 @@ class GetUserProfileData(
 
             emit(DataState.loading())
 
+        try {
             val sewMethods = getSewMethodsFromNetwork(
                 token = token,
                 userId = userId,
             )
             emit(DataState.success(sewMethods))
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+
+
 
 
     }
@@ -58,6 +64,7 @@ class GetUserProfileData(
         token: String,
         userId: Int
     ): List<SewMethod> {
+
         return dtoMapper.toDomainList(
             retrofitService.userPosts()
             //  token = token,

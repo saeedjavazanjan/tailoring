@@ -46,7 +46,8 @@ constructor(
 
     init {
     getUserData()
-}
+
+    }
 
 
 
@@ -55,6 +56,7 @@ constructor(
         getUserProfileData.getUserData().onEach { dataState->
             dataState.data.let{
                 user=it!!
+
             }
 
         }.catch {
@@ -72,14 +74,18 @@ constructor(
             userId = USERID,
             isNetworkAvailable = connectivityManager.isNetworkAvailable.value
         ).onEach { dataState->
-            dataState.data.let{
-                userPosts.value =it!!
+            dataState.loading.let {
+                loading.value=it
             }
-        }.catch {
+
+            dataState.data?.let{
+                userPosts.value =it
+            }
+        }/*.catch {
 
             dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
 
-        }
+        }*/
             .launchIn(viewModelScope)
 
     }
