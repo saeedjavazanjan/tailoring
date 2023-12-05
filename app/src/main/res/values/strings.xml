@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tailoring</string>
+    <string name="app_name">خیاط باشی</string>
 
     <string name="ok">OK</string>
 
@@ -24,5 +24,15 @@
 
     <!--description-->
         <string name="saved_successFully">با موفقیت ذخیره شد</string>
+
+
+    <!--profileEdit-->
+    <string name = "profile_edit_title"> ویرایش پروفایل</string>
+    <string name = "profile_edit_user_name">نام کاربری</string>
+    <string name = "profile_edit_avatar">تصویر پروفایل</string>
+    <string name = "profile_edit_exit"> خروج از حساب</string>
+    <string name = "profile_edit_save">ثبت نهایی</string>
+    <string name = "profile_edit_choose_photo">انتخاب عکس</string>
+
 
 </resources>
