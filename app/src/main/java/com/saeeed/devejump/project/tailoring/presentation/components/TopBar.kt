@@ -35,7 +35,7 @@ fun TopBar(){
                 IconButton(
                     modifier = Modifier
                         .constrainAs(menu) {
-                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
                             linkTo(top = parent.top, bottom = parent.bottom)
                         },
                     onClick = {
@@ -50,7 +50,7 @@ fun TopBar(){
                     color = Color.White,
                     fontSize = 15.sp,
                     modifier = Modifier.constrainAs(title){
-                        end.linkTo(menu.start)
+                        start.linkTo(menu.end)
                         linkTo(top = parent.top, bottom = parent.bottom)
                     }
                 )
@@ -58,7 +58,7 @@ fun TopBar(){
                 IconButton(
                     modifier = Modifier
                         .constrainAs(notification) {
-                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
                             linkTo(top = parent.top, bottom = parent.bottom)
                         },
                     onClick = {

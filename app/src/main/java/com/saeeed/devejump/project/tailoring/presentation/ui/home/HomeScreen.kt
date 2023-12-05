@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.saeeed.devejump.project.tailoring.presentation.components.BestsRowsOfHome
 import com.saeeed.devejump.project.tailoring.presentation.components.BannerViewPager
@@ -87,43 +90,46 @@ fun HomeScreen(
         LaunchedEffect(lifecycleState) {
             when (lifecycleState) {
                 androidx.lifecycle.Lifecycle.State.RESUMED -> {
-                  /*  if(bestOfMonthMethods.value.isEmpty() ||
+                    /*  if(bestOfMonthMethods.value.isEmpty() ||
                         bestOfWeekMethods.value.isEmpty() ||
                         bestOfDayMethods.value.isEmpty()
                         ){
                      //   viewModel.onTriggerEvent()
                     }*/
                 }
+
                 else -> {
 
                 }
             }
 
         }
-        Scaffold(
-            topBar= {
-                TopBar()
-            }
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
-        ) {
+            Scaffold(
+                topBar = {
+                    TopBar()
+                }
+
+            ) {
 
                 Column(
                     modifier = Modifier
-                     //   .verticalScroll(rememberScrollState())
+                        //   .verticalScroll(rememberScrollState())
                         .padding(it)
                 ) {
 
                     var visible by remember { mutableStateOf(true) }
 
 
-                  /*  if (!scrollState.canScrollBackward && scrollState.canScrollForward){
+                    /*  if (!scrollState.canScrollBackward && scrollState.canScrollForward){
 
                         visible=true
 
                     }else if (scrollState.canScrollBackward){
                         visible=false
                     }*/
-               //     AnimatedVisibility(visible) {
+                    //     AnimatedVisibility(visible) {
                     CollapsingToolbarScaffold(
                         modifier = Modifier,
                         state = state,
@@ -131,43 +137,46 @@ fun HomeScreen(
                         toolbar = {
                             BannerViewPager(
                                 banners,
-                                onNavigateToBannerDestination = {route->
+                                onNavigateToBannerDestination = { route ->
                                     try {
                                         onNavigateToBannerDestination(route)
 
-                                    }catch (e:Exception){
-                                        dialogQueue.appendErrorMessage("Error","صفحه مورد نظر یافت نشد.")
+                                    } catch (e: Exception) {
+                                        dialogQueue.appendErrorMessage(
+                                            "Error",
+                                            "صفحه مورد نظر یافت نشد."
+                                        )
                                     }
                                 },
                                 context = LocalContext.current
                             )
 
-                        }){
-                   //     if (!loading) {
-                            LazyVerticalGrid(
-                                state=scrollState,
-                                columns = GridCells.Fixed(2) ) {
+                        }) {
+                        //     if (!loading) {
+                        LazyVerticalGrid(
+                            state = scrollState,
+                            columns = GridCells.Fixed(2)
+                        ) {
 
-                                itemsIndexed(
-                                    items = sewMethods
-                                ) { index, sewMethod ->
-                                    viewModel.onChangeScrollPosition(index)
-                                    if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
-                                        viewModel.onTriggerEvent(FollowingsPostsEvent.NextPageEvent)
-                                    }
-                                    SewMethodCard(
-                                        sewMethod = sewMethod,
-                                        onClick = {
-                                            val route = Screen.SewDescription.route + "/${sewMethod.id}"
-                                            onNavigateToDescriptionScreen(route)
-                                        }
-                                    )
+                            itemsIndexed(
+                                items = sewMethods
+                            ) { index, sewMethod ->
+                                viewModel.onChangeScrollPosition(index)
+                                if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
+                                    viewModel.onTriggerEvent(FollowingsPostsEvent.NextPageEvent)
                                 }
+                                SewMethodCard(
+                                    sewMethod = sewMethod,
+                                    onClick = {
+                                        val route = Screen.SewDescription.route + "/${sewMethod.id}"
+                                        onNavigateToDescriptionScreen(route)
+                                    }
+                                )
                             }
+                        }
 
 
-
-                          /*  SewMethodList(
+                        /*  SewMethodList(
                                 loading = loading,
                                 scrollState=scrollState,
                                 sewMethods = sewMethods,
@@ -177,7 +186,7 @@ fun HomeScreen(
                                 onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
 
                                 )*/
-                            /* BestsRowsOfHome(
+                        /* BestsRowsOfHome(
                                  onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
                                  loading = loading,
                                  bestOfMonthMethods = bestOfMonthMethods,
@@ -187,17 +196,16 @@ fun HomeScreen(
                              )*/
 
 
-                          //  Spacer(modifier = Modifier.size(70.dp))
-                       // }
+                        //  Spacer(modifier = Modifier.size(70.dp))
+                        // }
                     }
 
-                  //  }
-
-
+                    //  }
 
 
                 }
             }
 
+        }
     }
 }
