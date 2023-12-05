@@ -2,11 +2,8 @@ package com.saeeed.devejump.project.tailoring.presentation.ui.user_profile
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,9 +14,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.icons.Icons
@@ -33,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.TabRow
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -63,6 +59,7 @@ import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 import com.google.accompanist.pager.*
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
+import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -80,9 +77,11 @@ fun UserProfileScreen(
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
     val user=viewModel.user
-    val posts=viewModel.userPosts.value
+    val userPosts=viewModel.userPosts.value
+   // val bookMarkedPosts=viewModel.bookMarkedPosts.value
 LaunchedEffect(Unit ){
     viewModel.getUserPosts()
+    //viewModel.getUserBookMarkedPosts()
 }
     AppTheme(
         displayProgressBar = loading,
@@ -221,7 +220,10 @@ LaunchedEffect(Unit ){
                 }
 
                 Tabs(pagerState = pagerState)
-                TabsContent(pagerState = pagerState, posts = posts)
+                TabsContent(pagerState = pagerState,
+                    viewModel=viewModel,
+                    onNavigateToDescriptionScreen=onNavigateToDescriptionScreen
+                )
 
 
             }
@@ -232,15 +234,34 @@ LaunchedEffect(Unit ){
 }
 @ExperimentalPagerApi
 @Composable
-fun TabsContent(pagerState: PagerState,posts:List<SewMethod>) {
+fun TabsContent(
+    pagerState: PagerState,
+    viewModel: UserProfileViewModel,
+    onNavigateToDescriptionScreen: (String) -> Unit,
+
+    ){
 
     HorizontalPager(state = pagerState) {
 
             page ->
         when (page) {
 
-            0 -> getPosts(posts=posts)
-            1 -> getPosts(posts=posts)
+            0 -> {
+                val userPosts=viewModel.userPosts.value
+                getPosts(
+                    posts=userPosts,
+                    onNavigateToDescriptionScreen = onNavigateToDescriptionScreen
+                )
+
+            }
+            1 ->{
+                 val bookMarkedPosts=viewModel.bookMarkedPosts.value
+                getPosts(
+                    posts=bookMarkedPosts,
+                    onNavigateToDescriptionScreen = onNavigateToDescriptionScreen
+
+                )
+            }
 
 
         }
@@ -316,7 +337,12 @@ fun Tabs(pagerState: PagerState) {
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun getPosts(posts: List<SewMethod>) {
+fun getPosts(
+    posts: List<SewMethod>,
+    onNavigateToDescriptionScreen: (String) -> Unit,
+
+
+    ) {
 
     Column(
 
@@ -331,7 +357,13 @@ fun getPosts(posts: List<SewMethod>) {
             itemsIndexed(
                 items = posts
             ) { index, post ->
-                PostCart(post = post)
+                PostCart(
+                    post = post,
+                    onClick = {
+                        val route = Screen.SewDescription.route + "/${post.id}"
+                        onNavigateToDescriptionScreen(route)
+                    }
+                    )
             }
         }
     }

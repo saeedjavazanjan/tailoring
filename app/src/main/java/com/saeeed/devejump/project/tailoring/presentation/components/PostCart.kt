@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
 import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,12 +30,15 @@ import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun PostCart(post:SewMethod) {
+fun PostCart(
+    post:SewMethod,
+    onClick:()-> Unit
+) {
     if (post.postType.equals("video")){
         Box( modifier = Modifier
             .aspectRatio(1f)
-            .padding(3.dp),
-            contentAlignment = Alignment.Center
+            .padding(3.dp).clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
         ) {
             val requestbuilder= Glide.with(LocalView.current)
             GlideImage(
@@ -62,7 +66,7 @@ fun PostCart(post:SewMethod) {
             contentDescription = "",
             modifier = Modifier
                 .aspectRatio(1f)
-                .padding(3.dp),
+                .padding(3.dp).clickable(onClick=onClick),
             contentScale = ContentScale.Crop,
         )
 
