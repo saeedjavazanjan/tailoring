@@ -38,7 +38,7 @@ constructor(
     val dialogQueue = DialogQueue()
     lateinit var user:UserData
     val userPosts:MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
-
+    val bookMarkedPosts:MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
 
 
 
@@ -80,12 +80,43 @@ constructor(
 
             dataState.data?.let{
                 userPosts.value =it
+                getUserBookMarkedPosts()
             }
-        }/*.catch {
+            dataState.error?.let {
+                dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
+
+            }
+        }.catch {
 
             dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
 
-        }*/
+        }
+            .launchIn(viewModelScope)
+
+    }
+
+    fun getUserBookMarkedPosts(){
+        getUserProfileData.getUserBookMarkedPosts(
+            token = token,
+            userId = USERID,
+            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState->
+            dataState.loading.let {
+                loading.value=it
+            }
+
+            dataState.data?.let{
+                bookMarkedPosts.value =it
+            }
+            dataState.error?.let {
+                dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
+
+            }
+        }.catch {
+
+            dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
+
+        }
             .launchIn(viewModelScope)
 
     }

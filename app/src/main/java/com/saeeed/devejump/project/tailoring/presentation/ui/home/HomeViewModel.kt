@@ -67,14 +67,14 @@ constructor(
     val dialogQueue = DialogQueue()
 
     init {
-        getBanners()
+       // getBanners()
 
 
         savedStateHandle.get<Int>(STATE_KEY_PAGE)?.let { p ->
             setPage(p)
         }
 
-            onTriggerEvent(FollowingsPostsEvent.NewLoad)
+        //    onTriggerEvent(FollowingsPostsEvent.NewLoad)
 
     }
 

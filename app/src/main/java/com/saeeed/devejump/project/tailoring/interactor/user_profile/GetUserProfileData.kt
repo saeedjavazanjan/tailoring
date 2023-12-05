@@ -53,6 +53,32 @@ class GetUserProfileData(
             emit(DataState.success(sewMethods))
         }catch (e:Exception){
             e.printStackTrace()
+            emit(DataState.error(e.message.toString()))
+        }
+
+
+
+
+    }
+
+    fun getUserBookMarkedPosts(
+        token: String,
+        userId: Int,
+        isNetworkAvailable: Boolean
+
+    ):Flow<DataState<List<SewMethod>>> = flow {
+
+        emit(DataState.loading())
+
+        try {
+            val sewMethods = getSewMethodsFromNetwork(
+                token = token,
+                userId = userId,
+            )
+            emit(DataState.success(sewMethods))
+        }catch (e:Exception){
+            e.printStackTrace()
+            emit(DataState.error(e.message.toString()))
         }
 
 
@@ -66,7 +92,7 @@ class GetUserProfileData(
     ): List<SewMethod> {
 
         return dtoMapper.toDomainList(
-            retrofitService.userPosts()
+            retrofitService.search().sewmethods
             //  token = token,
             // page = page,
             //  userId = userId,
