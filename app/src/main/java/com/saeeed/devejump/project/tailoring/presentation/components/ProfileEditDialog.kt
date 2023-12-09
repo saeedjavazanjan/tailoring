@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -31,11 +35,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -51,15 +58,20 @@ import androidx.compose.material3.Card as Card1
 @Composable
 fun ProfileEditDialog(
     showDialog: (Boolean) -> Unit,
-    userData: UserData
+    userData: UserData,
+    applyChanges:()-> Unit
 
 ) {
-
     val userName= remember {
         mutableStateOf(userData.userName)
     }
+    val userBio= remember {
+        mutableStateOf(userData.bio)
+    }
+
     var expanded = remember {
         listOf(
+            mutableStateOf(false),
             mutableStateOf(false),
             mutableStateOf(false),
             ) }
@@ -100,11 +112,34 @@ fun ProfileEditDialog(
                             )
                             if (expanded[0].value) {
                                 TextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .fillMaxWidth(0.9f),
+                                    shape = MaterialTheme.shapes.medium,
                                     value =userName.value
                                     ,
                                     onValueChange ={
                                         userName.value=it
-                                    }
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Done,
+                                    ),
+                                    keyboardActions = KeyboardActions(
+                                        onDone = {
+                                            //  comment()
+                                        }
+                                    ),
+
+                                    colors = TextFieldDefaults.textFieldColors(
+
+                                        textColor = Color.DarkGray,
+                                        placeholderColor = Color.White,
+                                        focusedIndicatorColor = Color.Transparent,
+                                        unfocusedIndicatorColor = Color.Transparent,
+                                        disabledIndicatorColor = Color.Transparent
+                                )
                                 )
                             }
                         }
@@ -164,7 +199,6 @@ fun ProfileEditDialog(
 
                                             },
                                         onClick = {
-                                          //  showDialog.value=true
 
                                         }
                                     ) {
@@ -180,7 +214,84 @@ fun ProfileEditDialog(
                             }
                         }
                     }
+                    Card(
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = 8.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .clickable(onClick = {
+                                expanded[2].value = !expanded[2].value
+                            })
+                    ) {
+                        Column(
 
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(8.dp),
+                                text = stringResource(id = R.string.profile_edit_bio),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            if (expanded[2].value) {
+                                TextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .fillMaxWidth(0.9f),
+                                    shape = MaterialTheme.shapes.medium,
+                                    value =userBio.value
+                                    ,
+                                    onValueChange ={
+                                        userBio.value=it
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Done,
+                                    ),
+                                    keyboardActions = KeyboardActions(
+                                        onDone = {
+                                            //  comment()
+                                        }
+                                    ),
+
+                                    colors = TextFieldDefaults.textFieldColors(
+
+                                        textColor = Color.DarkGray,
+                                        placeholderColor = Color.White,
+                                        focusedIndicatorColor = Color.Transparent,
+                                        unfocusedIndicatorColor = Color.Transparent,
+                                        disabledIndicatorColor = Color.Transparent
+
+
+                                )
+                                )
+
+                            }
+                        }
+
+
+                    }
+                    Button(
+                        colors = ButtonDefaults.buttonColors(Color.LightGray),
+                        shape= RoundedCornerShape(5.dp) ,
+                        modifier = Modifier
+                            .padding(15.dp).fillMaxWidth(),
+                        onClick = {
+                          //  shouldDismiss.value=true
+                            showDialog(false)
+                            applyChanges()
+                            //  showDialog.value=true
+
+                        }
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(5.dp),
+                            text = stringResource(id = R.string.profile_edit_save),
+                            color = Color.DarkGray
+                        )
+                        Icon(Icons.Default.Done, contentDescription = null)
+
+                    }
                 }
 
             }

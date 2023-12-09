@@ -20,7 +20,9 @@ fun ReportAlertDialog(
     ok: () -> Unit,
     cancle : () -> Unit
 ) {
-        AlertDialog(
+
+
+    AlertDialog(
             onDismissRequest = {
             },
             // below line is use to display title of our dialog

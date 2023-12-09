@@ -19,6 +19,9 @@ data class UserDataDto (
     @SerializedName("avatar")
     var avatar:String="",
 
+    @SerializedName("bio")
+    var bio:String="",
+
     @SerializedName("followers")
     var followers:List<UserPublicData> = emptyList(),
 
