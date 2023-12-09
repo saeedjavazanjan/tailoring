@@ -30,6 +30,7 @@
     <string name = "profile_edit_title"> ویرایش پروفایل</string>
     <string name = "profile_edit_user_name">نام کاربری</string>
     <string name = "profile_edit_avatar">تصویر پروفایل</string>
+    <string name = "profile_edit_bio">درباره کاربر</string>
     <string name = "profile_edit_exit"> خروج از حساب</string>
     <string name = "profile_edit_save">ثبت نهایی</string>
     <string name = "profile_edit_choose_photo">انتخاب عکس</string>

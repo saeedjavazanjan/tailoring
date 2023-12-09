@@ -6,6 +6,7 @@ data class UserData (
     var userName:String="",
     var phoneNumber:String="",
     var avatar:String="",
+    var bio:String="",
     var likes:  List<String> = listOf(),
     var bookMarks:   List<String> = listOf(),
     var followers:List<UserPublicData> = listOf(),

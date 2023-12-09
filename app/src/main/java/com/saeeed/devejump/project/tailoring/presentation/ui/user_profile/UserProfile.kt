@@ -85,7 +85,7 @@ fun UserProfileScreen(
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
-    val user=viewModel.user
+    val user=viewModel.user.value!!
     val showDialog =  remember { mutableStateOf(false) }
 
 LaunchedEffect(Unit ){
@@ -97,7 +97,10 @@ LaunchedEffect(Unit ){
             showDialog = {
             showDialog.value=it
              },
-            userData = user
+            userData = user,
+            applyChanges = {
+
+            }
         )
     }
     
@@ -149,7 +152,7 @@ LaunchedEffect(Unit ){
                         contentScale = ContentScale.Crop,
                     )
                     Text(
-                        text = "سلام من چند سالیه لباس کودک می دوزم . ممنون میشم در مورد کارام نظر بدید",
+                        text = user.bio,
                         modifier = Modifier
                             .wrapContentWidth(Alignment.Start)
                             .padding(10.dp)
@@ -381,29 +384,29 @@ fun getPosts(
 
     ) {
 
-    Column(
+        Column(
 
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(5.dp)
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(5.dp)
         ) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3)
+            ) {
 
-            itemsIndexed(
-                items = posts
-            ) { index, post ->
-                PostCart(
-                    post = post,
-                    onClick = {
-                        val route = Screen.SewDescription.route + "/${post.id}"
-                        onNavigateToDescriptionScreen(route)
-                    }
+                itemsIndexed(
+                    items = posts
+                ) { index, post ->
+                    PostCart(
+                        post = post,
+                        onClick = {
+                            val route = Screen.SewDescription.route + "/${post.id}"
+                            onNavigateToDescriptionScreen(route)
+                        }
                     )
+                }
             }
         }
-    }
 
 }
 

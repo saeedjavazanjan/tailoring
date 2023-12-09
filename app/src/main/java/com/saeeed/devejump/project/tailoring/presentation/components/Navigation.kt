@@ -42,7 +42,7 @@ fun Navigation(
     val homeViewModel: HomeViewModel = viewModel()
     val splashViewModel:SplashViewModel= viewModel()
     val userProfileViewModel:UserProfileViewModel= viewModel()
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.Splash.route) {
 
         composable(Screen.Splash.route){
             SplashScreen(

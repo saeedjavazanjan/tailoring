@@ -23,6 +23,9 @@ data class UserDataEntity(
     @ColumnInfo(name="avatar")
     var avatar: String,
 
+    @ColumnInfo(name="bio")
+    var bio: String,
+
     @ColumnInfo(name="followers")
     var followers: String,
 

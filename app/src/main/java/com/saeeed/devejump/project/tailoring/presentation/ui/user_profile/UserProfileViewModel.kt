@@ -36,7 +36,7 @@ constructor(
     ) : ViewModel() {
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
-    lateinit var user:UserData
+    val user:MutableState<UserData?> = mutableStateOf(null)
     val userPosts:MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
     val bookMarkedPosts:MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
 
@@ -55,7 +55,7 @@ constructor(
     fun getUserData(){
         getUserProfileData.getUserData().onEach { dataState->
             dataState.data.let{
-                user=it!!
+                user.value=it!!
 
             }
 
