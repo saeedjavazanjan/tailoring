@@ -74,7 +74,7 @@ constructor(
             setPage(p)
         }
 
-        //    onTriggerEvent(FollowingsPostsEvent.NewLoad)
+        //   onTriggerEvent(FollowingsPostsEvent.NewLoad)
 
     }
 

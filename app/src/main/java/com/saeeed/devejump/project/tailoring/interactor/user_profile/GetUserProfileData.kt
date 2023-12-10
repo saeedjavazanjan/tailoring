@@ -8,6 +8,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
+import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.userData
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,8 @@ class GetUserProfileData(
     private val entityMapper: SewEntityMapper,
     private val retrofitService: RetrofitService,
     private val dtoMapper: SewMethodMapper,
-    private val userDataEntityMapper: UserDataEntityMapper
+    private val userDataEntityMapper: UserDataEntityMapper,
+    private val userDtoMapper:UserDataMapper
 
     ) {
 
@@ -97,5 +99,28 @@ class GetUserProfileData(
             // page = page,
             //  userId = userId,
         )
+    }
+
+      fun updateUserData(
+        userData: UserData?
+    ):Flow<DataState<Boolean>> = flow {
+        emit(DataState.loading())
+       val databaseUpdate= sewMethodDao.updateUserData(listOf(userDataEntityMapper.mapFromDomainModel(userData)))
+
+        if (databaseUpdate>0){
+            try {
+             //   retrofitService.updateUseData(USERID,userDtoMapper.mapFromDomainModel(userData))
+                emit(DataState.success(true))
+
+            }catch (e:Exception){
+                emit(DataState.success(false))
+
+                emit(DataState.error("خطای ارسال اطلاعات"))
+
+            }
+        }else{
+            emit(DataState.error("خطای به روز رسانی دیتا بیس"))
+        }
+
     }
 }

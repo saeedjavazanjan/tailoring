@@ -8,7 +8,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.domain.model.UserPublicData
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
 
-class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData> {
+class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData?> {
     override fun mapToDomainModel(model: UserDataEntity): UserData {
         return UserData(
             userId = model.userId,
@@ -25,9 +25,9 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData> {
             )
     }
 
-    override fun mapFromDomainModel(domainModel: UserData): UserDataEntity {
+    override fun mapFromDomainModel(domainModel: UserData?): UserDataEntity {
         return UserDataEntity(
-            userId = domainModel.userId,
+            userId = domainModel!!.userId,
             userName=domainModel.userName,
             phoneNumber = domainModel.phoneNumber,
             avatar = domainModel.avatar,

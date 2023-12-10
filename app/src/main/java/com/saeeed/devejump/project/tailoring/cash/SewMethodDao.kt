@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntity
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntity
@@ -19,7 +20,7 @@ interface SewMethodDao {
     suspend fun insertSew(sewPost: SewEntity): Long
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserData(userData: UserDataEntity): Long
+    suspend fun insertUserData(userData: UserDataEntity)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertComment(comment: CommentEntity)
 
@@ -29,6 +30,11 @@ interface SewMethodDao {
 
     @Query("SELECT * FROM userData WHERE userid = :id")
     suspend fun getUserData(id: Int):UserDataEntity
+
+
+    @Update
+    suspend fun updateUserData(user:List<UserDataEntity>):Int
+
 
     @Query("UPDATE userData SET bookMarks = :bookmarkState WHERE userid LIKE :id ")
     suspend fun updateBookmarks(bookmarkState:String,id:Int):Int

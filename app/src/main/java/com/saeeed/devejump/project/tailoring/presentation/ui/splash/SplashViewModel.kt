@@ -8,6 +8,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.interactor.Splash.GetUserStuffsFromServer
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.TAG
+import com.saeeed.devejump.project.tailoring.utils.USERID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -24,6 +25,10 @@ class SplashViewModel
     val loading = mutableStateOf(false)
     val loaded= mutableStateOf(false)
 
+    init {
+        getUserData(USERID)
+
+    }
     fun getUserData(userId:Int){
             getUserData.execute(userId).onEach {dataState->
                 loading.value = dataState.loading
