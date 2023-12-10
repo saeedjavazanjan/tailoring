@@ -61,6 +61,13 @@ interface RetrofitService {
         @Query("query") query: Int
     ):UserDataDto
 
+    @POST("userData")
+    suspend fun updateUseData(
+        // @Header("Authorization") token: String,
+        @Field("UserId") userId: Int,
+        @Field("userDto") userDto:UserDataDto
+    ):Int
+
     @GET("comments")
     suspend fun onePostComments(
         //  @Header("Authorization") token: String,

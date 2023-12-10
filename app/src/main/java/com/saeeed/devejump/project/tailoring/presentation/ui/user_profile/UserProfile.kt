@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.user_profile
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,9 +31,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.TabRow
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -53,6 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.net.toUri
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -68,10 +69,9 @@ import com.google.accompanist.pager.*
 import com.saeeed.devejump.project.tailoring.presentation.components.ProfileEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
-import java.nio.file.WatchEvent
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalGlideComposeApi::class,
     ExperimentalPagerApi::class, ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
 )
@@ -85,192 +85,201 @@ fun UserProfileScreen(
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
-    val user=viewModel.user.value!!
     val showDialog =  remember { mutableStateOf(false) }
+    val composableScope = rememberCoroutineScope()
 
 LaunchedEffect(Unit ){
     viewModel.getUserPosts()
+    viewModel.getUserData()
     //viewModel.getUserBookMarkedPosts()
 }
-    if(showDialog.value){
-        ProfileEditDialog(
-            showDialog = {
-            showDialog.value=it
-             },
-            userData = user,
-            applyChanges = {
+    val user=viewModel.user.value
 
-            }
-        )
-    }
-    
-    AppTheme(
-        displayProgressBar = loading,
-        darkTheme = isDarkTheme,
-        isNetworkAvailable = isNetworkAvailable,
-        dialogQueue = dialogQueue.queue.value,
-        scaffoldState = scaffoldState
+    if( user !=null) {
+        if (showDialog.value) {
+            ProfileEditDialog(
+                showDialog = {
+                    showDialog.value = it
+                },
+                userData = user,
+                applyChanges = { imgUri, name, bio ->
+                    user!!.userName = name
+                    user!!.avatar = imgUri.toString()
+                    user!!.bio = bio
+                    viewModel.updateUserData(user, scaffoldState, composableScope)
+                }
+            )
+        }
 
-    ) {
-        val pagerState = rememberPagerState(pageCount =2, initialPage = 0)
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-
-        Scaffold(
-            topBar= {
-                TopBar()
-            }
+        AppTheme(
+            displayProgressBar = loading,
+            darkTheme = isDarkTheme,
+            isNetworkAvailable = isNetworkAvailable,
+            dialogQueue = dialogQueue.queue.value,
+            scaffoldState = scaffoldState
 
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
+            val pagerState = rememberPagerState(pageCount = 2, initialPage = 0)
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
-                Spacer(modifier = Modifier.size(50.dp))
-                ConstraintLayout(
-                    modifier = Modifier
-                        .fillMaxWidth(1f)
-                        .padding(top = 12.dp, start = 20.dp, end = 20.dp, bottom = 12.dp),
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    scaffoldState = scaffoldState,
+                    topBar = {
+                        TopBar()
+                    }
+
                 ) {
-                    val (avatarHolder, userName,bio, buttons, followers, following) = createRefs()
-
-                    GlideImage(
-                        model = user.avatar,
-                        loading = placeholder(R.drawable.empty_plate),
-                        contentDescription = "",
+                    Column(
                         modifier = Modifier
-                            .height(90.dp)
-                            .width(90.dp)
-                            .padding(10.dp)
-                            .clip(CircleShape)
-                            .constrainAs(avatarHolder) {
-                                start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(userName.top)
-                                end.linkTo(bio.start)
-                            },
-                        contentScale = ContentScale.Crop,
-                    )
-                    Text(
-                        text = user.bio,
-                        modifier = Modifier
-                            .wrapContentWidth(Alignment.Start)
-                            .padding(10.dp)
-                            .width(200.dp)
-                            .height(150.dp)
-                            .constrainAs(bio) {
-                                start.linkTo(avatarHolder.start)
-                                top.linkTo(avatarHolder.top)
-                                end.linkTo(parent.end)
-                            },
-                        style = MaterialTheme.typography.bodyMedium
-
-                    )
-
-                    Text(
-                        text = user.userName,
-                        modifier = Modifier
-                            .wrapContentWidth(Alignment.Start)
-                            .padding(10.dp)
-                            .constrainAs(userName) {
-                                start.linkTo(parent.start)
-                                top.linkTo(avatarHolder.bottom)
-                            },
-                        style = MaterialTheme.typography.bodyLarge
-
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .constrainAs(buttons) {
-                                top.linkTo(userName.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                    ){
-                        Button(
-                            colors = ButtonDefaults.buttonColors(Color.LightGray),
-                            shape= RoundedCornerShape(5.dp) ,
-                            onClick = {
-                                showDialog.value=true
-
-                            }
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(5.dp),
-                                text = "تنظیمات پروفایل",
-                                color = Color.DarkGray
-                            )
-                            Icon(Icons.Default.Settings, contentDescription = null)
-
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Button(
-                            colors = ButtonDefaults.buttonColors(Color.LightGray),
-                            shape= RoundedCornerShape(5.dp) ,
-                            onClick = {
-
-                            }
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(5.dp),
-                                text = "حساب کاربری",
-                                color = Color.DarkGray
-                            )
-                            Icon(Icons.Default.ShoppingCart, contentDescription = null)
-                        }
-                    }
-
-                    TextButton(
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .constrainAs(followers) {
-                                top.linkTo(buttons.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(following.start)
-
-                            },
-                        onClick = {
-                            /*TODO*/
-                        }
+                            .fillMaxSize()
                     ) {
-                        Text(text = "دنبال کننده گان ${user.followers.size}")
 
-                    }
+                        ConstraintLayout(
+                            modifier = Modifier
+                                .fillMaxWidth(1f)
+                                .padding(top = 12.dp, start = 20.dp, end = 20.dp, bottom = 12.dp),
+                        ) {
+                            val (avatarHolder, username, bio, buttons, followers, following) = createRefs()
 
-                    TextButton(
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .constrainAs(following) {
-                                top.linkTo(buttons.bottom)
-                                start.linkTo(followers.end)
-                                end.linkTo(parent.end)
+                            GlideImage(
+                                model = user?.avatar,
+                                loading = placeholder(R.drawable.empty_plate),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .height(90.dp)
+                                    .width(90.dp)
+                                    .padding(10.dp)
+                                    .clip(CircleShape)
+                                    .constrainAs(avatarHolder) {
+                                        start.linkTo(parent.start)
+                                        top.linkTo(parent.top)
+                                        bottom.linkTo(username.top)
+                                        end.linkTo(bio.start)
+                                    },
+                                contentScale = ContentScale.Crop,
+                            )
+                            Text(
+                                text = user!!.bio,
+                                modifier = Modifier
+                                    .wrapContentWidth(Alignment.Start)
+                                    .padding(10.dp)
+                                    .width(200.dp)
+                                    .height(150.dp)
+                                    .constrainAs(bio) {
+                                        start.linkTo(avatarHolder.start)
+                                        top.linkTo(avatarHolder.top)
+                                        end.linkTo(parent.end)
+                                    },
+                                style = MaterialTheme.typography.bodyMedium
 
-                            },
-                        onClick = {
-                            /*TODO*/
+                            )
+
+                            Text(
+                                text = user.userName,
+                                modifier = Modifier
+                                    .wrapContentWidth(Alignment.Start)
+                                    .padding(10.dp)
+                                    .constrainAs(username) {
+                                        start.linkTo(parent.start)
+                                        top.linkTo(avatarHolder.bottom)
+                                    },
+                                style = MaterialTheme.typography.bodyLarge
+
+                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .constrainAs(buttons) {
+                                        top.linkTo(username.bottom)
+                                        start.linkTo(parent.start)
+                                        end.linkTo(parent.end)
+                                    }
+                            ) {
+                                Button(
+                                    colors = ButtonDefaults.buttonColors(Color.LightGray),
+                                    shape = RoundedCornerShape(5.dp),
+                                    onClick = {
+                                        showDialog.value = true
+
+                                    }
+                                ) {
+                                    Text(
+                                        modifier = Modifier.padding(5.dp),
+                                        text = "تنظیمات پروفایل",
+                                        color = Color.DarkGray
+                                    )
+                                    Icon(Icons.Default.Settings, contentDescription = null)
+
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                Button(
+                                    colors = ButtonDefaults.buttonColors(Color.LightGray),
+                                    shape = RoundedCornerShape(5.dp),
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Text(
+                                        modifier = Modifier.padding(5.dp),
+                                        text = "حساب کاربری",
+                                        color = Color.DarkGray
+                                    )
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null)
+                                }
+                            }
+
+                            TextButton(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .constrainAs(followers) {
+                                        top.linkTo(buttons.bottom)
+                                        start.linkTo(parent.start)
+                                        end.linkTo(following.start)
+
+                                    },
+                                onClick = {
+                                    /*TODO*/
+                                }
+                            ) {
+                                Text(text = "دنبال کننده گان ${user.followers.size}")
+
+                            }
+
+                            TextButton(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .constrainAs(following) {
+                                        top.linkTo(buttons.bottom)
+                                        start.linkTo(followers.end)
+                                        end.linkTo(parent.end)
+
+                                    },
+                                onClick = {
+                                    /*TODO*/
+                                }
+                            ) {
+                                Text(text = "دنبال شونده گان ${user.following.size}")
+
+                            }
+
                         }
-                    ) {
-                        Text(text = "دنبال شونده گان ${user.following.size}")
+
+                        Tabs(pagerState = pagerState)
+                        TabsContent(
+                            pagerState = pagerState,
+                            viewModel = viewModel,
+                            onNavigateToDescriptionScreen = onNavigateToDescriptionScreen
+                        )
+
 
                     }
-
                 }
-
-                Tabs(pagerState = pagerState)
-                TabsContent(pagerState = pagerState,
-                    viewModel=viewModel,
-                    onNavigateToDescriptionScreen=onNavigateToDescriptionScreen
-                )
-
-
             }
         }
-    }
-    }
 
-
+    }
 }
 @ExperimentalPagerApi
 @Composable

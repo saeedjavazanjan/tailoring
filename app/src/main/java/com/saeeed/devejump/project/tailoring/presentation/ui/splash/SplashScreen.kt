@@ -29,10 +29,10 @@ fun SplashScreen(
         scaffoldState = scaffoldState
 
     ) {
-        LaunchedEffect(Unit){
+       /* LaunchedEffect(Unit){
             viewModel.getUserData(USERID)
 
-        }
+        }*/
     }
 
     if (viewModel.loaded.value){

@@ -197,6 +197,7 @@ object AppModule {
         entityMapper: SewEntityMapper,
         userDataEntityMapper: UserDataEntityMapper,
         sewMethodDao: SewMethodDao,
+        userDataMapper: UserDataMapper
 
     ): GetUserProfileData {
         return GetUserProfileData(
@@ -204,7 +205,8 @@ object AppModule {
             dtoMapper = dtoMapper,
             entityMapper = entityMapper,
             userDataEntityMapper = userDataEntityMapper,
-            sewMethodDao = sewMethodDao
+            sewMethodDao = sewMethodDao,
+            userDtoMapper =userDataMapper
 
 
         )

@@ -1,9 +1,17 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -47,6 +56,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.net.toUri
+import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -58,15 +69,28 @@ import androidx.compose.material3.Card as Card1
 @Composable
 fun ProfileEditDialog(
     showDialog: (Boolean) -> Unit,
-    userData: UserData,
-    applyChanges:()-> Unit
+    userData: UserData?,
+    applyChanges:(
+        imageUri:Uri,
+        userName:String,
+            bio:String
+            )-> Unit
 
 ) {
+    val context = LocalContext.current
+
+    var imageUri = remember {
+        mutableStateOf<Uri?>(userData!!.avatar.toUri())
+    }
+    val launcher = rememberLauncherForActivityResult(contract =
+    ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri.value = uri
+    }
     val userName= remember {
-        mutableStateOf(userData.userName)
+        mutableStateOf(userData!!.userName)
     }
     val userBio= remember {
-        mutableStateOf(userData.bio)
+        mutableStateOf(userData!!.bio)
     }
 
     var expanded = remember {
@@ -117,7 +141,7 @@ fun ProfileEditDialog(
                                         .padding(8.dp)
                                         .fillMaxWidth(0.9f),
                                     shape = MaterialTheme.shapes.medium,
-                                    value =userName.value
+                                    value =userName.value!!
                                     ,
                                     onValueChange ={
                                         userName.value=it
@@ -169,22 +193,40 @@ fun ProfileEditDialog(
                                 modifier = Modifier.padding(8.dp)
                                 ) {
                                     val (avatarHolder,selectImageButton) = createRefs()
+                                    if(imageUri.value ==null){
+                                        GlideImage(
+                                            model = userData!!.avatar,
+                                            loading = placeholder(R.drawable.empty_plate),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .height(50.dp)
+                                                .width(50.dp)
+                                                .fillMaxWidth(0.4f)
+                                                .clip(CircleShape)
+                                                .constrainAs(avatarHolder) {
+                                                    start.linkTo(parent.start)
+                                                    top.linkTo(parent.top)
+                                                },
+                                            contentScale = ContentScale.Crop,
+                                        )
+                                    }else{
+                                        GlideImage(
+                                            model = imageUri.value,
+                                            loading = placeholder(R.drawable.empty_plate),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .height(50.dp)
+                                                .width(50.dp)
+                                                .fillMaxWidth(0.4f)
+                                                .clip(CircleShape)
+                                                .constrainAs(avatarHolder) {
+                                                    start.linkTo(parent.start)
+                                                    top.linkTo(parent.top)
+                                                },
+                                            contentScale = ContentScale.Crop,
+                                        )
+                                    }
 
-                                    GlideImage(
-                                        model = userData.avatar,
-                                        loading = placeholder(R.drawable.empty_plate),
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .height(50.dp)
-                                            .width(50.dp)
-                                            .fillMaxWidth(0.4f)
-                                            .clip(CircleShape)
-                                            .constrainAs(avatarHolder) {
-                                                start.linkTo(parent.start)
-                                                top.linkTo(parent.top)
-                                            },
-                                        contentScale = ContentScale.Crop,
-                                    )
                                     Button(
                                         colors = ButtonDefaults.buttonColors(Color.LightGray),
                                         shape= RoundedCornerShape(5.dp) ,
@@ -199,6 +241,7 @@ fun ProfileEditDialog(
 
                                             },
                                         onClick = {
+                                            launcher.launch("image/*")
 
                                         }
                                     ) {
@@ -239,7 +282,7 @@ fun ProfileEditDialog(
                                         .padding(8.dp)
                                         .fillMaxWidth(0.9f),
                                     shape = MaterialTheme.shapes.medium,
-                                    value =userBio.value
+                                    value =userBio.value!!
                                     ,
                                     onValueChange ={
                                         userBio.value=it
@@ -275,12 +318,17 @@ fun ProfileEditDialog(
                         colors = ButtonDefaults.buttonColors(Color.LightGray),
                         shape= RoundedCornerShape(5.dp) ,
                         modifier = Modifier
-                            .padding(15.dp).fillMaxWidth(),
+                            .padding(15.dp)
+                            .fillMaxWidth(),
                         onClick = {
                           //  shouldDismiss.value=true
                             showDialog(false)
-                            applyChanges()
-                            //  showDialog.value=true
+                            applyChanges(
+                                imageUri.value!!,
+                                userName.value!!,
+                                userBio.value!!
+
+                            )
 
                         }
                     ) {
@@ -298,4 +346,5 @@ fun ProfileEditDialog(
 
         }
     }
+
 }
