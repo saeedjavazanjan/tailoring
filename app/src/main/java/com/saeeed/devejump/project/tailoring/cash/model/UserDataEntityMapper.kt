@@ -2,7 +2,6 @@ package com.saeeed.devejump.project.tailoring.cash.model
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.CommentOnSpecificPost
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.domain.model.UserPublicData
@@ -16,8 +15,8 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData?> {
             phoneNumber = model.phoneNumber,
             avatar = model.avatar,
             bio=model.bio,
-            followers = convertStringToUserList(model.followers),
-            following = convertStringToUserList(model.following),
+            followers = model.followers,
+            following = model.following,
             likes = convertStringToList(model.liKes),
             bookMarks = convertStringToList (model.bookMarks),
             comments = convertStringToCommentList(model.comments)
@@ -32,8 +31,8 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData?> {
             phoneNumber = domainModel.phoneNumber,
             avatar = domainModel.avatar,
             bio=domainModel.bio,
-            followers = convertUserListToString(domainModel.followers),
-            following = convertUserListToString(domainModel.following),
+            followers = domainModel.followers,
+            following = domainModel.following,
             liKes = convertListToString(domainModel.likes),
             bookMarks =convertListToString (domainModel.bookMarks),
             comments = convertCommentListToString( domainModel.comments)

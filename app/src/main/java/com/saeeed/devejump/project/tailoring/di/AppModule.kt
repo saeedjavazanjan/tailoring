@@ -7,12 +7,16 @@ import com.saeeed.devejump.project.tailoring.BaseApplication
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
 import com.saeeed.devejump.project.tailoring.cash.model.CommentEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.FollowersEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.FollowingsEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.interactor.Splash.GetUserStuffsFromServer
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
+import com.saeeed.devejump.project.tailoring.interactor.followers.GetFollowersList
+import com.saeeed.devejump.project.tailoring.interactor.followings.GetFollowingsList
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetHomeData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
@@ -21,6 +25,7 @@ import com.saeeed.devejump.project.tailoring.interactor.user_profile.GetUserProf
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
+import com.saeeed.devejump.project.tailoring.network.model.PeoplesMapper
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
@@ -51,6 +56,12 @@ object AppModule {
     @Provides
     fun provideMapper(): SewMethodMapper {
         return SewMethodMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideFollowersMapper(): PeoplesMapper {
+        return PeoplesMapper()
     }
 
     @Singleton
@@ -161,6 +172,17 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideFollowersEntityMapper(): FollowersEntityMapper {
+        return FollowersEntityMapper()
+    }
+    @Singleton
+    @Provides
+    fun provideFollowingsEntityMapper(): FollowingsEntityMapper {
+        return FollowingsEntityMapper()
+    }
+
+    @Singleton
+    @Provides
     fun provideSearchRecipe(
         retrofitService: RetrofitService,
         sewMethodDao: SewMethodDao,
@@ -174,6 +196,43 @@ object AppModule {
             dtoMapper = sewDtoMapper,
         )
     }
+
+    @Singleton
+    @Provides
+    fun provideGetFollowersList(
+        retrofitService: RetrofitService,
+        sewMethodDao: SewMethodDao,
+        followersEntityMapper: FollowersEntityMapper,
+        dtoMapper: PeoplesMapper,
+    ): GetFollowersList {
+        return GetFollowersList(
+            retrofitService = retrofitService,
+            sewMethodDao = sewMethodDao,
+            followersEntityMapper = followersEntityMapper,
+            dtoMapper = dtoMapper,
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetFollowingsList(
+        retrofitService: RetrofitService,
+        sewMethodDao: SewMethodDao,
+        followingsEntityMapper: FollowingsEntityMapper,
+        dtoMapper: PeoplesMapper,
+    ): GetFollowingsList {
+        return GetFollowingsList(
+            retrofitService = retrofitService,
+            sewMethodDao = sewMethodDao,
+            followingsEntityMapper = followingsEntityMapper,
+            dtoMapper = dtoMapper,
+        )
+    }
+
+
+
+
+
     @Singleton
     @Provides
     fun provideGetHomeData(

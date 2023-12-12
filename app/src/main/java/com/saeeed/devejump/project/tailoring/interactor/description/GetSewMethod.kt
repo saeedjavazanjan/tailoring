@@ -1,15 +1,10 @@
 package com.saeeed.devejump.project.tailoring.interactor.description
 
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
-import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
-import com.saeeed.devejump.project.tailoring.cash.model.CommentEntityMapper
-import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
-import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
-import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

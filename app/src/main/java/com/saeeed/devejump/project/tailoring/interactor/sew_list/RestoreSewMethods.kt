@@ -4,7 +4,7 @@ import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
-import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
+import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -21,14 +21,14 @@ class RestoreSewMethods(
             // query the cache
             val cacheResult = if (query.isBlank()){
                 sewMethodDao.restoreAllSewMethods(
-                    pageSize = RECIPE_PAGINATION_PAGE_SIZE,
+                    pageSize = POSTS_PAGINATION_PAGE_SIZE,
                     page = page
                 )
             }
             else{
                 sewMethodDao.restoreSewMethods(
                     query = query,
-                    pageSize = RECIPE_PAGINATION_PAGE_SIZE,
+                    pageSize = POSTS_PAGINATION_PAGE_SIZE,
                     page = page
                 )
             }

@@ -141,19 +141,16 @@ fun ProfileEditDialog(
                                         .padding(8.dp)
                                         .fillMaxWidth(0.9f),
                                     shape = MaterialTheme.shapes.medium,
-                                    value =userName.value!!
+                                    value =userName.value!!,
+                                    maxLines = 1,
+                                    singleLine = true
                                     ,
                                     onValueChange ={
                                         userName.value=it
                                     },
                                     keyboardOptions = KeyboardOptions(
                                         keyboardType = KeyboardType.Text,
-                                        imeAction = ImeAction.Done,
-                                    ),
-                                    keyboardActions = KeyboardActions(
-                                        onDone = {
-                                            //  comment()
-                                        }
+                                        imeAction = ImeAction.Default,
                                     ),
 
                                     colors = TextFieldDefaults.textFieldColors(
@@ -282,19 +279,14 @@ fun ProfileEditDialog(
                                         .padding(8.dp)
                                         .fillMaxWidth(0.9f),
                                     shape = MaterialTheme.shapes.medium,
-                                    value =userBio.value!!
-                                    ,
+                                    value =userBio.value!!,
+                                    maxLines = 4,
                                     onValueChange ={
                                         userBio.value=it
                                     },
                                     keyboardOptions = KeyboardOptions(
                                         keyboardType = KeyboardType.Text,
-                                        imeAction = ImeAction.Done,
-                                    ),
-                                    keyboardActions = KeyboardActions(
-                                        onDone = {
-                                            //  comment()
-                                        }
+                                        imeAction = ImeAction.Default,
                                     ),
 
                                     colors = TextFieldDefaults.textFieldColors(

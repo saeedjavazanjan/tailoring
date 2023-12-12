@@ -13,6 +13,11 @@ sealed class Screen(
     object Home : Screen("home")
     object Profile : Screen("profile")
     object School : Screen("school")
+
+    object Followers:Screen("followers")
+
+    object Followings:Screen("followings")
+
     object UserProfile : Screen("timeLine")
 
 }

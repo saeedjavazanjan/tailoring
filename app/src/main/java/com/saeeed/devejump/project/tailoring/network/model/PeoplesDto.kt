@@ -1,10 +1,8 @@
 package com.saeeed.devejump.project.tailoring.network.model
 
 import com.google.gson.annotations.SerializedName
-import com.saeeed.devejump.project.tailoring.domain.model.CommentOnSpecificPost
-import com.saeeed.devejump.project.tailoring.domain.model.UserPublicData
 
-data class UserDataDto (
+data class PeoplesDto (
 
     @SerializedName("userid")
     var userId: Int,
@@ -20,22 +18,14 @@ data class UserDataDto (
 
     @SerializedName("bio")
     var bio:String="",
-
     @SerializedName("followers")
     var followers:Int=0,
 
     @SerializedName("following")
     var following:Int=0,
 
-    @SerializedName("likes")
-    var likes: List<String> = emptyList(),
+    @SerializedName("considered_user_id")
+    var consideredUseId:Int
 
-    @SerializedName("bookMarks")
-    var bookMarks: List<String> = emptyList(),
-
-    @SerializedName("comments")
-    var comments: List<CommentOnSpecificPost> = emptyList()
-
-    )
-
+)
 

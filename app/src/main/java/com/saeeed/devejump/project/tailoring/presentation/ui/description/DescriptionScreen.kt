@@ -785,7 +785,8 @@ fun commentTextField(
                     keyboardActions = KeyboardActions(
                         onDone = {
                             //  comment()
-                            focusManager.clearFocus()                        }
+                            focusManager.clearFocus()
+                        }
                     ),
 
                     colors = TextFieldDefaults.textFieldColors(

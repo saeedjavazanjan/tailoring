@@ -7,12 +7,15 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
+import com.saeeed.devejump.project.tailoring.cash.model.FollowersEntity
+import com.saeeed.devejump.project.tailoring.cash.model.FollowingEntity
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntity
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntity
-import com.saeeed.devejump.project.tailoring.cash.relations.PostWitComment
-import com.saeeed.devejump.project.tailoring.domain.model.Comment
-import com.saeeed.devejump.project.tailoring.domain.model.UserData
-import com.saeeed.devejump.project.tailoring.utils.RECIPE_PAGINATION_PAGE_SIZE
+import com.saeeed.devejump.project.tailoring.cash.relations.CommentsByPostId
+import com.saeeed.devejump.project.tailoring.cash.relations.FollowersByConsideredUserId
+import com.saeeed.devejump.project.tailoring.cash.relations.FollowingsByConsideredUserId
+import com.saeeed.devejump.project.tailoring.utils.FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
+import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 
 @Dao
 interface SewMethodDao {
@@ -26,8 +29,15 @@ interface SewMethodDao {
 
     @Transaction
     @Query("SELECT * FROM sewMethods WHERE id = :postId")
-    suspend fun getPostWithComment(postId: Int): List<PostWitComment>
+    suspend fun getPostWithComment(postId: Int): List<CommentsByPostId>
 
+   /* @Transaction
+    @Query("SELECT * FROM userData WHERE userid = :userID")
+    suspend fun getUserFollowers(userID: Int): List<FollowersByConsideredUserId>
+
+    @Transaction
+    @Query("SELECT * FROM userData WHERE userid = :userID")
+    suspend fun getUserFollowings(userID: Int): List<FollowingsByConsideredUserId>*/
     @Query("SELECT * FROM userData WHERE userid = :id")
     suspend fun getUserData(id: Int):UserDataEntity
 
@@ -54,8 +64,11 @@ interface SewMethodDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSewMethods(post: List<SewEntity>): LongArray
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUserFollowers(follower: List<FollowersEntity>): LongArray
 
-
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUserFollowings(following: List<FollowingEntity>): LongArray
    /* @Query("SELECT EXISTS(SELECT bookMars FROM userData WHERE id = :id)")
     fun isBookMarkedOrNot(id : Int) : Boolean*/
     /*@Query("SELECT id FROM bookMarkedSewMethods WHERE id = :id")
@@ -86,8 +99,20 @@ interface SewMethodDao {
     suspend fun searchSewMethods(
         query: String,
         page: Int,
-        pageSize: Int = RECIPE_PAGINATION_PAGE_SIZE
+        pageSize: Int = POSTS_PAGINATION_PAGE_SIZE
     ): List<SewEntity>
+
+
+    @Query("""
+        SELECT * FROM followers 
+        WHERE user_name LIKE '%' || :query || '%'
+        ORDER BY user_name DESC LIMIT :pageSize OFFSET ((:page - 1) * :pageSize)
+        """)
+    suspend fun searchFollowers(
+        query: String,
+        page: Int,
+        pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
+    ): List<FollowersEntity>
 
     /**
      * Same as 'searchRecipes' function, but no query.
@@ -98,8 +123,26 @@ interface SewMethodDao {
     """)
     suspend fun getAllSewMethods(
         page: Int,
-        pageSize: Int = RECIPE_PAGINATION_PAGE_SIZE
+        pageSize: Int = POSTS_PAGINATION_PAGE_SIZE
     ): List<SewEntity>
+
+    @Query("""
+        SELECT * FROM followers 
+        ORDER BY user_name DESC LIMIT :pageSize OFFSET ((:page - 1) * :pageSize)
+    """)
+    suspend fun getAllFollowers(
+        page: Int,
+        pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
+    ): List<FollowersEntity>
+
+    @Query("""
+        SELECT * FROM followings
+        ORDER BY user_name DESC LIMIT :pageSize OFFSET ((:page - 1) * :pageSize)
+    """)
+    suspend fun getAllFollowings(
+        page: Int,
+        pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
+    ): List<FollowingEntity>
 
     /**
      * Restore Recipes after process death
@@ -113,8 +156,31 @@ interface SewMethodDao {
     suspend fun restoreSewMethods(
         query: String,
         page: Int,
-        pageSize: Int = RECIPE_PAGINATION_PAGE_SIZE
+        pageSize: Int = POSTS_PAGINATION_PAGE_SIZE
     ): List<SewEntity>
+
+
+    @Query("""
+        SELECT * FROM followers 
+        WHERE user_name LIKE '%' || :query || '%'
+        ORDER BY user_name DESC LIMIT (:page * :pageSize)
+        """)
+    suspend fun restoreFollowers(
+        query: String,
+        page: Int,
+        pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
+    ): List<FollowersEntity>
+
+    @Query("""
+        SELECT * FROM followings 
+        WHERE user_name LIKE '%' || :query || '%'
+        ORDER BY user_name DESC LIMIT (:page * :pageSize)
+        """)
+    suspend fun restoreFollowings(
+        query: String,
+        page: Int,
+        pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
+    ): List<FollowingEntity>
 
     /**
      * Same as 'restoreRecipes' function, but no query.
@@ -125,7 +191,25 @@ interface SewMethodDao {
     """)
     suspend fun restoreAllSewMethods(
         page: Int,
-        pageSize: Int = RECIPE_PAGINATION_PAGE_SIZE
+        pageSize: Int = POSTS_PAGINATION_PAGE_SIZE
     ): List<SewEntity>
+
+    @Query("""
+        SELECT * FROM followers 
+        ORDER BY user_name DESC LIMIT (:page * :pageSize)
+    """)
+    suspend fun restoreAllFollowers(
+        page: Int,
+        pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
+    ): List<FollowersEntity>
+
+    @Query("""
+        SELECT * FROM followers 
+        ORDER BY user_name DESC LIMIT (:page * :pageSize)
+    """)
+    suspend fun restoreAllFollowings(
+        page: Int,
+        pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
+    ): List<FollowingEntity>
 }
 

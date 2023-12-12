@@ -1,7 +1,6 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.user_profile
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -53,7 +51,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.net.toUri
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -81,7 +78,9 @@ fun UserProfileScreen(
     isNetworkAvailable: Boolean,
     viewModel: UserProfileViewModel,
     onNavigateToDescriptionScreen: (String) -> Unit,
-) {
+    onNavigateToFollowersScreen: ()->Unit,
+    onNavigateToFollowingsScreen: ()->Unit
+    ) {
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
@@ -161,6 +160,7 @@ LaunchedEffect(Unit ){
                             )
                             Text(
                                 text = user!!.bio,
+                                maxLines = 4,
                                 modifier = Modifier
                                     .wrapContentWidth(Alignment.Start)
                                     .padding(10.dp)
@@ -240,10 +240,10 @@ LaunchedEffect(Unit ){
 
                                     },
                                 onClick = {
-                                    /*TODO*/
+                                    onNavigateToFollowersScreen()
                                 }
                             ) {
-                                Text(text = "دنبال کننده گان ${user.followers.size}")
+                                Text(text = "دنبال کننده گان ${user.followers}")
 
                             }
 
@@ -257,10 +257,10 @@ LaunchedEffect(Unit ){
 
                                     },
                                 onClick = {
-                                    /*TODO*/
+                                    onNavigateToFollowingsScreen()
                                 }
                             ) {
-                                Text(text = "دنبال شونده گان ${user.following.size}")
+                                Text(text = "دنبال شونده گان ${user.following}")
 
                             }
 

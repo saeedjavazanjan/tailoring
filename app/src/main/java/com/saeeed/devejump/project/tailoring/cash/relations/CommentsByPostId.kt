@@ -5,7 +5,7 @@ import androidx.room.Relation
 import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.cash.model.SewEntity
 
-data class PostWitComment(
+data class CommentsByPostId(
     @Embedded val post: SewEntity,
     @Relation(
         parentColumn = "id",
