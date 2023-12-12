@@ -2,7 +2,8 @@ package com.saeeed.devejump.project.tailoring.utils
 
     const val TAG = "AppDebug"
 
-    const val RECIPE_PAGINATION_PAGE_SIZE = 30
+    const val POSTS_PAGINATION_PAGE_SIZE = 30
+const val FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE = 30
 
 const val USERID=1
 

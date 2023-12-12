@@ -116,6 +116,11 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
+                Screen.Followers.route->{
+
+                    bottomBarState.value = false
+
+                }
 
             }
 

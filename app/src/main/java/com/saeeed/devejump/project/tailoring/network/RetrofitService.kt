@@ -1,8 +1,8 @@
 package com.saeeed.devejump.project.tailoring.network
 
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
+import com.saeeed.devejump.project.tailoring.network.model.PeoplesDto
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import com.saeeed.devejump.project.tailoring.network.response.SewMethodSearchResponse
@@ -16,9 +16,9 @@ interface RetrofitService {
 
     @GET("search")
     suspend fun search(
-       // @Header("Authorization") token: String,
-      //  @Query("page") page: Int,
-      //  @Query("query") query: String
+        // @Header("Authorization") token: String,
+        //  @Query("page") page: Int,
+        //  @Query("query") query: String
     ): SewMethodSearchResponse
 
 
@@ -28,12 +28,19 @@ interface RetrofitService {
         //  @Query("page") page: Int,
         //  @Query("userId") userId: Int
     ): List<SewMethodDto>
+
     @GET("followings-post")
     suspend fun userPosts(
         // @Header("Authorization") token: String,
         //  @Query("page") page: Int,
         //  @Query("userId") userId: Int
     ): List<SewMethodDto>
+
+    @GET("following_state")
+    suspend fun followingState(
+         @Header("Authorization") token: String,
+          @Query("userId") userId: Int
+    ):Int
 
     @GET("get")
     suspend fun get(
@@ -44,13 +51,13 @@ interface RetrofitService {
 
     @GET("get_banners")
     suspend fun getBanners(
-      //  @Header("Authorization") token: String,
+        //  @Header("Authorization") token: String,
         @Query("query") query: String
     ): List<BannerDto>
 
     @GET("bests")
     suspend fun bestsOfMonth(
-      //  @Header("Authorization") token: String,
+        //  @Header("Authorization") token: String,
         @Query("query") query: String
     ): List<SewMethodDto>
 
@@ -59,56 +66,72 @@ interface RetrofitService {
     suspend fun userData(
         //  @Header("Authorization") token: String,
         @Query("query") query: Int
-    ):UserDataDto
+    ): UserDataDto
 
     @POST("userData")
     suspend fun updateUseData(
         // @Header("Authorization") token: String,
         @Field("UserId") userId: Int,
-        @Field("userDto") userDto:UserDataDto
-    ):Int
+        @Field("userDto") userDto: UserDataDto
+    ): Int
 
     @GET("comments")
     suspend fun onePostComments(
         //  @Header("Authorization") token: String,
-      //  @Query("query") query: Int
-    ):List<CommentDto>
+        //  @Query("query") query: Int
+    ): List<CommentDto>
 
     @POST("userData")
     suspend fun bookMark(
         // @Header("Authorization") token: String,
         @Field("UserId") userId: Int,
-        @Field("postId") postId:Int
-    ):Int
+        @Field("postId") postId: Int
+    ): Int
 
     @POST("userData")
     suspend fun likePost(
         // @Header("Authorization") token: String,
         @Field("UserId") userId: Int,
-        @Field("postId") postId:Int
-    ):Int
+        @Field("postId") postId: Int
+    ): Int
 
     @POST("userData")
     suspend fun commentOnPost(
         // @Header("Authorization") token: String,
         @Field("UserId") userId: Int,
-        @Field("postId") postId:Int,
+        @Field("postId") postId: Int,
         @Field("comment") comment: String
-    ):Int
+    ): Int
 
     @POST("userData")
     suspend fun editComment(
         // @Header("Authorization") token: String,
         @Field("UserId") userId: Int,
-        @Field("postId") postId:Int,
+        @Field("postId") postId: Int,
         @Field("comment") comment: String
-    ):Int
+    ): Int
 
     @POST("userData")
     suspend fun removeComment(
         // @Header("Authorization") token: String,
         @Field("UserId") userId: Int,
-        @Field("postId") postId:Int,
+        @Field("postId") postId: Int,
         @Field("comment") comment: String
-    ):Int
+    ): Int
+
+    @GET("followers")
+    suspend fun getUserFollowers(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int,
+        @Query("query") query: String
+    ): List<PeoplesDto>
+
+    @GET("followings")
+    suspend fun getUserFollowings(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int,
+        @Query("query") query: String
+    ): List<PeoplesDto>
+
+
 }

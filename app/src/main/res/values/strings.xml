@@ -36,4 +36,10 @@
     <string name = "profile_edit_choose_photo">انتخاب عکس</string>
 
 
+    <!--followersAndFollowing-->
+
+    <string name="follow">دنبال کن</string>
+    <string name="followed_user">دنبال می کنم</string>
+
+
 </resources>
