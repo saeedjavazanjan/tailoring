@@ -3,7 +3,6 @@ package com.saeeed.devejump.project.tailoring.presentation.components
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -28,8 +27,9 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileScre
 import com.saeeed.devejump.project.tailoring.presentation.ui.school.SchoolScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.user_profile.UserProfileScreen
-import com.saeeed.devejump.project.tailoring.presentation.ui.user_profile.UserProfileViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.UserProfileScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.AuthorProfileViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileViewModel
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -46,10 +46,11 @@ fun Navigation(
     val descriptionViewModel: DescriptionViewModel = viewModel()
     val homeViewModel: HomeViewModel = viewModel()
     val splashViewModel: SplashViewModel = viewModel()
-    val userProfileViewModel: UserProfileViewModel = viewModel()
+    val authorProfileViewModel: AuthorProfileViewModel = viewModel()
     val followersViewModel: FollowersViewModel = viewModel()
     val followingsViewModel:FollowingsViewModel = viewModel()
-    NavHost(navController = navController, startDestination = Screen.Splash.route) {
+    val profileViewModel:ProfileViewModel= viewModel()
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
             SplashScreen(
@@ -117,7 +118,20 @@ fun Navigation(
             })
         ) { navBackStackEntry ->
             navBackStackEntry.arguments?.getInt("authorID")?.let {
-                ProfileScreen(userId = it)
+                ProfileScreen(
+                    isDarkTheme = appDataStore.isDark.value,
+                    isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                    onNavigateToDescriptionScreen = navController::navigate,
+                    onNavigateToFollowersScreen = {
+                        navController.navigate(Screen.Followers.route)
+                    },
+                    onNavigateToFollowingsScreen={
+                        navController.navigate(Screen.Followings.route)
+
+                    },
+                    viewModel = profileViewModel,
+                    userId = navBackStackEntry.arguments?.getInt("authorID")
+                )
             }
         }
         composable(Screen.Courses.route) {
@@ -128,7 +142,7 @@ fun Navigation(
             SchoolScreen()
 
         }
-        composable(Screen.UserProfile.route) {
+        composable(Screen.AuthorProfile.route) {
             UserProfileScreen(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
@@ -140,7 +154,7 @@ fun Navigation(
                     navController.navigate(Screen.Followings.route)
 
                 },
-                viewModel = userProfileViewModel
+                viewModel = authorProfileViewModel
             )
 
         }

@@ -18,6 +18,6 @@ sealed class Screen(
 
     object Followings:Screen("followings")
 
-    object UserProfile : Screen("timeLine")
+    object AuthorProfile : Screen("authorProfile")
 
 }

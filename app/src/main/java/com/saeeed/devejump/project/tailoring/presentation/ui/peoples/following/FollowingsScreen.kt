@@ -15,10 +15,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -32,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.saeeed.devejump.project.tailoring.presentation.components.PeopleCard
+import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 
@@ -84,7 +83,12 @@ fun FollowingsScreen(
                        viewModel.onTriggerEvent(FollowingsEvent.NextPageEvent)
                     }
                     PeopleCard(
-                      follower=  follower,
+                      people=  follower,
+                        onNavigateToUserProfile = {
+                            val route = Screen.Profile.route + "/${follower.userId}"
+                            onNavigateToProfile(route)
+
+                        }
 
                     )
                 }

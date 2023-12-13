@@ -63,17 +63,7 @@ class GetFollowersList(
         }
     }
 
-    fun checkIfUserFollowed(
-        userId:Int,
-        token:String
-    ):Flow <DataState<Int>> = flow {
 
-
-        val result=retrofitService.followingState(token=token,userId=userId)
-        DataState.success(result)
-
-
-    }
 
     private suspend fun getFollowersFromServer(
         token: String,

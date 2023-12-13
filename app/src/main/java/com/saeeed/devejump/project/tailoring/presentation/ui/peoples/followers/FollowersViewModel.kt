@@ -43,7 +43,6 @@ class FollowersViewModel
     val query = mutableStateOf("")
     var scrollPosition = 0
 
-    val followingStatus= mutableStateOf(false)
 
     init {
         savedStateHandle.get<Int>(STATE_KEY_PAGE)?.let { p ->
@@ -191,24 +190,7 @@ class FollowersViewModel
 
 
 
-    fun stateOfFollowing(userId:Int,token: String){
-        getFollowersList.checkIfUserFollowed(userId,token).onEach { dataState ->
 
-            dataState.data?.let {
-                if (it==204){
-                    followingStatus.value=true
-                }else if (it==404){
-                    followingStatus.value=true
-
-                }
-            }
-
-        }.catch {
-            dialogQueue.appendErrorMessage("خطایی رخ داده است",it.message.toString())
-
-        }
-
-    }
 
 
 

@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
                     // topBarState.value = true
 
                 }
-                Screen.UserProfile.route-> {
+                Screen.AuthorProfile.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
                     // topBarState.value = true
@@ -140,7 +140,7 @@ class MainActivity : ComponentActivity() {
                         items = listOf(
                             BottomNavItem(
                                 name = "پروفایل",
-                                route = Screen.UserProfile.route,
+                                route = Screen.AuthorProfile.route,
                                 icon = Icons.Default.Person
                             ),
                             BottomNavItem(

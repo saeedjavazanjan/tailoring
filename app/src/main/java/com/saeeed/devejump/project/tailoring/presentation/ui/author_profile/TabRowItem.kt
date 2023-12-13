@@ -1,4 +1,4 @@
-package com.saeeed.devejump.project.tailoring.presentation.ui.user_profile
+package com.saeeed.devejump.project.tailoring.presentation.ui.author_profile
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector

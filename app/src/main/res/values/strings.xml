@@ -36,10 +36,22 @@
     <string name = "profile_edit_choose_photo">انتخاب عکس</string>
 
 
-    <!--followersAndFollowing-->
 
+
+
+
+    <!--profile-->
+
+
+    <string name="followers">دنبال کننده گان</string>
+    <string name="followings">دنبال شونده گان</string>
+    <string name="profileSetting">تنظیمات پروفایل</string>
+    <string name="UserTransactions">حساب کاربری</string>
     <string name="follow">دنبال کن</string>
     <string name="followed_user">دنبال می کنم</string>
+    <string name="posts">پست ها</string>
+    <string name="saved_posts">ذخیره شده ها</string>
+
 
 
 </resources>
