@@ -1,17 +1,12 @@
-package com.saeeed.devejump.project.tailoring.presentation.ui.user_profile
+package com.saeeed.devejump.project.tailoring.presentation.ui.author_profile
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
@@ -23,14 +18,13 @@ import com.saeeed.devejump.project.tailoring.utils.USERID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 @HiltViewModel
-class UserProfileViewModel
+class AuthorProfileViewModel
 @Inject
 constructor(
     private val getUserProfileData: GetUserProfileData,
@@ -58,7 +52,11 @@ constructor(
 
 
     fun getUserData(){
-        getUserProfileData.getUserData().onEach { dataState->
+        getUserProfileData.getAuthorData(
+            token = token,
+            userId = USERID,
+            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState->
             dataState.data?.let{
                 user.value=it
 

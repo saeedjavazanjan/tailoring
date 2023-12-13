@@ -1,4 +1,4 @@
-package com.saeeed.devejump.project.tailoring.presentation.ui.user_profile
+package com.saeeed.devejump.project.tailoring.presentation.ui.author_profile
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -72,13 +73,12 @@ import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalGlideComposeApi::class,
-    ExperimentalPagerApi::class, ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
-)
+    ExperimentalPagerApi::class,)
 @Composable
 fun UserProfileScreen(
     isDarkTheme: Boolean,
     isNetworkAvailable: Boolean,
-    viewModel: UserProfileViewModel,
+    viewModel: AuthorProfileViewModel,
     onNavigateToDescriptionScreen: (String) -> Unit,
     onNavigateToFollowersScreen: ()->Unit,
     onNavigateToFollowingsScreen: ()->Unit
@@ -90,9 +90,8 @@ fun UserProfileScreen(
     val composableScope = rememberCoroutineScope()
 
 LaunchedEffect(Unit ){
-    viewModel.getUserPosts()
+   // viewModel.getUserPosts()
     viewModel.getUserData()
-    //viewModel.getUserBookMarkedPosts()
 }
     val user=viewModel.user.value
 
@@ -140,7 +139,8 @@ LaunchedEffect(Unit ){
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize().padding(it)
+                            .fillMaxSize()
+                            .padding(it)
                     ) {
 
                         ConstraintLayout(
@@ -215,7 +215,7 @@ LaunchedEffect(Unit ){
                                 ) {
                                     Text(
                                         modifier = Modifier.padding(5.dp),
-                                        text = "تنظیمات پروفایل",
+                                        text = stringResource(id = R.string.profileSetting),
                                         color = Color.DarkGray
                                     )
                                     Icon(Icons.Default.Settings, contentDescription = null)
@@ -232,7 +232,7 @@ LaunchedEffect(Unit ){
                                 ) {
                                     Text(
                                         modifier = Modifier.padding(5.dp),
-                                        text = "حساب کاربری",
+                                        text = stringResource(id = R.string.UserTransactions),
                                         color = Color.DarkGray
                                     )
                                     Icon(Icons.Default.ShoppingCart, contentDescription = null)
@@ -252,7 +252,8 @@ LaunchedEffect(Unit ){
                                     onNavigateToFollowersScreen()
                                 }
                             ) {
-                                Text(text = "دنبال کننده گان ${user.followers}")
+                                Text(text =
+                                stringResource(id = R.string.followers)+ user.followers)
 
                             }
 
@@ -269,7 +270,8 @@ LaunchedEffect(Unit ){
                                     onNavigateToFollowingsScreen()
                                 }
                             ) {
-                                Text(text = "دنبال شونده گان ${user.following}")
+                                Text(text = 
+                                stringResource(id = R.string.followings)+ user.following)
 
                             }
 
@@ -294,7 +296,7 @@ LaunchedEffect(Unit ){
 @Composable
 fun TabsContent(
     pagerState: PagerState,
-    viewModel: UserProfileViewModel,
+    viewModel: AuthorProfileViewModel,
     onNavigateToDescriptionScreen: (String) -> Unit,
 
     ){
@@ -334,13 +336,13 @@ fun TabsContent(
 fun Tabs(pagerState: PagerState) {
     val tabRowItems = listOf(
         TabRowItem(
-            title = "پست ها",
+            title = stringResource(id = R.string.posts),
             icon = Icons.Default.AccountBox,
             screen = {
             }
         ) ,
         TabRowItem(
-            title = "ذخیره ها",
+            title = stringResource(id = R.string.saved_posts),
             icon = ImageVector.vectorResource(R.drawable.baseline_bookmark_border_24),
             screen = {
 

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -27,11 +27,13 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.Peoples
+import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun  PeopleCard(
-    follower: Peoples,
+    people: Peoples,
+    onNavigateToUserProfile:()->Unit
 )  {
     Card(
         shape = MaterialTheme.shapes.small,
@@ -45,6 +47,9 @@ fun  PeopleCard(
             .fillMaxWidth()
             .wrapContentHeight(),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        onClick = {
+            onNavigateToUserProfile()
+        }
     ) {
 
         Column(
@@ -66,7 +71,7 @@ fun  PeopleCard(
                 val (avatarHolder, userName , userBio) = createRefs()
 
                 GlideImage(
-                    model = follower.avatar,
+                    model = people.avatar,
                     loading = placeholder(R.drawable.empty_plate),
                     contentDescription = "",
                     modifier = Modifier
@@ -83,7 +88,7 @@ fun  PeopleCard(
                     contentScale = ContentScale.Crop,
                 )
                 Text(
-                    text = follower.userName,
+                    text = people.userName,
                     modifier = Modifier
                         .wrapContentWidth(Alignment.Start)
                         .padding(10.dp)
@@ -97,7 +102,7 @@ fun  PeopleCard(
                 )
 
                 Text(
-                    text = follower.bio,
+                    text = people.bio,
                     modifier = Modifier
                         .wrapContentWidth(Alignment.Start)
                         .padding(10.dp)

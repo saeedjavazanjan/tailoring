@@ -10,7 +10,6 @@ import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.utils.USERID
-import com.saeeed.devejump.project.tailoring.utils.userData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -26,12 +25,40 @@ class GetUserProfileData(
 
 
 
+    fun getUserData(
+        token: String,
+        userId: Int,
+        isNetworkAvailable: Boolean
+    ): Flow<DataState<UserData>> = flow {
 
 
-    fun getUserData():
+
+            try {
+                emit(DataState.loading())
+                val userData=getUserDataFromNetwork(userId)
+                emit(DataState.success(userData))
+
+            }catch (e:Exception){
+                e.printStackTrace()
+                emit(DataState.error(e.message?:"خطایی رخ داده است"))
+
+            }
+
+
+
+
+
+    }
+
+    fun getAuthorData(
+        token: String,
+        userId: Int,
+        isNetworkAvailable: Boolean
+
+    ):
             Flow<DataState<UserData>> = flow {
         try {
-            val userData =sewMethodDao.getUserData(USERID)
+            val userData =sewMethodDao.getUserData(userId)
             emit(DataState.success(userDataEntityMapper.mapToDomainModel(userData)))
         }catch (e:Exception){
             emit(DataState.error(e.message.toString()))
@@ -115,7 +142,7 @@ class GetUserProfileData(
             }catch (e:Exception){
                 emit(DataState.success(false))
 
-                emit(DataState.error("خطای ارسال اطلاعات"))
+                emit(DataState.error(e.message?:"خطای ارسال اطلاعات"))
 
             }
         }else{
@@ -123,4 +150,23 @@ class GetUserProfileData(
         }
 
     }
+    fun checkIfUserFollowed(
+        userId:Int,
+        token:String
+    ):Flow <DataState<Int>> = flow {
+
+
+        val result=retrofitService.followingState(token=token,userId=userId)
+        DataState.success(result)
+
+
+    }
+
+    private suspend fun getUserDataFromNetwork(UserId:Int): UserData {
+
+        return userDtoMapper.mapToDomainModel(retrofitService.userData(UserId))
+
+
+    }
+
 }
