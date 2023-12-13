@@ -26,7 +26,7 @@ const val STATE_KEY_LIST_POSITION = "people.state.query.list_position"
 const val STATE_KEY_QUERY = "people.state.query.key"
 
 @HiltViewModel
-class FollowersViewModel
+class FollowingsViewModel
    @Inject
        constructor(
        private val getFollowingsList: GetFollowingsList,

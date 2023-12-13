@@ -31,6 +31,8 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -126,12 +128,19 @@ LaunchedEffect(Unit ){
                     scaffoldState = scaffoldState,
                     topBar = {
                         TopBar()
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = { },
+                        ) {
+                            Icon(Icons.Filled.Add, "Floating action button.")
+                        }
                     }
 
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxSize().padding(it)
                     ) {
 
                         ConstraintLayout(

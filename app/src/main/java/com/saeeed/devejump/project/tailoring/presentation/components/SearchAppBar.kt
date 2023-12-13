@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
@@ -80,12 +82,15 @@ fun SearchAppBar(
                         Icon(Icons.Filled.Search, "")
                     },
                     colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colorScheme.onSurface,
-                        placeholderColor = MaterialTheme.colorScheme.surface,
-                        disabledPlaceholderColor = MaterialTheme.colorScheme.surface
+
+                        textColor = Color.DarkGray,
+                        placeholderColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
                     )
 
-                )
+                    )
          /*       ConstraintLayout(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {

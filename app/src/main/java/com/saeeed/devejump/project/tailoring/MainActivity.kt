@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
@@ -19,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
@@ -189,21 +192,24 @@ class MainActivity : ComponentActivity() {
                     scaffoldState.snackbarHostState
                 }
             ) {
-                Navigation(
-                    appDataStore = appDataStore,
-                    connectivityManager = connectivityManager,
-                    navController = navController,
-                    scaffoldState=scaffoldState
+                Box(modifier = Modifier.padding(it)){
+                    Navigation(
+                        appDataStore = appDataStore,
+                        connectivityManager = connectivityManager,
+                        navController = navController,
+                        scaffoldState=scaffoldState
 
-                )
-                if (openDialog.value) {
-                    ExitAlertDialog(navController, {
-                        openDialog.value = it
-                    }, {
-                        finish()
-                    })
+                    )
+                    if (openDialog.value) {
+                        ExitAlertDialog(navController, {
+                            openDialog.value = it
+                        }, {
+                            finish()
+                        })
 
+                    }
                 }
+
 
 
                 /*   val listViewModel: ListViewModel = viewModel()

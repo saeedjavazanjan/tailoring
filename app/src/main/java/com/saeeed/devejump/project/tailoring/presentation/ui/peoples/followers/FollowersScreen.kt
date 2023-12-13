@@ -23,12 +23,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.saeeed.devejump.project.tailoring.presentation.components.FollowerCard
+import com.saeeed.devejump.project.tailoring.presentation.components.PeopleCard
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 
@@ -80,7 +83,7 @@ fun FollowersScreen(
                     if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
                        viewModel.onTriggerEvent(FollowersEvent.NextPageEvent)
                     }
-                    FollowerCard(
+                    PeopleCard(
                       follower=  follower,
 
                     )
@@ -124,13 +127,10 @@ fun SearchBar(
             leadingIcon = {
                 Icon(Icons.Filled.Search, "")
             },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colorScheme.onSurface,
-                placeholderColor = MaterialTheme.colorScheme.surface,
-                disabledPlaceholderColor = MaterialTheme.colorScheme.surface
-            )
+            textStyle = TextStyle(color = Color.Blue, fontWeight = FontWeight.Medium),
 
-        )
+
+            )
     }
 
 }
