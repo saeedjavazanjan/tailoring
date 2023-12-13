@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
@@ -152,15 +153,14 @@ fun ProfileEditDialog(
                                         keyboardType = KeyboardType.Text,
                                         imeAction = ImeAction.Default,
                                     ),
+                                     colors = TextFieldDefaults.textFieldColors(
 
-                                    colors = TextFieldDefaults.textFieldColors(
-
-                                        textColor = Color.DarkGray,
-                                        placeholderColor = Color.White,
-                                        focusedIndicatorColor = Color.Transparent,
-                                        unfocusedIndicatorColor = Color.Transparent,
-                                        disabledIndicatorColor = Color.Transparent
-                                )
+                                         textColor = Color.DarkGray,
+                                         placeholderColor = Color.White,
+                                         focusedIndicatorColor = Color.Transparent,
+                                         unfocusedIndicatorColor = Color.Transparent,
+                                         disabledIndicatorColor = Color.Transparent
+                                 )
                                 )
                             }
                         }
@@ -280,7 +280,8 @@ fun ProfileEditDialog(
                                         .fillMaxWidth(0.9f),
                                     shape = MaterialTheme.shapes.medium,
                                     value =userBio.value!!,
-                                    maxLines = 4,
+
+                                            maxLines = 4,
                                     onValueChange ={
                                         userBio.value=it
                                     },
@@ -296,10 +297,8 @@ fun ProfileEditDialog(
                                         focusedIndicatorColor = Color.Transparent,
                                         unfocusedIndicatorColor = Color.Transparent,
                                         disabledIndicatorColor = Color.Transparent
-
-
-                                )
-                                )
+                                    )
+                                    )
 
                             }
                         }

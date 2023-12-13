@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -28,20 +30,20 @@ import com.saeeed.devejump.project.tailoring.domain.model.Peoples
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun  FollowerCard(
+fun  PeopleCard(
     follower: Peoples,
 )  {
     Card(
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
             .padding(
-                bottom = 6.dp,
-                top = 6.dp,
+                bottom = 10.dp,
+                top = 10.dp,
                 start = 10.dp,
                 end = 10.dp
             )
             .fillMaxWidth()
-            .height(100.dp),
+            .wrapContentHeight(),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
 
@@ -59,39 +61,53 @@ fun  FollowerCard(
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .fillMaxHeight()
-                    .padding(top = 12.dp, start = 8.dp, end = 8.dp),
+                    .padding(top = 10.dp, start = 8.dp, end = 8.dp, bottom = 10.dp),
             ) {
-                val (avatarHolder, authorName, date, commentText,reportButton,editButton) = createRefs()
+                val (avatarHolder, userName , userBio) = createRefs()
 
                 GlideImage(
                     model = follower.avatar,
                     loading = placeholder(R.drawable.empty_plate),
                     contentDescription = "",
                     modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
+                        .width(60.dp)
+                        .height(60.dp)
                         .clip(CircleShape)
                         .constrainAs(avatarHolder) {
                             start.linkTo(parent.start)
+
                             top.linkTo(parent.top)
-                            bottom.linkTo(commentText.top)
-                            end.linkTo(authorName.start)
+                            bottom.linkTo(userName.top)
+                            end.linkTo(parent.end)
                         },
                     contentScale = ContentScale.Crop,
                 )
-                val author = follower.userName
                 Text(
-                    text = author,
+                    text = follower.userName,
                     modifier = Modifier
                         .wrapContentWidth(Alignment.Start)
                         .padding(10.dp)
-                        .constrainAs(authorName) {
-                            start.linkTo(avatarHolder.end)
-                            bottom.linkTo(avatarHolder.bottom)
-                            top.linkTo(avatarHolder.top)
-                            end.linkTo(avatarHolder.end)
+                        .constrainAs(userName) {
+                            start.linkTo(parent.start)
+                            bottom.linkTo(userBio.top)
+                            top.linkTo(avatarHolder.bottom)
+                            end.linkTo(parent.end)
                         },
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Text(
+                    text = follower.bio,
+                    modifier = Modifier
+                        .wrapContentWidth(Alignment.Start)
+                        .padding(10.dp)
+                        .constrainAs(userBio) {
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            top.linkTo(userName.bottom)
+                            end.linkTo(parent.end)
+                        },
+                    style = MaterialTheme.typography.bodySmall
                 )
 
 

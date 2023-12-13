@@ -3,6 +3,7 @@ package com.saeeed.devejump.project.tailoring.presentation.components
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -19,6 +20,8 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.peoples.followers.FollowersScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.peoples.followers.FollowersViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.peoples.following.FollowingsScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.peoples.following.FollowingsViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.ListScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.ListViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileScreen
@@ -45,6 +48,7 @@ fun Navigation(
     val splashViewModel: SplashViewModel = viewModel()
     val userProfileViewModel: UserProfileViewModel = viewModel()
     val followersViewModel: FollowersViewModel = viewModel()
+    val followingsViewModel:FollowingsViewModel = viewModel()
     NavHost(navController = navController, startDestination = Screen.Splash.route) {
 
         composable(Screen.Splash.route) {
@@ -62,6 +66,14 @@ fun Navigation(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                 viewModel = followersViewModel,
+                onNavigateToProfile = navController::navigate
+            )
+        }
+        composable(Screen.Followings.route) {
+            FollowingsScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                viewModel = followingsViewModel,
                 onNavigateToProfile = navController::navigate
             )
         }
