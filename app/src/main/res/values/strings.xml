@@ -41,8 +41,6 @@
 
 
     <!--profile-->
-
-
     <string name="followers">دنبال کننده گان</string>
     <string name="followings">دنبال شونده گان</string>
     <string name="profileSetting">تنظیمات پروفایل</string>
@@ -51,6 +49,11 @@
     <string name="followed_user">دنبال می کنم</string>
     <string name="posts">پست ها</string>
     <string name="saved_posts">ذخیره شده ها</string>
+
+
+    <!--uploadPost-->
+    <string name="choose_photo">انتخاب عکس</string>
+    <string name="choose_video">انتخاب ویدئو</string>
 
 
 
