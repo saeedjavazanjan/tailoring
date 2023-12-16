@@ -124,6 +124,15 @@ class MainActivity : ComponentActivity() {
                     bottomBarState.value = false
 
                 }
+                Screen.Followings.route->{
+
+                    bottomBarState.value = false
+
+                }
+
+                Screen.UploadPost.route->{
+                    bottomBarState.value=false
+                }
 
             }
 

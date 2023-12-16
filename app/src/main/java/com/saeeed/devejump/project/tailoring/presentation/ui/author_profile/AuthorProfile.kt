@@ -81,7 +81,8 @@ fun UserProfileScreen(
     viewModel: AuthorProfileViewModel,
     onNavigateToDescriptionScreen: (String) -> Unit,
     onNavigateToFollowersScreen: ()->Unit,
-    onNavigateToFollowingsScreen: ()->Unit
+    onNavigateToFollowingsScreen: ()->Unit,
+    onNavigateToUploadPostScreen: () -> Unit
     ) {
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
@@ -130,7 +131,10 @@ LaunchedEffect(Unit ){
                     },
                     floatingActionButton = {
                         FloatingActionButton(
-                            onClick = { },
+                            onClick = {
+                               onNavigateToUploadPostScreen()
+
+                            },
                         ) {
                             Icon(Icons.Filled.Add, "Floating action button.")
                         }

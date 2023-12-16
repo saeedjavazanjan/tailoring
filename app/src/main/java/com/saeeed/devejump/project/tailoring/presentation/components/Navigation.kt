@@ -30,6 +30,8 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewMo
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.UserProfileScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.AuthorProfileViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.upload.UploadPostScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.upload.UploadPostViewModel
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -50,6 +52,7 @@ fun Navigation(
     val followersViewModel: FollowersViewModel = viewModel()
     val followingsViewModel:FollowingsViewModel = viewModel()
     val profileViewModel:ProfileViewModel= viewModel()
+    val uploadPostViewModel:UploadPostViewModel= viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
@@ -154,10 +157,23 @@ fun Navigation(
                     navController.navigate(Screen.Followings.route)
 
                 },
-                viewModel = authorProfileViewModel
+                viewModel = authorProfileViewModel,
+                onNavigateToUploadPostScreen = {
+                    navController.navigate(Screen.UploadPost.route)
+                }
             )
 
         }
+        composable(Screen.UploadPost.route) {
+            UploadPostScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                viewModel = uploadPostViewModel
+            )
+
+        }
+
+
         composable(Screen.Search.route) {
             ListScreen(
                 isDarkTheme = appDataStore.isDark.value,
