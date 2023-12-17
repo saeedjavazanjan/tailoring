@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.text.CaseMap.Title
 import android.net.Uri
 import android.provider.Settings
 import android.widget.Toast
@@ -27,13 +28,17 @@ import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -51,6 +56,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -103,15 +110,7 @@ fun UploadPostScreen(
         selectedImages.size
     })
 
-    val imageLauncher = rememberLauncherForActivityResult(
 
-        ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)) {
-        selectedImages.apply {
-            clear()
-            addAll(it)
-        }
-        typeOfPost.value="photo"
-    }
 
     val context = LocalContext.current
     val activity =context as Activity
@@ -126,7 +125,14 @@ fun UploadPostScreen(
     var capturedImageUri = remember {
         mutableStateOf<Uri?>(Uri.EMPTY)
     }
-
+    val imageLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)) {
+        selectedImages.apply {
+            clear()
+            addAll(it)
+        }
+        typeOfPost.value="photo"
+    }
     val imageCropLauncher = rememberLauncherForActivityResult(
         contract = CropImageContract()
     ) { result ->
@@ -173,8 +179,6 @@ fun UploadPostScreen(
         scaffoldState = scaffoldState
 
     ) {
-
-
 
         permissionDialogQueue
             .reversed()
@@ -339,33 +343,8 @@ fun UploadPostScreen(
 
                         }
                     }
+                    TitleAndDescription()
 
-                   /* TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .fillMaxWidth(0.9f),
-                        shape = MaterialTheme.shapes.medium,
-                        value = userBio.value!!,
-
-                        maxLines = 4,
-                        onValueChange = {
-                            userBio.value = it
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Default,
-                        ),
-
-                        colors = TextFieldDefaults.textFieldColors(
-
-                            textColor = Color.DarkGray,
-                            placeholderColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        )
-                    )*/
                 }
             }
         }
@@ -408,6 +387,70 @@ fun SelectedImagesPager(
         )
     }
 
+}
+
+@Composable
+fun TitleAndDescription(
+){
+    var title= remember {
+        mutableStateOf<String>("")
+    }
+    var description= remember {
+        mutableStateOf<String>("")
+    }
+
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 20.dp, start = 20.dp, top = 10.dp, bottom = 10.dp),
+        value = title.value!!,
+        label = {
+                Text(text = stringResource(id = R.string.post_title), color = Color.Gray)
+        },
+        singleLine = true,
+        onValueChange = {
+            title.value = it
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Default,
+        ),
+
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor= Color.White,
+            textColor = Color.DarkGray,
+            placeholderColor = Color.White,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        )
+    )
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 20.dp, start = 20.dp, top = 10.dp, bottom = 10.dp),
+        value = description.value!!,
+        label = {
+            Text(text = stringResource(id = R.string.post_description),color = Color.Gray)
+        },
+        maxLines = 5,
+        onValueChange = {
+            description.value = it
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Default,
+        ),
+
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor= Color.White,
+            textColor = Color.DarkGray,
+            placeholderColor = Color.White,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        )
+    )
 }
 fun Context.createImageFile(): File {
     // Create an image file name

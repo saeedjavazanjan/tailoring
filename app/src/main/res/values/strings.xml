@@ -54,6 +54,9 @@
     <!--uploadPost-->
     <string name="choose_photo">انتخاب عکس</string>
     <string name="choose_video">انتخاب ویدئو</string>
+    <string name="post_title">عنوان</string>
+    <string name="post_description">توضیحات</string>
+
 
 
     <!--ERRORS-->
