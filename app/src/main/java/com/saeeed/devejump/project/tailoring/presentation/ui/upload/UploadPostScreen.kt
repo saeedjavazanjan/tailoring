@@ -1,8 +1,14 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.upload
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
-import android.widget.ImageButton
+import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,35 +18,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,26 +51,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
-import androidx.media3.ui.BuildConfig
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.saeeed.devejump.project.tailoring.MainActivity
 import com.saeeed.devejump.project.tailoring.R
+import com.saeeed.devejump.project.tailoring.components.CameraPermissionTextProvider
+import com.saeeed.devejump.project.tailoring.components.PermissionDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
-import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
-import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewModel
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
-import com.saeeed.devejump.project.tailoring.utils.posts
-import java.nio.file.WatchEvent
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Objects
+import kotlin.contracts.contract
 
 @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalPagerApi::class,
@@ -90,18 +91,20 @@ fun UploadPostScreen(
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
+    val permissionDialogQueue = viewModel.visiblePermissionDialogQueue
 
     val typeOfPost= remember {
         mutableStateOf("")
     }
-    var selectedImages=remember { mutableStateListOf<Uri?>(null) }
-    val selectedVideoUri = remember { mutableStateOf<Uri?>(null) }
+    var selectedImages=remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
+    val selectedVideoUri = remember { mutableStateOf<Uri?>(Uri.EMPTY) }
 
     val pagerState = rememberPagerState(pageCount = {
         selectedImages.size
     })
 
     val imageLauncher = rememberLauncherForActivityResult(
+
         ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)) {
         selectedImages.apply {
             clear()
@@ -109,11 +112,48 @@ fun UploadPostScreen(
         }
         typeOfPost.value="photo"
     }
+
     val context = LocalContext.current
+    val activity =context as Activity
+
+    val file = context.createImageFile()
+
+    val uri = FileProvider.getUriForFile(
+        Objects.requireNonNull(context),
+        context.packageName + ".provider", file
+    )
+
+    var capturedImageUri = remember {
+        mutableStateOf<Uri?>(Uri.EMPTY)
+    }
+
+    val imageCropLauncher = rememberLauncherForActivityResult(
+        contract = CropImageContract()
+    ) { result ->
+        if (result.isSuccessful) {
+            capturedImageUri.value = result.uriContent
+            typeOfPost.value="cameraPhoto"
+            // Got image data. Use it according to your need
+        }
+    }
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+            val cropOptions = CropImageContractOptions(uri, CropImageOptions())
+            imageCropLauncher.launch(cropOptions)
 
 
+        }
 
-
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+       contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            viewModel.onPermissionResult(
+                permission = Manifest.permission.CAMERA,
+                isGranted = isGranted
+            )
+        }
+    )
 
 
     val videoLauncher = rememberLauncherForActivityResult(contract =
@@ -133,6 +173,41 @@ fun UploadPostScreen(
         scaffoldState = scaffoldState
 
     ) {
+
+
+
+        permissionDialogQueue
+            .reversed()
+            .forEach { permission ->
+                PermissionDialog(
+                    permissionTextProvider = when (permission) {
+                        Manifest.permission.CAMERA -> {
+                            CameraPermissionTextProvider()
+                        }
+
+                        else -> return@forEach
+                    },
+                    isPermanentlyDeclined = !shouldShowRequestPermissionRationale(activity,
+                        permission
+                    ),
+                    onDismiss = viewModel::dismissDialog,
+                    onOkClick = {
+                        viewModel.dismissDialog()
+                        cameraPermissionLauncher.launch(
+                            Manifest.permission.CAMERA
+                        )
+                    },
+                    onGoToAppSettingsClick = {
+                        activity.openAppSettings()
+                    }
+                )
+
+    }
+
+
+
+
+
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
             Scaffold(
@@ -167,6 +242,18 @@ fun UploadPostScreen(
                             selectedImages = selectedImages
                         )
                             }
+                            "cameraPhoto"->{
+                                    GlideImage(
+                                        model = capturedImageUri.value,
+                                        loading = placeholder(R.drawable.empty_plate),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(RectangleShape),
+                                        contentScale = ContentScale.Crop,
+                                    )
+                                }
+
                             else->{
                                 Image(
                                     painter = painterResource(id = R.drawable.empty_plate),
@@ -210,6 +297,14 @@ fun UploadPostScreen(
                         IconButton(modifier = Modifier
                             .weight(1f),
                             onClick = {
+                                val permissionCheckResult =
+                                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                                if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                                    cameraLauncher.launch(uri)
+                                } else {
+                                    // Request a permission
+                                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                                }
 
 
                             }) {
@@ -275,7 +370,14 @@ fun UploadPostScreen(
             }
         }
     }
+
+
+
+
 }
+
+
+
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
@@ -306,4 +408,22 @@ fun SelectedImagesPager(
         )
     }
 
+}
+fun Context.createImageFile(): File {
+    // Create an image file name
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    val image = File.createTempFile(
+        imageFileName, /* prefix */
+        ".jpg", /* suffix */
+        externalCacheDir      /* directory */
+    )
+    return image
+}
+
+fun Activity.openAppSettings() {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).also(::startActivity)
 }

@@ -56,5 +56,8 @@
     <string name="choose_video">انتخاب ویدئو</string>
 
 
+    <!--ERRORS-->
+   <string name="unKnownError">خطایی رخ داده است</string>
+
 
 </resources>
