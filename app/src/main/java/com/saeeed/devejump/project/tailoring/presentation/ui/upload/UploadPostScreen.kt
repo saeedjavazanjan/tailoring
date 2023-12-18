@@ -6,10 +6,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.icu.text.CaseMap.Title
 import android.net.Uri
 import android.provider.Settings
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,6 +44,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,7 +59,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -71,10 +69,10 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.saeeed.devejump.project.tailoring.MainActivity
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.components.CameraPermissionTextProvider
 import com.saeeed.devejump.project.tailoring.components.PermissionDialog
+import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
@@ -82,7 +80,6 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Objects
-import kotlin.contracts.contract
 
 @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalPagerApi::class,
@@ -171,6 +168,9 @@ fun UploadPostScreen(
         }
     }
 
+    val showDialog =  remember { mutableStateOf(false) }
+
+
     AppTheme(
         displayProgressBar = loading,
         darkTheme = isDarkTheme,
@@ -179,6 +179,17 @@ fun UploadPostScreen(
         scaffoldState = scaffoldState
 
     ) {
+
+        if (showDialog.value){
+            ProductEditDialog(
+                showDialog = {
+                    showDialog.value=it
+                             },
+                requestPermission = {
+                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            )
+        }
 
         permissionDialogQueue
             .reversed()
@@ -344,6 +355,25 @@ fun UploadPostScreen(
                         }
                     }
                     TitleAndDescription()
+
+                    Button(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        colors = ButtonDefaults.buttonColors(Color.LightGray),
+                        onClick = {
+                            showDialog.value=true
+
+                        }) {
+                        Text(
+                            text = stringResource(id = R.string.attach_product),
+                            color = Color.White
+                        )
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_attach_file_24),
+                            contentDescription =null,
+                            tint = Color.White
+                        )
+                    }
+
 
                 }
             }
