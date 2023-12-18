@@ -78,9 +78,8 @@ fun ProfileEditDialog(
             )-> Unit
 
 ) {
-    val context = LocalContext.current
 
-    var imageUri = remember {
+    val imageUri = remember {
         mutableStateOf<Uri?>(userData!!.avatar.toUri())
     }
     val launcher = rememberLauncherForActivityResult(contract =
@@ -94,7 +93,7 @@ fun ProfileEditDialog(
         mutableStateOf(userData!!.bio)
     }
 
-    var expanded = remember {
+    val expanded = remember {
         listOf(
             mutableStateOf(false),
             mutableStateOf(false),

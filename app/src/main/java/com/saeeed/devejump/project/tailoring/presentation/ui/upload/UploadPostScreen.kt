@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,13 +26,17 @@ import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -41,6 +44,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,9 +55,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -64,10 +69,10 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.saeeed.devejump.project.tailoring.MainActivity
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.components.CameraPermissionTextProvider
 import com.saeeed.devejump.project.tailoring.components.PermissionDialog
+import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
@@ -75,7 +80,6 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Objects
-import kotlin.contracts.contract
 
 @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalPagerApi::class,
@@ -103,15 +107,7 @@ fun UploadPostScreen(
         selectedImages.size
     })
 
-    val imageLauncher = rememberLauncherForActivityResult(
 
-        ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)) {
-        selectedImages.apply {
-            clear()
-            addAll(it)
-        }
-        typeOfPost.value="photo"
-    }
 
     val context = LocalContext.current
     val activity =context as Activity
@@ -126,7 +122,14 @@ fun UploadPostScreen(
     var capturedImageUri = remember {
         mutableStateOf<Uri?>(Uri.EMPTY)
     }
-
+    val imageLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)) {
+        selectedImages.apply {
+            clear()
+            addAll(it)
+        }
+        typeOfPost.value="photo"
+    }
     val imageCropLauncher = rememberLauncherForActivityResult(
         contract = CropImageContract()
     ) { result ->
@@ -165,6 +168,9 @@ fun UploadPostScreen(
         }
     }
 
+    val showDialog =  remember { mutableStateOf(false) }
+
+
     AppTheme(
         displayProgressBar = loading,
         darkTheme = isDarkTheme,
@@ -174,7 +180,16 @@ fun UploadPostScreen(
 
     ) {
 
-
+        if (showDialog.value){
+            ProductEditDialog(
+                showDialog = {
+                    showDialog.value=it
+                             },
+                requestPermission = {
+                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            )
+        }
 
         permissionDialogQueue
             .reversed()
@@ -339,33 +354,27 @@ fun UploadPostScreen(
 
                         }
                     }
+                    TitleAndDescription()
 
-                   /* TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .fillMaxWidth(0.9f),
-                        shape = MaterialTheme.shapes.medium,
-                        value = userBio.value!!,
+                    Button(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        colors = ButtonDefaults.buttonColors(Color.LightGray),
+                        onClick = {
+                            showDialog.value=true
 
-                        maxLines = 4,
-                        onValueChange = {
-                            userBio.value = it
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Default,
-                        ),
-
-                        colors = TextFieldDefaults.textFieldColors(
-
-                            textColor = Color.DarkGray,
-                            placeholderColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
+                        }) {
+                        Text(
+                            text = stringResource(id = R.string.attach_product),
+                            color = Color.White
                         )
-                    )*/
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_attach_file_24),
+                            contentDescription =null,
+                            tint = Color.White
+                        )
+                    }
+
+
                 }
             }
         }
@@ -408,6 +417,70 @@ fun SelectedImagesPager(
         )
     }
 
+}
+
+@Composable
+fun TitleAndDescription(
+){
+    var title= remember {
+        mutableStateOf<String>("")
+    }
+    var description= remember {
+        mutableStateOf<String>("")
+    }
+
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 20.dp, start = 20.dp, top = 10.dp, bottom = 10.dp),
+        value = title.value!!,
+        label = {
+                Text(text = stringResource(id = R.string.post_title), color = Color.Gray)
+        },
+        singleLine = true,
+        onValueChange = {
+            title.value = it
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Default,
+        ),
+
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor= Color.White,
+            textColor = Color.DarkGray,
+            placeholderColor = Color.White,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        )
+    )
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 20.dp, start = 20.dp, top = 10.dp, bottom = 10.dp),
+        value = description.value!!,
+        label = {
+            Text(text = stringResource(id = R.string.post_description),color = Color.Gray)
+        },
+        maxLines = 5,
+        onValueChange = {
+            description.value = it
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Default,
+        ),
+
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor= Color.White,
+            textColor = Color.DarkGray,
+            placeholderColor = Color.White,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        )
+    )
 }
 fun Context.createImageFile(): File {
     // Create an image file name

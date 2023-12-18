@@ -54,6 +54,23 @@
     <!--uploadPost-->
     <string name="choose_photo">انتخاب عکس</string>
     <string name="choose_video">انتخاب ویدئو</string>
+    <string name="post_title">عنوان</string>
+    <string name="post_description">توضیحات</string>
+    <string name="attach_product">افزودن محصول به این پست</string>
+
+    <!--productEdit-->
+    <string name="choose_photo_from_gallery">انتخاب از گالری</string>
+    <string name="take_photo_with_camera">عکس با دوربین</string>
+    <string name="name_and_detail_of_product">نام و توضیحات محصول</string>
+    <string name="name_of_product">نام محصول *</string>
+    <string name="detail_of_product">توضیحات محصول *</string>
+    <string name="product_images"> تصاویر محصول</string>
+    <string name="product_type"> نوع محصول</string>
+    <string name="digital_product"> محصول دیجیتال </string>
+    <string name="physical_product"> محصول فیزیکی </string>
+    <string name="select_file"> فایل مربوطه را انتخاب کنید</string>
+    <string name="digital_condition">درصورتی که محصول شما دیجیتال می باشد باید فایل مربوط با پسوند zip اضافه شود</string>
+
 
 
     <!--ERRORS-->
