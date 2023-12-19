@@ -63,13 +63,21 @@
     <string name="take_photo_with_camera">عکس با دوربین</string>
     <string name="name_and_detail_of_product">نام و توضیحات محصول</string>
     <string name="name_of_product">نام محصول *</string>
-    <string name="detail_of_product">توضیحات محصول *</string>
+    <string name="mas_of_product">وزن محصول به گرم *</string>
+    <string name="price_of_product">قیمت محصول به ریال *</string>
+    <string name="supply_of_product">موجودی محصول  *</string>
+    <string name="description_of_product">توضیحات محصول *</string>
+    <string name="unit_of_product">واحد شمارش *</string>
     <string name="product_images"> تصاویر محصول</string>
     <string name="product_type"> نوع محصول</string>
+    <string name="product_details"> وزن ،قیمت و موجودی</string>
     <string name="digital_product"> محصول دیجیتال </string>
     <string name="physical_product"> محصول فیزیکی </string>
     <string name="select_file"> فایل مربوطه را انتخاب کنید</string>
     <string name="digital_condition">درصورتی که محصول شما دیجیتال می باشد باید فایل مربوط با پسوند zip اضافه شود</string>
+    <string name="product_save"> ثبت نهایی </string>
+    <string name="product_cancel"> انصراف </string>
+
 
 
 
