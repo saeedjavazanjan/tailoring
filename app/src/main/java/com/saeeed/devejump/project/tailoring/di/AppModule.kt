@@ -21,6 +21,7 @@ import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetHomeData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
+import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.interactor.user_profile.GetUserProfileData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
@@ -56,6 +57,12 @@ object AppModule {
     @Provides
     fun provideMapper(): SewMethodMapper {
         return SewMethodMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideUploadPostFunctions(): UploadPostFunctions {
+        return UploadPostFunctions()
     }
 
     @Singleton

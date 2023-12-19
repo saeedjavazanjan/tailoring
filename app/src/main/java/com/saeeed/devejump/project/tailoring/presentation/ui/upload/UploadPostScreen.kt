@@ -187,6 +187,9 @@ fun UploadPostScreen(
                              },
                 requestPermission = {
                     cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                },
+                zipSelectedFile = {
+                    viewModel.zipSelectedFile(it)
                 }
             )
         }
