@@ -84,4 +84,14 @@ class CameraPermissionTextProvider: PermissionTextProvider {
     }
 }
 
+class StoragePermissionTextProvider: PermissionTextProvider {
+    override fun getDescription(isPermanentlyDeclined: Boolean): String {
+        return if(isPermanentlyDeclined) {
+            "ظاهرا شما با دسترسی برنامه به حافظه داخلی موافقت نکرده اید لازم است از بخش تنظیمات دسترسی را اعطا نمایید."
+        } else {
+            "لطفا با دسترسی برنامه به حافظه داخلی موافقت کنید "
+        }
+    }
+}
+
 

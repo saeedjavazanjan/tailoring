@@ -72,6 +72,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.components.CameraPermissionTextProvider
 import com.saeeed.devejump.project.tailoring.components.PermissionDialog
+import com.saeeed.devejump.project.tailoring.components.StoragePermissionTextProvider
 import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
@@ -152,7 +153,17 @@ fun UploadPostScreen(
        contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
             viewModel.onPermissionResult(
-                permission = Manifest.permission.CAMERA,
+                permission =Manifest.permission.CAMERA,
+                isGranted = isGranted
+            )
+        }
+    )
+
+    val storagePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            viewModel.onPermissionResult(
+                permission =Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 isGranted = isGranted
             )
         }
@@ -186,7 +197,7 @@ fun UploadPostScreen(
                     showDialog.value=it
                              },
                 requestPermission = {
-                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 },
                 zipSelectedFile = {
                     viewModel.zipSelectedFile(it)
@@ -202,6 +213,9 @@ fun UploadPostScreen(
                         Manifest.permission.CAMERA -> {
                             CameraPermissionTextProvider()
                         }
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+                            StoragePermissionTextProvider()
+                        }
 
                         else -> return@forEach
                     },
@@ -211,9 +225,20 @@ fun UploadPostScreen(
                     onDismiss = viewModel::dismissDialog,
                     onOkClick = {
                         viewModel.dismissDialog()
-                        cameraPermissionLauncher.launch(
-                            Manifest.permission.CAMERA
-                        )
+
+                        when(permission){
+                            Manifest.permission.CAMERA -> {
+                                cameraPermissionLauncher.launch(
+                                    Manifest.permission.CAMERA
+                                )
+                            }
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+                                storagePermissionLauncher.launch(
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                )
+                            }
+                        }
+
                     },
                     onGoToAppSettingsClick = {
                         activity.openAppSettings()
