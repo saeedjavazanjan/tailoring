@@ -285,7 +285,10 @@ fun ProductEditDialog(
                                     zipSelectedFile = {
                                         zipSelectedFile(it)
                                     },
-                                   selectedTypeOfProduct = selectedTypeOfProduct
+                                   selectedTypeOfProduct = selectedTypeOfProduct,
+                                    requestPermission={
+                                        requestPermission()
+                                    }
                                 )
                             }
                         }
@@ -518,8 +521,10 @@ fun ProductDetail(
 @Composable
 fun ProductType(
     zipSelectedFile:(List<Uri?>)->Unit,
-    selectedTypeOfProduct:MutableState<String>
+    selectedTypeOfProduct:MutableState<String>,
+    requestPermission:()->Unit
 ){
+    val context= LocalContext.current
     val selectedFilesPath = remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
     val fileLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()) {
@@ -576,7 +581,14 @@ fun ProductType(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(Color.LightGray),
                 onClick = {
-                    fileLauncher.launch("*/*")
+                    val permissionCheckResult =
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                        fileLauncher.launch("*/*")
+                    } else {
+                        requestPermission()
+                    }
+
 
                 }) {
                 Text(

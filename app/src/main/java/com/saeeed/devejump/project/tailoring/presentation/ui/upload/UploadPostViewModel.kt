@@ -1,21 +1,20 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.upload
 
 import android.net.Uri
+import android.os.Environment
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
+
 
 @HiltViewModel
 class UploadPostViewModel
@@ -26,6 +25,8 @@ class UploadPostViewModel
 
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
+
+    val zipFilePath= mutableStateOf("")
 
 
     val visiblePermissionDialogQueue = mutableStateListOf<String>()
@@ -46,14 +47,21 @@ class UploadPostViewModel
     fun zipSelectedFile(uris: List<Uri?>){
 
         val listOfPaths= mutableListOf<String>()
+        val outputZipPath=createFolder()
         uris.let {
             it.forEach {
                 listOfPaths.add(it!!.path!!)
             }
-            uploadPostFunctions.zipSelectedFiles(listOfPaths).onEach {dataState ->
+            uploadPostFunctions.zipSelectedFiles(listOfPaths,outputZipPath).onEach {dataState ->
                loading.value= dataState.loading
 
                 dataState.data?.let {
+                    zipFilePath.value=it
+
+
+                }
+                dataState.error?.let {
+                    dialogQueue.appendErrorMessage("خطا",it)
 
                 }
 
@@ -62,6 +70,18 @@ class UploadPostViewModel
             }
                 .launchIn(viewModelScope)
         }
+    }
+
+
+    fun createFolder():String{
+        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+            .toString()
+
+        val file=File(path,"tailoring")
+        if(!file.exists()){
+            file.mkdirs()
+        }
+        return file.path+"product"
     }
 
 }
