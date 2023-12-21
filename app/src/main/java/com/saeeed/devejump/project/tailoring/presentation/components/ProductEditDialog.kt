@@ -98,7 +98,8 @@ fun ProductEditDialog(
     showDialog: (Boolean) -> Unit,
     requestPermission:()->Unit,
     zipSelectedFile:(List<Uri?>)->Unit,
-    setProduct:(Product)->Unit
+    setProduct:(Product)->Unit,
+    digitalFileStatus:Boolean
     )
 
 {
@@ -119,23 +120,26 @@ fun ProductEditDialog(
     var price= remember {
         mutableStateOf<String>("")
     }
-    var supply= remember {
+    val supply= remember {
         mutableStateOf<String>("")
     }
-    var unit= remember {
-        mutableStateOf<String>("")
+    val unit= remember {
+        mutableStateOf<String>("عدد")
     }
 
-    var selectedImages= remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
+    val selectedImages= remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
 
-    var name= remember {
+    val name= remember {
         mutableStateOf<String>("")
     }
-    var description= remember {
+    val description= remember {
         mutableStateOf<String>("")
     }
     val selectedTypeOfProduct = remember { mutableStateOf("محصول فیزیکی") }
 
+    val digitalFileStatus= remember {
+        mutableStateOf(digitalFileStatus)
+    }
 
 
     Dialog(
@@ -292,7 +296,7 @@ fun ProductEditDialog(
 
                                 ProductType(
                                     zipSelectedFile = {
-                                        zipSelectedFile(it)
+                                     zipSelectedFile(it)
                                     },
                                    selectedTypeOfProduct = selectedTypeOfProduct,
                                     requestPermission={
@@ -365,6 +369,7 @@ fun ProductEditDialog(
                                         supply = supply.value,
                                         unit = unit.value,
                                         price=price.value,
+                                        digitalFileStatus = digitalFileStatus
                                     )
 
                                 ){
@@ -383,7 +388,15 @@ fun ProductEditDialog(
                                             .show()
 
                                     }
-                                    "Ok"->{
+                                    "there is not file"->{
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.not_file_attached_warning),
+                                            Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+
+                                        "Ok"->{
                                         showDialog(false)
 
                                     }
@@ -429,8 +442,10 @@ fun checkCondition(
     mas:String,
     supply:String,
     unit:String,
-    price: String
+    price: String,
+    digitalFileStatus:MutableState<Boolean>
 ):String {
+
     if (name == "" || description=="" || price==""){
         return "there is free field"
     }
@@ -442,7 +457,9 @@ fun checkCondition(
     if (description.length < 50){
         return "short description"
     }
-   else return "Ok"
+    return if(!digitalFileStatus.value &&  typeOfProduct != "محصول فیزیکی"){
+        "there is not file"
+    } else "Ok"
 }
 
 
@@ -514,33 +531,7 @@ fun ProductDetail(
                     disabledIndicatorColor = Color.Transparent
                 )
             )
-           /* TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .fillMaxWidth(0.9f),
-                shape = MaterialTheme.shapes.medium,
-                value = unit.value!!,
-                label = {
-                    Text(text = stringResource(id = R.string.unit_of_product), color = Color.Gray)
-                },
-                singleLine = true,
-                onValueChange = {
-                    unit.value = it
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next,
-                ),
-                colors = TextFieldDefaults.textFieldColors(
 
-                    textColor = Color.DarkGray,
-                    placeholderColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )*/
             ExposedDropdownMenuBox(
                 modifier = Modifier
                     .fillMaxWidth()

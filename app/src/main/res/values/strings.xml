@@ -79,6 +79,7 @@
     <string name="product_cancel"> انصراف </string>
     <string name="free_field_warning">فیلدهای ستاره دار نباید خالی باشد</string>
     <string name="short_description_warning">توضیحات نباید کمتر از 50 کاراکتر باشد</string>
+    <string name="not_file_attached_warning">فایل مربوط به محصول دیجیتال خود را اضافه کنید</string>
 
 
 

@@ -97,6 +97,7 @@ fun UploadPostScreen(
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
     val permissionDialogQueue = viewModel.visiblePermissionDialogQueue
+    val digitalFileStatus=viewModel.digitalFileStatus.value
 
     val typeOfPost= remember {
         mutableStateOf("")
@@ -204,7 +205,8 @@ fun UploadPostScreen(
                 },
                 setProduct = {
 
-                }
+                },
+                digitalFileStatus = digitalFileStatus
             )
         }
 

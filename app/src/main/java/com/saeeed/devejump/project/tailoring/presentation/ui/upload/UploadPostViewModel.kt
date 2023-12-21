@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
@@ -34,6 +35,7 @@ class UploadPostViewModel
     val dialogQueue = DialogQueue()
 
     val zipFilePath= mutableStateOf("")
+    val digitalFileStatus= mutableStateOf(false)
 
 
     val visiblePermissionDialogQueue = mutableStateListOf<String>()
@@ -59,16 +61,20 @@ class UploadPostViewModel
 
                 dataState.data?.let {
                     zipFilePath.value=it
-
+                    digitalFileStatus.value=true
                     Toast.makeText(context,"compressed successfull",Toast.LENGTH_SHORT).show()
                 }
                 dataState.error?.let {
                     dialogQueue.appendErrorMessage("خطا",it)
+                    digitalFileStatus.value=false
 
                 }
 
             }.catch {error->
                 dialogQueue.appendErrorMessage("خطا",error.message.toString())
+                digitalFileStatus.value=false
+
+
             }
                 .launchIn(viewModelScope)
         }
