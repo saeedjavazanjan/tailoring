@@ -1,7 +1,10 @@
 package com.saeeed.devejump.project.tailoring.interactor.upload_post
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.Uri
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
+import com.saeeed.devejump.project.tailoring.utils.GetPathFromUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,33 +20,40 @@ class UploadPostFunctions() {
 
     @SuppressLint("SuspiciousIndentation")
     fun zipSelectedFiles(
-        filesToCompress: List<String>,
-        outputZipFilePath: String
+        uris: List<Uri?>,
+        outputZipFilePath: String,
+        context:Context
 
     ): Flow<DataState<String>> = flow<DataState<String>> {
         emit(DataState.loading())
         val buffer = ByteArray(1024)
-        try {
-            val fos = FileOutputStream(outputZipFilePath)
-            val zos = ZipOutputStream(fos)
+        val filesToCompress= mutableListOf<String?>()
+        val getPathFromUri= GetPathFromUri.instance
 
-            filesToCompress.forEach { file ->
-                val ze = ZipEntry(File(file).name)
-                zos.putNextEntry(ze)
-                val `in` = FileInputStream(file)
-                while(true) {
-                    val len = `in`.read(buffer)
-                    if (len <= 0) break
-                    zos.write(buffer, 0, len)
+        try {
+                uris.forEach { uri ->
+                    filesToCompress.add(getPathFromUri.trigger(uri!!, context))
+                }
+                val fos = FileOutputStream(outputZipFilePath)
+                val zos = ZipOutputStream(fos)
+
+                filesToCompress.forEach { file ->
+                    val ze = ZipEntry(File(file).name)
+                    zos.putNextEntry(ze)
+                    val `in` = FileInputStream(file)
+                    while (true) {
+                        val len = `in`.read(buffer)
+                        if (len <= 0) break
+                        zos.write(buffer, 0, len)
+                    }
+
+                    `in`.close()
                 }
 
-                `in`.close()
-            }
-
-            zos.closeEntry()
-            zos.close()
-            emit(DataState.success(outputZipFilePath))
-        } catch (e: Exception) {
+                zos.closeEntry()
+                zos.close()
+                emit(DataState.success(outputZipFilePath))
+             } catch (e: Exception) {
             e.printStackTrace()
             emit(DataState.error(e.message?:"خطایی رخ داده است"))
         }

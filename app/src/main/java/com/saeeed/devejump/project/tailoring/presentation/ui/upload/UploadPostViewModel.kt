@@ -1,14 +1,20 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.upload
 
+import android.app.Application
+import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
+import com.saeeed.devejump.project.tailoring.utils.GetPathFromUri
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -22,6 +28,7 @@ class UploadPostViewModel
        private val uploadPostFunctions: UploadPostFunctions
 
 ):ViewModel() {
+
 
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
@@ -44,21 +51,16 @@ class UploadPostViewModel
         }
     }
 
-    fun zipSelectedFile(uris: List<Uri?>){
-
-        val listOfPaths= mutableListOf<String>()
+    fun zipSelectedFile(uris: List<Uri?>,context: Context){
         val outputZipPath=createFolder()
         uris.let {
-            it.forEach {
-                listOfPaths.add(it!!.path!!)
-            }
-            uploadPostFunctions.zipSelectedFiles(listOfPaths,outputZipPath).onEach {dataState ->
+            uploadPostFunctions.zipSelectedFiles(uris,outputZipPath,context).onEach {dataState ->
                loading.value= dataState.loading
 
                 dataState.data?.let {
                     zipFilePath.value=it
 
-
+                    Toast.makeText(context,"compressed successfull",Toast.LENGTH_SHORT).show()
                 }
                 dataState.error?.let {
                     dialogQueue.appendErrorMessage("خطا",it)

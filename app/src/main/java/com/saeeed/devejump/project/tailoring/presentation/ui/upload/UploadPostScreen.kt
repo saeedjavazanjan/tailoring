@@ -200,7 +200,10 @@ fun UploadPostScreen(
                     storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 },
                 zipSelectedFile = {
-                    viewModel.zipSelectedFile(it)
+                    viewModel.zipSelectedFile(it,context)
+                },
+                setProduct = {
+
                 }
             )
         }

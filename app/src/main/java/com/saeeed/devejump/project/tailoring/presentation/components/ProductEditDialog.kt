@@ -3,6 +3,7 @@ package com.saeeed.devejump.project.tailoring.presentation.components
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,7 +35,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.ExposedDropdownMenuDefaults
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
@@ -48,9 +52,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,6 +87,7 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.saeeed.devejump.project.tailoring.R
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.ui.upload.SelectedImagesPager
 import com.saeeed.devejump.project.tailoring.presentation.ui.upload.createImageFile
 import java.util.Objects
@@ -90,11 +97,13 @@ import java.util.Objects
 fun ProductEditDialog(
     showDialog: (Boolean) -> Unit,
     requestPermission:()->Unit,
-    zipSelectedFile:(List<Uri?>)->Unit
+    zipSelectedFile:(List<Uri?>)->Unit,
+    setProduct:(Product)->Unit
     )
 
 {
 
+    val context= LocalContext.current
     val expanded = remember {
         listOf(
             mutableStateOf(false),
@@ -347,6 +356,39 @@ fun ProductEditDialog(
                         Button(
                             colors = ButtonDefaults.buttonColors(Color.Green),
                             onClick = {
+                                when(
+                                    checkCondition(
+                                        name=name.value,
+                                        description=description.value,
+                                        typeOfProduct = selectedTypeOfProduct.value,
+                                        mas = mas.value,
+                                        supply = supply.value,
+                                        unit = unit.value,
+                                        price=price.value,
+                                    )
+
+                                ){
+                                     "there is free field"->{
+                                         Toast.makeText(context,
+                                             context.getString(R.string.free_field_warning),
+                                             Toast.LENGTH_SHORT)
+                                             .show()
+
+                                     }
+                                    "short description"->{
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.short_description_warning),
+                                            Toast.LENGTH_SHORT)
+                                            .show()
+
+                                    }
+                                    "Ok"->{
+                                        showDialog(false)
+
+                                    }
+
+                                }
                                 
 
                             }) {
@@ -354,11 +396,7 @@ fun ProductEditDialog(
                                 text = stringResource(id = R.string.product_save),
                                 color = Color.White
                             )
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_folder_zip_24),
-                                contentDescription =null,
-                                tint = Color.White
-                            )
+
                         }
                         
                         Button(
@@ -370,11 +408,7 @@ fun ProductEditDialog(
                                 text = stringResource(id = R.string.cancel),
                                 color = Color.White
                             )
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_folder_zip_24),
-                                contentDescription =null,
-                                tint = Color.White
-                            )
+
 
 
                         }
@@ -388,7 +422,31 @@ fun ProductEditDialog(
 
     }
 
+fun checkCondition(
+    name:String,
+    description:String,
+    typeOfProduct: String,
+    mas:String,
+    supply:String,
+    unit:String,
+    price: String
+):String {
+    if (name == "" || description=="" || price==""){
+        return "there is free field"
+    }
+    if(typeOfProduct == "محصول فیزیکی"){
+        if(mas == "" || supply == "" || unit =="" ){
+            return "there is free field"
+        }
+    }
+    if (description.length < 50){
+        return "short description"
+    }
+   else return "Ok"
+}
 
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProductDetail(
     typeOfProduct:String,
@@ -398,14 +456,15 @@ fun ProductDetail(
     supply:MutableState<String>,
 
 ){
-
+    val options = listOf("عدد", "متر", "کیلو", "قواره", "بسته")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOptionText by remember { mutableStateOf(options[0]) }
     Column{
         if (typeOfProduct.equals(stringResource(id = R.string.physical_product))){
             TextField(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(8.dp)
-                    .fillMaxWidth(0.9f),
+                    .fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 value = mas.value.toString(),
                 label = {
@@ -431,9 +490,8 @@ fun ProductDetail(
             )
             TextField(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(8.dp)
-                    .fillMaxWidth(0.9f),
+                    .fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 value = supply.value,
                 label = {
@@ -456,7 +514,7 @@ fun ProductDetail(
                     disabledIndicatorColor = Color.Transparent
                 )
             )
-            TextField(
+           /* TextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -482,14 +540,66 @@ fun ProductDetail(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
                 )
-            )
+            )*/
+            ExposedDropdownMenuBox(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                expanded = expanded,
+                onExpandedChange = {
+                    expanded = !expanded
+                }
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    readOnly = true,
+                    value = selectedOptionText,
+                    onValueChange = { },
+                    label = {
+                        Text(text = stringResource(id = R.string.unit_of_product), color = Color.Gray)
+                    },
+                    trailingIcon = {
+
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = expanded
+                        )
+                    },
+                     colors = TextFieldDefaults.textFieldColors(
+
+                        textColor = Color.DarkGray,
+                        placeholderColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = {
+                        expanded = false
+                    }
+                ) {
+                    options.forEach { selectionOption ->
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedOptionText = selectionOption
+                                expanded = false
+                                unit.value=selectionOption
+                            }
+                        ){
+                            Text(text = selectionOption)
+                        }
+                    }
+                }
+            }
         }
 
         TextField(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(8.dp)
-                .fillMaxWidth(0.9f),
+                .fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
             value = price.value.toString(),
             label = {
@@ -678,6 +788,9 @@ fun ProductNameAndDescription(
     description:MutableState<String>
 ){
 
+    val characterCounter = remember {
+        mutableStateOf(0)
+    }
     Column {
         TextField(
             modifier = Modifier
@@ -707,10 +820,11 @@ fun ProductNameAndDescription(
                 disabledIndicatorColor = Color.Transparent
             )
         )
+
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(top = 8.dp, end = 8.dp, start = 8.dp)
                 .fillMaxWidth(0.9f),
             shape = MaterialTheme.shapes.medium,
             value = description.value!!,
@@ -720,6 +834,8 @@ fun ProductNameAndDescription(
             maxLines = 4,
             onValueChange = {
                 description.value = it
+                characterCounter.value= description.value.length
+
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -734,7 +850,12 @@ fun ProductNameAndDescription(
                 disabledIndicatorColor = Color.Transparent
             )
         )
-
+        Text(
+            modifier = Modifier.padding(start = 8.dp, end=8.dp, bottom = 8.dp),
+            text = "${characterCounter.value}/50" ,
+            color=Color.LightGray,
+            style = MaterialTheme.typography.bodySmall
+        )
 
     }
 
