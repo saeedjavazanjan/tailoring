@@ -77,6 +77,8 @@
     <string name="digital_condition">درصورتی که محصول شما دیجیتال می باشد باید فایل مربوط با پسوند zip اضافه شود</string>
     <string name="product_save"> ثبت نهایی </string>
     <string name="product_cancel"> انصراف </string>
+    <string name="free_field_warning">فیلدهای ستاره دار نباید خالی باشد</string>
+    <string name="short_description_warning">توضیحات نباید کمتر از 50 کاراکتر باشد</string>
 
 
 
