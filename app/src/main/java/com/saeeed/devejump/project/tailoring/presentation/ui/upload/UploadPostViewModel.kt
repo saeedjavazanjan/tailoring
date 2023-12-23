@@ -5,11 +5,13 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.GetPathFromUri
@@ -31,9 +33,12 @@ class UploadPostViewModel
 
 
     val loading = mutableStateOf(false)
+    val fileZippingLoading= mutableStateOf(false)
     val dialogQueue = DialogQueue()
+    val product: MutableState<Product?> = mutableStateOf(null)
 
     val zipFilePath= mutableStateOf("")
+    val digitalFileStatus= mutableStateOf(false)
 
 
     val visiblePermissionDialogQueue = mutableStateListOf<String>()
@@ -55,20 +60,24 @@ class UploadPostViewModel
         val outputZipPath=createFolder()
         uris.let {
             uploadPostFunctions.zipSelectedFiles(uris,outputZipPath,context).onEach {dataState ->
-               loading.value= dataState.loading
+               fileZippingLoading.value= dataState.loading
 
                 dataState.data?.let {
                     zipFilePath.value=it
-
+                    digitalFileStatus.value=true
                     Toast.makeText(context,"compressed successfull",Toast.LENGTH_SHORT).show()
                 }
                 dataState.error?.let {
                     dialogQueue.appendErrorMessage("خطا",it)
+                    digitalFileStatus.value=false
 
                 }
 
             }.catch {error->
                 dialogQueue.appendErrorMessage("خطا",error.message.toString())
+                digitalFileStatus.value=false
+
+
             }
                 .launchIn(viewModelScope)
         }

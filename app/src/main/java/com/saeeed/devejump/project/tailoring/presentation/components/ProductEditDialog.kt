@@ -44,6 +44,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -80,6 +81,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.media3.common.Timeline.Window
+import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -87,6 +89,7 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.saeeed.devejump.project.tailoring.R
+import com.saeeed.devejump.project.tailoring.components.progress_bar.DotsFlashing
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.ui.upload.SelectedImagesPager
 import com.saeeed.devejump.project.tailoring.presentation.ui.upload.createImageFile
@@ -98,7 +101,9 @@ fun ProductEditDialog(
     showDialog: (Boolean) -> Unit,
     requestPermission:()->Unit,
     zipSelectedFile:(List<Uri?>)->Unit,
-    setProduct:(Product)->Unit
+    setProduct:(Product)->Unit,
+    digitalFileStatus:Boolean,
+    fileZippingLoading: Boolean
     )
 
 {
@@ -119,19 +124,19 @@ fun ProductEditDialog(
     var price= remember {
         mutableStateOf<String>("")
     }
-    var supply= remember {
+    val supply= remember {
         mutableStateOf<String>("")
     }
-    var unit= remember {
-        mutableStateOf<String>("")
+    val unit= remember {
+        mutableStateOf<String>("عدد")
     }
 
-    var selectedImages= remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
+    val selectedImages= remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
 
-    var name= remember {
+    val name= remember {
         mutableStateOf<String>("")
     }
-    var description= remember {
+    val description= remember {
         mutableStateOf<String>("")
     }
     val selectedTypeOfProduct = remember { mutableStateOf("محصول فیزیکی") }
@@ -292,12 +297,13 @@ fun ProductEditDialog(
 
                                 ProductType(
                                     zipSelectedFile = {
-                                        zipSelectedFile(it)
+                                     zipSelectedFile(it)
                                     },
                                    selectedTypeOfProduct = selectedTypeOfProduct,
                                     requestPermission={
                                         requestPermission()
-                                    }
+                                    },
+                                    fileZippingLoading=fileZippingLoading
                                 )
                             }
                         }
@@ -365,6 +371,7 @@ fun ProductEditDialog(
                                         supply = supply.value,
                                         unit = unit.value,
                                         price=price.value,
+                                        digitalFileStatus = digitalFileStatus
                                     )
 
                                 ){
@@ -383,10 +390,34 @@ fun ProductEditDialog(
                                             .show()
 
                                     }
-                                    "Ok"->{
-                                        showDialog(false)
 
-                                    }
+                                        "Ok"->{
+                                                Toast.makeText(
+                                                    context,
+                                                    context.getString(R.string.product_saved_successfully),
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                    .show()
+                                            setProduct(
+                                                Product(
+                                                    id=0,
+                                                    name=name.value,
+                                                    description=description.value,
+                                                    images = selectedImages.toList(),
+                                                    typeOfProduct = selectedTypeOfProduct.value,
+                                                    price = price.value,
+                                                    unit = unit.value,
+                                                    supply = supply.value,
+                                                    mas = mas.value,
+                                                    postId = 0
+
+                                                )
+                                            )
+
+                                                showDialog(false)
+
+
+                                        }
 
                                 }
                                 
@@ -429,8 +460,10 @@ fun checkCondition(
     mas:String,
     supply:String,
     unit:String,
-    price: String
+    price: String,
+    digitalFileStatus:Boolean
 ):String {
+
     if (name == "" || description=="" || price==""){
         return "there is free field"
     }
@@ -442,7 +475,9 @@ fun checkCondition(
     if (description.length < 50){
         return "short description"
     }
-   else return "Ok"
+    return if(!digitalFileStatus &&  typeOfProduct != "محصول فیزیکی"){
+        "there is not file"
+    } else   "Ok"
 }
 
 
@@ -514,33 +549,7 @@ fun ProductDetail(
                     disabledIndicatorColor = Color.Transparent
                 )
             )
-           /* TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .fillMaxWidth(0.9f),
-                shape = MaterialTheme.shapes.medium,
-                value = unit.value!!,
-                label = {
-                    Text(text = stringResource(id = R.string.unit_of_product), color = Color.Gray)
-                },
-                singleLine = true,
-                onValueChange = {
-                    unit.value = it
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next,
-                ),
-                colors = TextFieldDefaults.textFieldColors(
 
-                    textColor = Color.DarkGray,
-                    placeholderColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
-            )*/
             ExposedDropdownMenuBox(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -632,7 +641,8 @@ fun ProductDetail(
 fun ProductType(
     zipSelectedFile:(List<Uri?>)->Unit,
     selectedTypeOfProduct:MutableState<String>,
-    requestPermission:()->Unit
+    requestPermission:()->Unit,
+    fileZippingLoading: Boolean
 ){
     val context= LocalContext.current
     val selectedFilesPath = remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
@@ -687,32 +697,43 @@ fun ProductType(
                style= MaterialTheme.typography.bodySmall
 
             )
-            Button(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(Color.LightGray),
-                onClick = {
-                    val permissionCheckResult =
-                        ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                        fileLauncher.launch("*/*")
-                    } else {
-                        requestPermission()
-                    }
+            if  (fileZippingLoading){
+                Box(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                ){
+                    DotsFlashing()
+
+                }
+
+            }else{
+                Button(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(Color.LightGray),
+                    onClick = {
+                        val permissionCheckResult =
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                            fileLauncher.launch("*/*")
+                        } else {
+                            requestPermission()
+                        }
 
 
-                }) {
-                Text(
-                    text = stringResource(id = R.string.select_file),
-                    color = Color.White
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_folder_zip_24),
-                    contentDescription =null,
-                    tint = Color.White
-                )
+                    }) {
+                    Text(
+                        text = stringResource(id = R.string.select_file),
+                        color = Color.White
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_folder_zip_24),
+                        contentDescription =null,
+                        tint = Color.White
+                    )
 
 
+                }
             }
+
         }
 
     }

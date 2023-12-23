@@ -1,14 +1,16 @@
 package com.saeeed.devejump.project.tailoring.domain.model
 
+import android.net.Uri
+
 data class Product(
     val id:Int,
     val name:String,
     val description:String,
-    val images:List<String> = listOf(),
+    val images:List<Uri?> = listOf(),
     val typeOfProduct:String,
-    val mas:Int=0,
-    val supply:Int=0,
+    val mas:String="0",
+    val supply:String="0",
     val unit:String,
-    val price:Int,
+    val price:String,
     val postId:Int
 )
