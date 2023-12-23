@@ -11,29 +11,44 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +66,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -73,6 +89,7 @@ import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.components.CameraPermissionTextProvider
 import com.saeeed.devejump.project.tailoring.components.PermissionDialog
 import com.saeeed.devejump.project.tailoring.components.StoragePermissionTextProvider
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
@@ -207,6 +224,7 @@ fun UploadPostScreen(
                 },
                 setProduct = {
                              viewModel.product.value=it
+
                 },
                 digitalFileStatus = digitalFileStatus,
                 fileZippingLoading=fileZippingLoading
@@ -272,6 +290,7 @@ fun UploadPostScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(it)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     Box(
                         modifier = Modifier
@@ -393,7 +412,9 @@ fun UploadPostScreen(
                     TitleAndDescription()
 
                     if(viewModel.product.value != null){
-
+                        ProductPreview(
+                            product = viewModel.product.value!!
+                        )
                     }else{
                         Button(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -427,10 +448,76 @@ fun UploadPostScreen(
 }
 
 
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun ProductPreview(
+    product: Product
+){
+    Card(
+        modifier=Modifier.padding(20.dp),
+        elevation=CardDefaults.cardElevation(10.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        ),
+                border = BorderStroke(1.dp, color = Color.Gray)
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ){
+                GlideImage(
+                    model = product.images[0],
+                    contentDescription = "",
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(100.dp)
+                        .padding(5.dp)
+                        .clip(RoundedCornerShape(10.dp)),
+                    contentScale = ContentScale.Crop,
+                )
+                Text(
+                    modifier=Modifier.align(Alignment.Bottom),
+                    text =product.name
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(Icons.Default.Edit , contentDescription =null )
+                Icon(Icons.Default.Delete , contentDescription =null )
+
+            }
+            Text(
+                modifier=Modifier.padding(10.dp),
+                text =product.description
+            )
+
+            Text(
+                modifier=Modifier.padding(10.dp),
+
+                text ="قیمت ${product.price} تومان "
+            )
+            TextButton(
+                modifier=Modifier
+                    .align(Alignment.End),
+                onClick = { /*TODO*/ }) {
+                Text(
+                    modifier=Modifier.padding(10.dp),
+                    text = stringResource(id =R.string.more),
+                    color= Color.Blue
+                )
+            }
+
+        }
 
 
 
 
+    }
+
+
+
+}
 
 
 
