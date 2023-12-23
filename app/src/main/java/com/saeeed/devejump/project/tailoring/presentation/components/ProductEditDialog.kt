@@ -610,7 +610,7 @@ fun ProductDetail(
                 .padding(8.dp)
                 .fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
-            value = price.value.toString(),
+            value = price.value ,
             label = {
                 Text(text = stringResource(id = R.string.price_of_product), color = Color.Gray)
             },
