@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.GetPathFromUri
@@ -32,7 +33,9 @@ class UploadPostViewModel
 
 
     val loading = mutableStateOf(false)
+    val fileZippingLoading= mutableStateOf(false)
     val dialogQueue = DialogQueue()
+    val product: MutableState<Product?> = mutableStateOf(null)
 
     val zipFilePath= mutableStateOf("")
     val digitalFileStatus= mutableStateOf(false)
@@ -57,7 +60,7 @@ class UploadPostViewModel
         val outputZipPath=createFolder()
         uris.let {
             uploadPostFunctions.zipSelectedFiles(uris,outputZipPath,context).onEach {dataState ->
-               loading.value= dataState.loading
+               fileZippingLoading.value= dataState.loading
 
                 dataState.data?.let {
                     zipFilePath.value=it

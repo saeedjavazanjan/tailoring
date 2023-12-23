@@ -97,7 +97,6 @@ fun UploadPostScreen(
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
     val permissionDialogQueue = viewModel.visiblePermissionDialogQueue
-    val digitalFileStatus=viewModel.digitalFileStatus.value
 
     val typeOfPost= remember {
         mutableStateOf("")
@@ -193,6 +192,9 @@ fun UploadPostScreen(
     ) {
 
         if (showDialog.value){
+            val fileZippingLoading=viewModel.fileZippingLoading.value
+            val digitalFileStatus=viewModel.digitalFileStatus.value
+
             ProductEditDialog(
                 showDialog = {
                     showDialog.value=it
@@ -204,9 +206,10 @@ fun UploadPostScreen(
                     viewModel.zipSelectedFile(it,context)
                 },
                 setProduct = {
-
+                             viewModel.product.value=it
                 },
-                digitalFileStatus = digitalFileStatus
+                digitalFileStatus = digitalFileStatus,
+                fileZippingLoading=fileZippingLoading
             )
         }
 
@@ -389,23 +392,28 @@ fun UploadPostScreen(
                     }
                     TitleAndDescription()
 
-                    Button(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        colors = ButtonDefaults.buttonColors(Color.LightGray),
-                        onClick = {
-                            showDialog.value=true
+                    if(viewModel.product.value != null){
 
-                        }) {
-                        Text(
-                            text = stringResource(id = R.string.attach_product),
-                            color = Color.White
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_attach_file_24),
-                            contentDescription =null,
-                            tint = Color.White
-                        )
+                    }else{
+                        Button(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            colors = ButtonDefaults.buttonColors(Color.LightGray),
+                            onClick = {
+                                showDialog.value=true
+
+                            }) {
+                            Text(
+                                text = stringResource(id = R.string.attach_product),
+                                color = Color.White
+                            )
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_attach_file_24),
+                                contentDescription =null,
+                                tint = Color.White
+                            )
+                        }
                     }
+
 
 
                 }
@@ -417,6 +425,10 @@ fun UploadPostScreen(
 
 
 }
+
+
+
+
 
 
 
