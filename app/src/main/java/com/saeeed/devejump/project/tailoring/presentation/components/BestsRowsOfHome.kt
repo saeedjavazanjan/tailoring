@@ -11,26 +11,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saeeed.devejump.project.tailoring.R
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
 @Composable
 fun BestsRowsOfHome(
     onNavigateToDescriptionScreen:(String)-> Unit,
     loading: Boolean,
-    bestOfMonthMethods: MutableState<List<SewMethod>>,
-    bestOfWeekMethods: MutableState<List<SewMethod>>,
-    bestOfDayMethods: MutableState<List<SewMethod>>,
+    bestOfMonthMethods: MutableState<List<Post>>,
+    bestOfWeekMethods: MutableState<List<Post>>,
+    bestOfDayMethods: MutableState<List<Post>>,
 
 
-) {
+    ) {
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -72,7 +71,7 @@ fun BestsRowsOfHome(
         }
         BestsRow(
             loading = loading ,
-            sewMethods = bestOfMonthMethods.value.take(3) ,
+            posts = bestOfMonthMethods.value.take(3) ,
             onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
 
 
@@ -116,7 +115,7 @@ fun BestsRowsOfHome(
 
        BestsRow(
            loading = loading ,
-           sewMethods = bestOfWeekMethods.value.take(3) ,
+           posts = bestOfWeekMethods.value.take(3) ,
            onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
        )
        Spacer(modifier = Modifier.size(50.dp))
@@ -154,7 +153,7 @@ fun BestsRowsOfHome(
        }
        BestsRow(
            loading = loading ,
-           sewMethods = bestOfDayMethods.value.take(3) ,
+           posts = bestOfDayMethods.value.take(3) ,
            onNavigateToDescriptionScreen = onNavigateToDescriptionScreen,
 
 

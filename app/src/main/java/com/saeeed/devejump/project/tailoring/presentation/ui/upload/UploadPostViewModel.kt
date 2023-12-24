@@ -1,6 +1,5 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.upload
 
-import android.app.Application
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
@@ -8,15 +7,14 @@ import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
 import com.saeeed.devejump.project.tailoring.domain.model.Product
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
-import com.saeeed.devejump.project.tailoring.utils.GetPathFromUri
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -83,7 +81,11 @@ class UploadPostViewModel
         }
     }
 
+    fun uploadPostAndProduct(post:CreatedPost){
 
+
+
+    }
     fun createFolder():String{
         val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
             .toString()

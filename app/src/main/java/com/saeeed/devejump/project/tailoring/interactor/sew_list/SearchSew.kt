@@ -1,11 +1,11 @@
 package com.saeeed.devejump.project.tailoring.interactor.sew_list
 
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
-import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
+import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.flow
 class SearchSew(
     private val sewMethodDao: SewMethodDao,
     private val retrofitService: RetrofitService,
-    private val entityMapper: SewEntityMapper,
-    private val dtoMapper: SewMethodMapper,
+    private val entityMapper: PostEntityMapper,
+    private val dtoMapper: PostMapper,
 ) {
 
     fun execute(
@@ -22,7 +22,7 @@ class SearchSew(
         page: Int,
         query: String,
         isNetworkAvailable:Boolean
-    ): Flow<DataState<List<SewMethod>>> = flow {
+    ): Flow<DataState<List<Post>>> = flow {
         try {
             emit(DataState.loading())
 
@@ -71,7 +71,7 @@ class SearchSew(
 
             emit(DataState.success(list))
         } catch (e: Exception) {
-            emit(DataState.error<List<SewMethod>>(e.message ?: "Unknown Error"))
+            emit(DataState.error<List<Post>>(e.message ?: "Unknown Error"))
         }
     }
 
@@ -80,7 +80,7 @@ class SearchSew(
         token: String,
         page: Int,
         query: String
-    ): List<SewMethod> {
+    ): List<Post> {
         return dtoMapper.toDomainList(
             retrofitService.search().sewmethods
             //  token = token,

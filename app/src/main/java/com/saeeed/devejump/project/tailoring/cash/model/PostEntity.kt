@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "sewMethods")
-data class SewEntity(
+@Entity(tableName = "posts")
+data class PostEntity(
 // Value from API
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "id")
@@ -49,8 +49,8 @@ data class SewEntity(
     /**
      * Value from API
      */
-    @ColumnInfo(name = "date_updated")
-    var dateUpdated: Long,
+    @ColumnInfo(name = "have_product")
+    var haveProduct: Int,
 
     /**
      * The date this recipe was "refreshed" in the cache.

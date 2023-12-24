@@ -8,13 +8,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
@@ -47,7 +47,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -55,6 +54,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,7 +66,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -78,6 +77,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -87,13 +87,19 @@ import com.canhub.cropper.CropImageOptions
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.components.CameraPermissionTextProvider
+import com.saeeed.devejump.project.tailoring.components.GenericDialog
+import com.saeeed.devejump.project.tailoring.components.NegativeAction
 import com.saeeed.devejump.project.tailoring.components.PermissionDialog
+import com.saeeed.devejump.project.tailoring.components.PositiveAction
 import com.saeeed.devejump.project.tailoring.components.StoragePermissionTextProvider
+import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
+import com.saeeed.devejump.project.tailoring.utils.USERID
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -109,6 +115,7 @@ fun UploadPostScreen(
     isDarkTheme: Boolean,
     isNetworkAvailable: Boolean,
     viewModel: UploadPostViewModel,
+    navController:NavController
 ){
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
@@ -124,8 +131,15 @@ fun UploadPostScreen(
     val pagerState = rememberPagerState(pageCount = {
         selectedImages.size
     })
-
-
+    val title= remember {
+        mutableStateOf<String>("")
+    }
+    val description= remember {
+        mutableStateOf<String>("")
+    }
+    val exitDialogShow= remember {
+        mutableStateOf(false)
+    }
 
     val context = LocalContext.current
     val activity =context as Activity
@@ -137,11 +151,12 @@ fun UploadPostScreen(
         context.packageName + ".provider", file
     )
 
-    var capturedImageUri = remember {
+   /* var capturedImageUri = remember {
         mutableStateOf<Uri?>(Uri.EMPTY)
-    }
+    }*/
     val imageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)) {
+        selectedVideoUri.value= Uri.EMPTY
         selectedImages.apply {
             clear()
             addAll(it)
@@ -152,7 +167,12 @@ fun UploadPostScreen(
         contract = CropImageContract()
     ) { result ->
         if (result.isSuccessful) {
-            capturedImageUri.value = result.uriContent
+
+            selectedImages.apply {
+                clear()
+                selectedImages.add(result.uriContent)
+            }
+            selectedVideoUri.value= Uri.EMPTY
             typeOfPost.value="cameraPhoto"
             // Got image data. Use it according to your need
         }
@@ -207,6 +227,33 @@ fun UploadPostScreen(
         scaffoldState = scaffoldState
 
     ) {
+        
+        if (exitDialogShow.value){
+            GenericDialog(
+                onDismiss = { /*TODO*/ },
+                title = "",
+                description = stringResource(id = R.string.not_saved_warning) ,
+                positiveAction = PositiveAction(
+                  positiveBtnTxt =   "بله",
+                    onPositiveAction = {
+                        exitDialogShow.value=false
+                        navController.popBackStack()
+                    }
+                ),
+                negativeAction = NegativeAction(
+                    negativeBtnTxt="خیر",
+                    onNegativeAction = {
+                        exitDialogShow.value=false
+
+                    }
+
+                )
+            )
+        }
+        
+        
+        
+        
 
         if (showDialog.value){
             val fileZippingLoading=viewModel.fileZippingLoading.value
@@ -286,11 +333,12 @@ fun UploadPostScreen(
                     TopBar()
                 }
             ) {
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(it)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
                 ) {
                     Box(
                         modifier = Modifier
@@ -314,7 +362,7 @@ fun UploadPostScreen(
                             }
                             "cameraPhoto"->{
                                     GlideImage(
-                                        model = capturedImageUri.value,
+                                        model = selectedImages[0],
                                         loading = placeholder(R.drawable.empty_plate),
                                         contentDescription = "",
                                         modifier = Modifier
@@ -409,7 +457,10 @@ fun UploadPostScreen(
 
                         }
                     }
-                    TitleAndDescription()
+                    TitleAndDescription(
+                        title=title,
+                        description=description
+                    )
 
                     if(viewModel.product.value != null){
                         ProductPreview(
@@ -437,12 +488,74 @@ fun UploadPostScreen(
 
 
 
+                            Button(
+                                modifier= Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(top = 100.dp),
+                                colors = ButtonDefaults.buttonColors(Color.Green),
+                                onClick = {
+
+                                    if(title.value=="" || description.value==""){
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.free_field_warning),
+                                            Toast.LENGTH_SHORT
+                                            ).show()
+
+                                    }else{
+                                        viewModel.uploadPostAndProduct(
+                                            post = CreatedPost(
+                                                id=0,
+                                                title = title.value,
+                                                postType =
+                                                    if(selectedVideoUri.value==Uri.EMPTY){
+                                                        "image"
+                                                    }else{
+                                                        "video"
+                                                    }
+                                                ,
+                                                publisher = USERID.toString(),
+                                                authorId = USERID,
+                                                featuredImage = selectedImages.toList(),
+                                                videoUri = selectedVideoUri.value!!,
+                                                description = description.value,
+                                                dateAdded =Date() ,
+                                                haveProduct =
+                                                if (viewModel.product.value==null){
+                                                    0
+                                                }else{
+                                                    1
+                                                }
+
+
+                                            )
+                                        )
+                                    }
+
+                                }) {
+                                Text(
+                                    text = stringResource(id = R.string.product_save),
+                                    color = Color.White
+                                )
+
+                            }
+
+
+
+
+
+
+
                 }
             }
         }
     }
 
+ BackHandler {
+     
+     exitDialogShow.value=true
 
+ }
 
 
 }
@@ -471,6 +584,7 @@ fun ProductPreview(
                 GlideImage(
                     model = product.images[0],
                     contentDescription = "",
+                    loading=placeholder(R.drawable.empty_plate),
                     modifier = Modifier
                         .width(100.dp)
                         .height(100.dp)
@@ -553,13 +667,10 @@ fun SelectedImagesPager(
 
 @Composable
 fun TitleAndDescription(
+    title:MutableState<String>,
+    description:MutableState<String>
 ){
-    var title= remember {
-        mutableStateOf<String>("")
-    }
-    var description= remember {
-        mutableStateOf<String>("")
-    }
+
 
     TextField(
         modifier = Modifier
@@ -567,7 +678,7 @@ fun TitleAndDescription(
             .padding(end = 20.dp, start = 20.dp, top = 10.dp, bottom = 10.dp),
         value = title.value!!,
         label = {
-                Text(text = stringResource(id = R.string.post_title), color = Color.Gray)
+                Text(text = stringResource(id = R.string.post_title)+"*", color = Color.Gray)
         },
         singleLine = true,
         onValueChange = {
@@ -593,9 +704,8 @@ fun TitleAndDescription(
             .padding(end = 20.dp, start = 20.dp, top = 10.dp, bottom = 10.dp),
         value = description.value!!,
         label = {
-            Text(text = stringResource(id = R.string.post_description),color = Color.Gray)
+            Text(text = stringResource(id = R.string.post_description)+"*",color = Color.Gray)
         },
-        maxLines = 5,
         onValueChange = {
             description.value = it
         },
@@ -603,7 +713,6 @@ fun TitleAndDescription(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Default,
         ),
-
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor= Color.White,
             textColor = Color.DarkGray,

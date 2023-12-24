@@ -1,26 +1,26 @@
 package com.saeeed.devejump.project.tailoring.interactor.description
 
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
-import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
+import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class GetSewMethod (
     private val sewMethodDao: SewMethodDao,
-    private val entityMapper: SewEntityMapper,
+    private val entityMapper: PostEntityMapper,
     private val retrofitService: RetrofitService,
-    private val sewMethodMapper: SewMethodMapper,
+    private val postMapper:PostMapper,
 ){
 
     fun execute(
         postId: Int,
         token: String,
         isNetworkAvailable: Boolean,
-    ): Flow<DataState<SewMethod>> = flow {
+    ): Flow<DataState<Post>> = flow {
         try {
             emit(DataState.loading())
 
@@ -59,21 +59,21 @@ class GetSewMethod (
             }
 
         }catch (e: Exception){
-            emit(DataState.error<SewMethod>(e.message?: "Unknown Error"))
+            emit(DataState.error<Post>(e.message?: "Unknown Error"))
         }
     }
 
 
 
 
-    private suspend fun getSewFromCache(postId: Int): SewMethod? {
+    private suspend fun getSewFromCache(postId: Int): Post? {
         return sewMethodDao.getSewById(postId)?.let { sewEntity ->
             entityMapper.mapToDomainModel(sewEntity)
         }
     }
 
-    private suspend fun getSewFromNetwork(token: String, postId: Int): SewMethod {
-        return sewMethodMapper.mapToDomainModel(retrofitService.get(token, postId))
+    private suspend fun getSewFromNetwork(token: String, postId: Int): Post {
+        return postMapper.mapToDomainModel(retrofitService.get(token, postId))
     }
 
 

@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
@@ -37,7 +37,7 @@ class ListViewModel
         private val savedStateHandle: SavedStateHandle,
         ):ViewModel() {
 
-    val methods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
+    val methods: MutableState<List<Post>> = mutableStateOf(ArrayList())
     val selectedCategory: MutableState<Category?> = mutableStateOf(null)
    // var categoryScrollPosition: Float = 0F
     val loading = mutableStateOf(false)
@@ -75,13 +75,13 @@ class ListViewModel
             try {
                 when(event){
                     is SearchEvent.NewSearchEvent -> {
-                      //  newSearch()
+                        newSearch()
                     }
                     is SearchEvent.NextPageEvent -> {
-                     //   nextPage()
+                        nextPage()
                     }
                     is SearchEvent.RestoreStateEvent -> {
-                     //   restoreState()
+                        restoreState()
                     }
                 }
             }catch (e: Exception){
@@ -157,7 +157,7 @@ class ListViewModel
         }
     }
 
-    private fun appendMethods(methods: List<SewMethod>){
+    private fun appendMethods(methods: List<Post>){
         val current = ArrayList(this.methods.value)
         current.addAll(methods)
         this.methods.value = current

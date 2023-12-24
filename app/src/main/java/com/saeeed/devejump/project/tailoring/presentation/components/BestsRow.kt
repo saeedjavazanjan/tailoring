@@ -10,30 +10,30 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
 @Composable
 fun BestsRow(
     loading: Boolean,
-    sewMethods: List<SewMethod>,
+    posts: List<Post>,
     onNavigateToDescriptionScreen: (String) -> Unit,
 ) { Box(modifier = Modifier
     .background(color = MaterialTheme.colorScheme.surface)
 ) {
-    if (loading && sewMethods.isEmpty()) {
+    if (loading && posts.isEmpty()) {
         // LoadingRecipeListShimmer(imageHeight = 250.dp,)
-    } else if (sewMethods.isEmpty()) {
+    } else if (posts.isEmpty()) {
         //   NothingHere()
     } else {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
         LazyRow {
             itemsIndexed(
-                items = sewMethods
+                items = posts
             ) { index, sewMethod ->
                 SewMethodCard(
-                    sewMethod = sewMethod,
+                    post = sewMethod,
                     onClick = {
                         val route = Screen.SewDescription.route + "/${sewMethod.id}"
                         onNavigateToDescriptionScreen(route)

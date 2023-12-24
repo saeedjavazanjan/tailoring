@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.user_profile.GetUserProfileData
@@ -37,8 +37,8 @@ constructor(
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
     val user:MutableState<UserData?> = mutableStateOf(null)
-    val userPosts:MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
-    val bookMarkedPosts:MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
+    val userPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
+    val bookMarkedPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
 
 
 

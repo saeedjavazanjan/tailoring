@@ -2,12 +2,9 @@ package com.saeeed.devejump.project.tailoring.presentation.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -36,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,7 +57,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
 import com.saeeed.devejump.project.tailoring.utils.USER_NAME
@@ -77,7 +72,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun SewMethodView(
     loading:Boolean,
-    sewMethod: SewMethod,
+    post: Post,
     bookMarkState: Boolean,
     likeState:Boolean,
     likesCount:Int,
@@ -112,11 +107,11 @@ fun SewMethodView(
 
 
         var onEditComment  = remember {
-            mutableStateOf( Comment(0,"","","",0,"",sewMethod.id))
+            mutableStateOf( Comment(0,"","","",0,"",post.id))
         }
 
     var onReportComment= remember {
-        mutableStateOf( Comment(0,"","","",0,"",sewMethod.id))
+        mutableStateOf( Comment(0,"","","",0,"",post.id))
     }
 
 
@@ -138,17 +133,17 @@ fun SewMethodView(
                             .height(225.dp),
                         contentAlignment = Alignment.TopEnd,
                     ) {
-                        if (sewMethod.postType.equals("video")) {
+                        if (post.postType.equals("video")) {
                             val context = LocalContext.current
                             VideoPlayer(
-                                videoUrl = sewMethod.videoUrl,
+                                videoUrl = post.videoUrl,
                                 context = context
                             )
 
                         } else {
                             AsyncImage(
-                                model = sewMethod.featuredImage,
-                                contentDescription = sewMethod.title,
+                                model = post.featuredImage,
+                                contentDescription = post.title,
                                 modifier = Modifier
                                     .fillMaxSize(),
                                 contentScale = ContentScale.Crop,
@@ -197,7 +192,7 @@ fun SewMethodView(
                         ) {
                             val (titleHolder, likeCount, likeIcon) = createRefs()
                             Text(
-                                text = sewMethod.title,
+                                text = post.title,
                                 modifier = Modifier
                                     .constrainAs(titleHolder) {
                                         top.linkTo(parent.top)
@@ -259,7 +254,7 @@ fun SewMethodView(
                     ) {
                         val (avatarHolder, authorText) = createRefs()
 
-                        val avatar = sewMethod.featuredImage
+                        val avatar = post.featuredImage
                         GlideImage(
                             model = avatar,
                             loading = placeholder(R.drawable.empty_plate),
@@ -275,7 +270,7 @@ fun SewMethodView(
                                 },
                             contentScale = ContentScale.Crop,
                         )
-                        val author = sewMethod.publisher
+                        val author = post.publisher
                         Text(
                             text = author,
                             modifier = Modifier
@@ -290,15 +285,15 @@ fun SewMethodView(
                         )
 
                     }
-                    val updated = sewMethod.dateUpdated
+                    val updated = post.dateAdded
                     Text(
-                        text = "Updated ${updated} by ${sewMethod.publisher}",
+                        text = "Updated ${updated} by ${post.publisher}",
                         color = Color.Gray,
                         modifier = Modifier
                             .padding(start = 10.dp),
                         style = MaterialTheme.typography.bodySmall
                     )
-                    val description = sewMethod.description
+                    val description = post.description
 
                     Text(
                         text = description,
@@ -400,7 +395,7 @@ fun SewMethodView(
                                         USER_NAME,
                                         USERID,
                                         "یکم آبان",
-                                        postId = sewMethod.id
+                                        postId = post.id
                                     )
                                 )
                             }

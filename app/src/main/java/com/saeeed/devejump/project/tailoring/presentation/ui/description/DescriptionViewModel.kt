@@ -7,13 +7,11 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
@@ -45,7 +43,7 @@ constructor(
     private val state: SavedStateHandle,
     private val userActivityOnPost: UserActivityOnPost,
 ): ViewModel(){
-    val sewMethod: MutableState<SewMethod?> = mutableStateOf(null)
+    val post: MutableState<Post?> = mutableStateOf(null)
 
     val loading = mutableStateOf(false)
     val commentSendLoading= mutableStateOf(false)
@@ -96,7 +94,7 @@ constructor(
         getSewMethod.execute(id, token,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
             loading.value = dataState.loading
             dataState.data?.let { data ->
-                sewMethod.value = data
+                post.value = data
                 state.set(STATE_KEY_SEW, data.id)
                 checkSewBookMarkState()
                 checkLikeState()
@@ -118,7 +116,7 @@ constructor(
      fun bookMark(scaffoldState: ScaffoldState, scope:CoroutineScope) {
         val snackbarController=SnackbarController(scope)
 
-            userActivityOnPost.bookMark(sewMethod.value!!.id).onEach { dataState ->
+            userActivityOnPost.bookMark(post.value!!.id).onEach { dataState ->
                   dataState.data?.let {
                      snackbarController.getScope().launch {
                          if (it> 0){
@@ -155,7 +153,7 @@ constructor(
     fun removeFromBookMarkDataBase(scaffoldState: ScaffoldState,scope:CoroutineScope) {
         val snackbarController=SnackbarController(scope)
 
-        userActivityOnPost.unBookMark(sewMethod.value!!.id).onEach { dataState ->
+        userActivityOnPost.unBookMark(post.value!!.id).onEach { dataState ->
             dataState.data?.let {
                 snackbarController.getScope().launch {
                     if (it > 0){
@@ -187,16 +185,16 @@ constructor(
         }.launchIn(viewModelScope)
     }
     fun checkSewBookMarkState(){
-            userActivityOnPost.checkBookMarkState(sewMethod.value!!.id).onEach { dataState ->
+            userActivityOnPost.checkBookMarkState(post.value!!.id).onEach { dataState ->
 
                 dataState.data.let {
                    bookMarkState.value=it!!
-                     Log.d(TAG, "check bookmark ${sewMethod.value!!.id}")
+                     Log.d(TAG, "check bookmark ${post.value!!.id}")
 
                 }
                 dataState.error.let {error->
                  //   dialogQueue.appendErrorMessage("An Error Occurred", error!!)
-                     Log.e(TAG, "check bookmark ${sewMethod.value!!.id}")
+                     Log.e(TAG, "check bookmark ${post.value!!.id}")
 
                 }
 
@@ -206,16 +204,16 @@ constructor(
     }
 
     fun checkLikeState(){
-        userActivityOnPost.checkLikeState(sewMethod.value!!.id).onEach { dataState ->
+        userActivityOnPost.checkLikeState(post.value!!.id).onEach { dataState ->
 
             dataState.data.let {
                 liKeState.value=it!!
-                Log.d(TAG, "check like ${sewMethod.value!!.id}")
+                Log.d(TAG, "check like ${post.value!!.id}")
 
             }
             dataState.error.let {error->
                 //   dialogQueue.appendErrorMessage("An Error Occurred", error!!)
-                Log.e(TAG, "check like ${sewMethod.value!!.id}")
+                Log.e(TAG, "check like ${post.value!!.id}")
 
             }
 
@@ -227,7 +225,7 @@ constructor(
     @SuppressLint("SuspiciousIndentation")
     fun likePost() {
 
-        userActivityOnPost.likePost(sewMethod.value!!.id, likeCount = (likeCount.value+1).toString()).onEach { dataState ->
+        userActivityOnPost.likePost(post.value!!.id, likeCount = (likeCount.value+1).toString()).onEach { dataState ->
             dataState.data?.let {
                     if (it> 0){
                         liKeState.value=true
@@ -254,7 +252,7 @@ constructor(
     @SuppressLint("SuspiciousIndentation")
     fun unLikePost() {
 
-        userActivityOnPost.unLikePost(sewMethod.value!!.id, likeCount =(likeCount.value-1).toString()).onEach { dataState ->
+        userActivityOnPost.unLikePost(post.value!!.id, likeCount =(likeCount.value-1).toString()).onEach { dataState ->
             dataState.data?.let {
                 if (it> 0){
                     liKeState.value=false

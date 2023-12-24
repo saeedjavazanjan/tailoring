@@ -8,8 +8,6 @@ import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
-import com.saeeed.devejump.project.tailoring.utils.USERID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

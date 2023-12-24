@@ -1,21 +1,21 @@
 package com.saeeed.devejump.project.tailoring.interactor.home
 
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
+import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class Bests(
     private val retrofitService: RetrofitService,
-    private val dtoMapper: SewMethodMapper,
+    private val dtoMapper: PostMapper,
 ) {
     fun execute(
         token: String,
         query: String,
         isNetworkAvailable: Boolean
-    ): Flow<DataState<List<SewMethod>>> = flow {
+    ): Flow<DataState<List<Post>>> = flow {
         try {
             emit(DataState.loading())
 
@@ -36,12 +36,12 @@ class Bests(
 
 
         } catch (e: Exception) {
-            emit(DataState.error<List<SewMethod>>(e.message ?: "Unknown Error"))
+            emit(DataState.error<List<Post>>(e.message ?: "Unknown Error"))
             //  Log.e(TAG, "flow error : ${e.message}")
         }
     }
 
-    private suspend fun getSewMethodsFromNetwork(token: String, query: String): List<SewMethod> {
+    private suspend fun getSewMethodsFromNetwork(token: String, query: String): List<Post> {
         return dtoMapper.toDomainList(
             retrofitService.bestsOfMonth(query=query)
         )

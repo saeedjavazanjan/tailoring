@@ -9,7 +9,7 @@ import com.saeeed.devejump.project.tailoring.cash.database.AppDatabase
 import com.saeeed.devejump.project.tailoring.cash.model.CommentEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.FollowersEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.FollowingsEntityMapper
-import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.interactor.Splash.GetUserStuffsFromServer
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
@@ -27,7 +27,7 @@ import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesMapper
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
+import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
 import com.saeeed.devejump.project.tailoring.repository.SewRepositoryImpl
@@ -55,8 +55,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMapper(): SewMethodMapper {
-        return SewMethodMapper()
+    fun provideMapper():PostMapper {
+        return PostMapper()
     }
 
     @Singleton
@@ -134,11 +134,11 @@ object AppModule {
     @Provides
     fun provideRepository(
         retrofitService: RetrofitService,
-        sewMethodMapper: SewMethodMapper,
+        postMapper: PostMapper,
     ): SewRepository{
         return SewRepositoryImpl(
             recipeService = retrofitService,
-            mapper = sewMethodMapper
+            mapper = postMapper
         )
     }
 
@@ -160,8 +160,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideCacheRecipeMapper(): SewEntityMapper {
-        return SewEntityMapper()
+    fun provideCacheRecipeMapper(): PostEntityMapper {
+        return PostEntityMapper()
     }
 
     @Singleton
@@ -193,14 +193,14 @@ object AppModule {
     fun provideSearchRecipe(
         retrofitService: RetrofitService,
         sewMethodDao: SewMethodDao,
-        sewEntityMapper: SewEntityMapper,
-        sewDtoMapper: SewMethodMapper,
+        postEntityMapper: PostEntityMapper,
+        postDtoMapper: PostMapper,
     ): SearchSew {
         return SearchSew(
             retrofitService = retrofitService,
             sewMethodDao = sewMethodDao,
-            entityMapper = sewEntityMapper,
-            dtoMapper = sewDtoMapper,
+            entityMapper = postEntityMapper,
+            dtoMapper = postDtoMapper,
         )
     }
 
@@ -245,7 +245,7 @@ object AppModule {
     fun provideGetHomeData(
         retrofitService: RetrofitService,
         bannerMapper: BannerMapper,
-        dtoMapper: SewMethodMapper
+        dtoMapper: PostMapper
     ): GetHomeData {
         return GetHomeData(
             retrofitService = retrofitService,
@@ -259,8 +259,8 @@ object AppModule {
     @Provides
     fun provideGetUserProfileData(
         retrofitService: RetrofitService,
-        dtoMapper: SewMethodMapper,
-        entityMapper: SewEntityMapper,
+        dtoMapper: PostMapper,
+        entityMapper: PostEntityMapper,
         userDataEntityMapper: UserDataEntityMapper,
         sewMethodDao: SewMethodDao,
         userDataMapper: UserDataMapper
@@ -282,7 +282,7 @@ object AppModule {
     @Provides
     fun provideBests(
         retrofitService: RetrofitService,
-        sewDtoMapper: SewMethodMapper,
+        sewDtoMapper: PostMapper,
     ): Bests {
         return Bests(
             retrofitService = retrofitService,
@@ -295,11 +295,11 @@ object AppModule {
     @Provides
     fun provideRestoreRecipes(
         sewMethodDao: SewMethodDao,
-        sewEntityMapper: SewEntityMapper
+        postEntityMapper: PostEntityMapper
     ): RestoreSewMethods {
         return RestoreSewMethods(
             sewMethodDao = sewMethodDao,
-            entityMapper = sewEntityMapper,
+            entityMapper = postEntityMapper,
         )
     }
 
@@ -307,15 +307,15 @@ object AppModule {
     @Provides
     fun provideGetSewMethod(
         sewMethodDao: SewMethodDao,
-        sewEntityMapper: SewEntityMapper,
+        postEntityMapper: PostEntityMapper,
         retrofitService: RetrofitService,
-        sewDtoMapper: SewMethodMapper,
+        postDtoMapper: PostMapper,
     ): GetSewMethod {
         return GetSewMethod(
             sewMethodDao= sewMethodDao,
-            entityMapper = sewEntityMapper,
+            entityMapper = postEntityMapper,
             retrofitService= retrofitService,
-            sewMethodMapper =  sewDtoMapper,
+            postMapper =  postDtoMapper,
 
         )
     }
@@ -360,13 +360,13 @@ fun provideUserData(
         sewMethodDao: SewMethodDao,
         userDataEntityMapper: UserDataEntityMapper,
         retrofitService: RetrofitService,
-        sewEntityMapper: SewEntityMapper
+        postEntityMapper: PostEntityMapper
     ):UserActivityOnPost {
         return UserActivityOnPost(
             sewMethodDao = sewMethodDao,
             entityMapper = userDataEntityMapper,
             retrofitService = retrofitService,
-            sewEntityMapper = sewEntityMapper
+            postEntityMapper = postEntityMapper
         )
     }
 

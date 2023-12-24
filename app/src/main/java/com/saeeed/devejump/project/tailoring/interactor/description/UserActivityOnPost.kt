@@ -2,11 +2,10 @@ package com.saeeed.devejump.project.tailoring.interactor.description
 
 import android.annotation.SuppressLint
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
-import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
-import com.saeeed.devejump.project.tailoring.domain.model.CommentOnSpecificPost
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import kotlinx.coroutines.delay
@@ -17,7 +16,7 @@ class UserActivityOnPost (
     private val sewMethodDao: SewMethodDao,
     private val retrofitService: RetrofitService,
     private val entityMapper: UserDataEntityMapper,
-    private val sewEntityMapper: SewEntityMapper
+    private val postEntityMapper: PostEntityMapper
 
 ) {
 
