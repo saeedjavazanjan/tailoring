@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -62,7 +61,15 @@ class UploadPostFunctions() {
 
 
 
+    fun uploadPost():Flow<DataState<Int>> = flow{
+        emit(DataState.loading())
+
+
+
+
+    }
 }
+
 
 /* emit(DataState.loading())
        val outputZipFile = File.createTempFile("out", ".zip")

@@ -1,23 +1,22 @@
 package com.saeeed.devejump.project.tailoring.interactor.user_profile
 
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
-import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
+import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
-import com.saeeed.devejump.project.tailoring.utils.USERID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class GetUserProfileData(
     private val sewMethodDao: SewMethodDao,
-    private val entityMapper: SewEntityMapper,
+    private val entityMapper: PostEntityMapper,
     private val retrofitService: RetrofitService,
-    private val dtoMapper: SewMethodMapper,
+    private val dtoMapper: PostMapper,
     private val userDataEntityMapper: UserDataEntityMapper,
     private val userDtoMapper:UserDataMapper
 
@@ -70,7 +69,7 @@ class GetUserProfileData(
         userId: Int,
         isNetworkAvailable: Boolean
 
-    ):Flow<DataState<List<SewMethod>>> = flow {
+    ):Flow<DataState<List<Post>>> = flow {
 
             emit(DataState.loading())
 
@@ -95,7 +94,7 @@ class GetUserProfileData(
         userId: Int,
         isNetworkAvailable: Boolean
 
-    ):Flow<DataState<List<SewMethod>>> = flow {
+    ):Flow<DataState<List<Post>>> = flow {
 
         emit(DataState.loading())
 
@@ -118,7 +117,7 @@ class GetUserProfileData(
     private suspend fun getSewMethodsFromNetwork(
         token: String,
         userId: Int
-    ): List<SewMethod> {
+    ): List<Post> {
 
         return dtoMapper.toDomainList(
             retrofitService.search().sewmethods

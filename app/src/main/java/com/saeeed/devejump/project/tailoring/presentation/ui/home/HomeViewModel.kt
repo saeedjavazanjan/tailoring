@@ -7,13 +7,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.Banner
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetHomeData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.STATE_KEY_LIST_POSITION
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.SearchEvent
 import com.saeeed.devejump.project.tailoring.utils.BEST_OF_DAY
 import com.saeeed.devejump.project.tailoring.utils.BEST_OF_MONTH
 import com.saeeed.devejump.project.tailoring.utils.BEST_OF_WEEK
@@ -47,16 +46,16 @@ constructor(
     ) : ViewModel() {
 
     val banners: MutableState<List<Banner>> = mutableStateOf(ArrayList())
-    val methods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
+    val methods: MutableState<List<Post>> = mutableStateOf(ArrayList())
 
     private val bannersQuery = GET_HOME_BANNERS
     private val bestsOfMonthQuery = BEST_OF_MONTH
     private val bestOfWeekQuery = BEST_OF_WEEK
     private val bestOfDayQuery = BEST_OF_DAY
 
-    val bestOfMonthMethods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
-    val bestOfWeekMethods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
-    val bestOfDayMethods: MutableState<List<SewMethod>> = mutableStateOf(ArrayList())
+    val bestOfMonthMethods: MutableState<List<Post>> = mutableStateOf(ArrayList())
+    val bestOfWeekMethods: MutableState<List<Post>> = mutableStateOf(ArrayList())
+    val bestOfDayMethods: MutableState<List<Post>> = mutableStateOf(ArrayList())
 
 
     val page = mutableStateOf(1)
@@ -235,7 +234,7 @@ constructor(
             }
         }
     }
-    private fun appendMethods(methods: List<SewMethod>){
+    private fun appendMethods(methods: List<Post>){
         val current = ArrayList(this.methods.value)
         current.addAll(methods)
         this.methods.value = current

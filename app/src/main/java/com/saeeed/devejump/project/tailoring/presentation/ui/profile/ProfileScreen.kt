@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,7 +42,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.saeeed.devejump.project.tailoring.R
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.presentation.components.PostCart
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
@@ -240,7 +239,7 @@ fun ProfileScreen(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun getThisUserPosts(
-    posts: List<SewMethod>,
+    posts: List<Post>,
     onNavigateToDescriptionScreen: (String) -> Unit,
 
 

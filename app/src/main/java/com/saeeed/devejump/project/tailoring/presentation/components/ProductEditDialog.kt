@@ -149,6 +149,7 @@ fun ProductEditDialog(
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
             dismissOnClickOutside = false,
+            dismissOnBackPress = false,
                     decorFitsSystemWindows=false
         ),
 

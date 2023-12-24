@@ -1,9 +1,8 @@
 package com.saeeed.devejump.project.tailoring.network.model
 
 import com.google.gson.annotations.SerializedName
-import com.saeeed.devejump.project.tailoring.domain.model.Comment
 
-data class SewMethodDto(
+data class PostDto(
 
     @SerializedName("id")
     var pk: Int,
@@ -35,7 +34,7 @@ data class SewMethodDto(
     @SerializedName("long_date_added")
     var longDateAdded: Long,
 
-    @SerializedName("long_date_updated")
-    var longDateUpdated: Long,
+    @SerializedName("have_product")
+    var haveProduct: Int,
 )
 

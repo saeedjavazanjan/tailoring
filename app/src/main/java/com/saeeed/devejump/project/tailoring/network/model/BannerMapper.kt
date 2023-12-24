@@ -1,7 +1,6 @@
 package com.saeeed.devejump.project.tailoring.network.model
 
 import com.saeeed.devejump.project.tailoring.domain.model.Banner
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
 
 class BannerMapper:DomainMapper<BannerDto,Banner> {

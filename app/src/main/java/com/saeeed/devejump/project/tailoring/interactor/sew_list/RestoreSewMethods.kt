@@ -1,21 +1,21 @@
 package com.saeeed.devejump.project.tailoring.interactor.sew_list
 
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
-import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
+import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class RestoreSewMethods(
     private val sewMethodDao: SewMethodDao,
-    private val entityMapper: SewEntityMapper,
+    private val entityMapper: PostEntityMapper,
 ) {
     fun execute(
         page: Int,
         query: String
-    ): Flow<DataState<List<SewMethod>>> = flow {
+    ): Flow<DataState<List<Post>>> = flow {
         try {
             emit(DataState.loading())
             // query the cache
@@ -38,7 +38,7 @@ class RestoreSewMethods(
             emit(DataState.success(list))
 
         }catch (e: Exception){
-            emit(DataState.error<List<SewMethod>>(e.message?: "Unknown Error"))
+            emit(DataState.error<List<Post>>(e.message?: "Unknown Error"))
         }
     }
 }

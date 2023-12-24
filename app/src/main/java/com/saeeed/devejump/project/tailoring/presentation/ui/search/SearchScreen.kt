@@ -77,7 +77,7 @@ fun ListScreen(
 
                     SewMethodList(
                         loading = loading,
-                        sewMethods = sewMethods,
+                        posts = sewMethods,
                         onChangeScrollPosition = viewModel::onChangeCategoryScrollPosition,
                         page = page,
                         onTriggerNextPage = { viewModel.onTriggerEvent(SearchEvent.NextPageEvent) },

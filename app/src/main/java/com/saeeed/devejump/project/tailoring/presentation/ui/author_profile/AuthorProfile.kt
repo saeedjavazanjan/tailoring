@@ -1,7 +1,6 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.author_profile
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.TabRow
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -61,7 +59,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.saeeed.devejump.project.tailoring.R
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.presentation.components.PostCart
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -402,7 +400,7 @@ fun Tabs(pagerState: PagerState) {
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun getPosts(
-    posts: List<SewMethod>,
+    posts: List<Post>,
     onNavigateToDescriptionScreen: (String) -> Unit,
 
 

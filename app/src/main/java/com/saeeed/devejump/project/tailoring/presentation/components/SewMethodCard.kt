@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
@@ -25,29 +24,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import coil.ImageLoader
-import coil.compose.AsyncImage
-import coil.decode.VideoFrameDecoder
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
-import com.bumptech.glide.request.RequestOptions
 import com.saeeed.devejump.project.tailoring.R
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @ExperimentalCoroutinesApi
 @Composable
 fun SewMethodCard(
-    sewMethod: SewMethod,
+    post: Post,
     onClick: () -> Unit,
 ){
     Card(
@@ -65,7 +59,7 @@ fun SewMethodCard(
     ) {
 
         Column() {
-            sewMethod.let { method ->
+            post.let { method ->
 
                 if (method.postType.equals("image")){
                     GlideImage(
@@ -124,7 +118,7 @@ fun SewMethodCard(
 
 
             }
-            sewMethod.title?.let { title ->
+            post.title?.let { title ->
 
                 Column {
                     Text(
@@ -143,7 +137,7 @@ fun SewMethodCard(
                             .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp),
 
                     ) {
-                        val avatar=sewMethod.featuredImage
+                        val avatar=post.featuredImage
                         val (avatarHolder) = createRefs()
                         GlideImage(
                             model = avatar,
@@ -160,7 +154,7 @@ fun SewMethodCard(
                                 },
                             contentScale = ContentScale.Crop,
                         )
-                        val author=sewMethod.publisher
+                        val author=post.publisher
                         val(authorText)=createRefs()
                         Text(
                             text = author,
@@ -190,7 +184,7 @@ fun SewMethodCard(
                                 }
 
                         )
-                        val likes = sewMethod.like.toString()
+                        val likes = post.like.toString()
                         val(likesCount)=createRefs()
 
                         Text(

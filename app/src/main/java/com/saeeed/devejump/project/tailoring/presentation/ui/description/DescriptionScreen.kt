@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -49,7 +48,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,22 +63,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
-import com.saeeed.devejump.project.tailoring.presentation.components.BannerCard
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.presentation.components.CommentCard
 import com.saeeed.devejump.project.tailoring.presentation.components.ReportAlertDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
@@ -89,7 +83,6 @@ import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
 import com.saeeed.devejump.project.tailoring.utils.USER_NAME
-import com.saeeed.devejump.project.tailoring.utils.comments
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -117,7 +110,7 @@ fun DescriptionScreen(
 
         val loading = viewModel.loading.value
         val commentSendLoading=viewModel.commentSendLoading.value
-        val sewMethod = viewModel.sewMethod.value
+        val sewMethod = viewModel.post.value
         val dialogQueue = viewModel.dialogQueue
         val composableScope = rememberCoroutineScope()
         val bookMarkState=viewModel.bookMarkState.value
@@ -198,7 +191,7 @@ fun DescriptionScreen(
                                                .wrapContentHeight()
                                        ) {
                                            imageAndVideoHolder(
-                                               sewMethod = it,
+                                               post = it,
                                                bookMarkState = bookMarkState,
                                                save = {
                                                    viewModel.bookMark(scaffoldState, composableScope)
@@ -211,7 +204,7 @@ fun DescriptionScreen(
                                                }
                                            )
                                            detail(
-                                               sewMethod = it,
+                                               post = it,
                                                likesCount = likesCount,
                                                likeState = likeState,
                                                like = {
@@ -286,7 +279,7 @@ fun DescriptionScreen(
                                 }
 
                                 commentTextField(
-                                    sewMethod = it,
+                                    post = it,
                                     scrollState = scrollState ,
                                     query = query ,
                                     commentState = commentState,
@@ -368,12 +361,12 @@ fun DescriptionScreen(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun imageAndVideoHolder(
-    sewMethod:SewMethod,
+    post:Post,
     bookMarkState:Boolean,
     save:() -> Unit,
     removeBookMark:()-> Unit,
 
-){
+    ){
     val bookState= mutableStateOf(bookMarkState)
 
     Box(
@@ -382,16 +375,16 @@ fun imageAndVideoHolder(
             .height(225.dp),
         contentAlignment = Alignment.TopEnd,
     ) {
-        if (sewMethod.postType.equals("video")) {
+        if (post.postType.equals("video")) {
             val context = LocalContext.current
             VideoPlayer(
-                videoUrl = sewMethod.videoUrl,
+                videoUrl = post.videoUrl,
                 context = context
             )
 
         } else {
             val pagerState = rememberPagerState(pageCount = {
-                sewMethod.featuredImage.size
+                post.featuredImage.size
             })
             HorizontalPager(
                 state = pagerState,
@@ -403,8 +396,8 @@ fun imageAndVideoHolder(
 
             ) { page ->
     AsyncImage(
-        model = sewMethod.featuredImage[page],
-        contentDescription = sewMethod.title,
+        model = post.featuredImage[page],
+        contentDescription = post.title,
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop,
     )
@@ -465,7 +458,7 @@ fun imageAndVideoHolder(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun detail(
-    sewMethod:SewMethod,
+    post:Post,
     likesCount:Int,
     likeState:Boolean,
     like:() ->Unit,
@@ -489,7 +482,7 @@ fun detail(
         ) {
             val (titleHolder, likeCount, likeIcon) = createRefs()
             Text(
-                text = sewMethod.title,
+                text = post.title,
                 modifier = Modifier
                     .constrainAs(titleHolder) {
                         top.linkTo(parent.top)
@@ -551,7 +544,7 @@ fun detail(
     ) {
         val (avatarHolder, authorText) = createRefs()
 
-        val avatar = sewMethod.featuredImage
+        val avatar = post.featuredImage
         GlideImage(
             model = avatar,
             loading = placeholder(R.drawable.empty_plate),
@@ -567,7 +560,7 @@ fun detail(
                 },
             contentScale = ContentScale.Crop,
         )
-        val author = sewMethod.publisher
+        val author = post.publisher
 
         TextButton(
             modifier = Modifier
@@ -579,7 +572,7 @@ fun detail(
                     top.linkTo(avatarHolder.top)
                 },
             onClick = {
-                val route = Screen.Profile.route + "/${sewMethod.authorId}"
+                val route = Screen.Profile.route + "/${post.authorId}"
                 onNavigateToProfile(route)
 
             }
@@ -591,15 +584,15 @@ fun detail(
         }
 
     }
-    val updated = sewMethod.dateUpdated
+    val date = post.dateAdded
     Text(
-        text = "Updated ${updated} by ${sewMethod.publisher}",
+        text = "Updated $date by ${post.publisher}",
         color = Color.Gray,
         modifier = Modifier
             .padding(start = 10.dp),
         style = MaterialTheme.typography.bodySmall
     )
-    val description = sewMethod.description
+    val description = post.description
 
     Text(
         text = description,
@@ -665,7 +658,7 @@ fun CommentsList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun commentTextField(
-    sewMethod:SewMethod,
+    post:Post,
     comments: MutableList<Comment>,
     scrollState:LazyListState,
     query:MutableState<String>,
@@ -716,7 +709,7 @@ fun commentTextField(
                                         USER_NAME,
                                         USERID,
                                         "یکم آبان",
-                                        postId = sewMethod.id
+                                        postId = post.id
                                     )
                                 )
                             }

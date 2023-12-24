@@ -168,7 +168,8 @@ fun Navigation(
             UploadPostScreen(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                viewModel = uploadPostViewModel
+                viewModel = uploadPostViewModel,
+                navController
             )
 
         }

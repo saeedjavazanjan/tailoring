@@ -1,13 +1,13 @@
 package com.saeeed.devejump.project.tailoring.cash.model
 
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
 import com.saeeed.devejump.project.tailoring.utils.DateUtils
 
-class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
+class PostEntityMapper : DomainMapper<PostEntity, Post> {
 
-    override fun mapToDomainModel(model: SewEntity): SewMethod {
-        return SewMethod(
+    override fun mapToDomainModel(model: PostEntity): Post {
+        return Post(
             id = model.id,
             title = model.title,
             postType=model.postType,
@@ -18,13 +18,13 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
             videoUrl = model.video,
             description = model.description,
             dateAdded =DateUtils.longToDate(model.dateAdded),
-            dateUpdated = DateUtils.longToDate(model.dateUpdated),
+            haveProduct = model.haveProduct,
         )
     }
 
 
-    override fun mapFromDomainModel(domainModel: SewMethod): SewEntity {
-        return SewEntity(
+    override fun mapFromDomainModel(domainModel: Post): PostEntity {
+        return PostEntity(
             id = domainModel.id,
             title = domainModel.title,
             postType=domainModel.postType,
@@ -35,7 +35,7 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
             video = domainModel.videoUrl,
             description = domainModel.description,
             dateAdded = DateUtils.dateToLong(domainModel.dateAdded),
-            dateUpdated = DateUtils.dateToLong(domainModel.dateUpdated),
+            haveProduct = domainModel.haveProduct,
             dateCached = DateUtils.dateToLong(DateUtils.createTimestamp())
         )
     }
@@ -90,11 +90,11 @@ class SewEntityMapper : DomainMapper<SewEntity, SewMethod> {
         return list
     }
 */
-    fun fromEntityList(initial: List<SewEntity>): List<SewMethod>{
+    fun fromEntityList(initial: List<PostEntity>): List<Post>{
         return initial.map { mapToDomainModel(it) }
     }
 
-    fun toEntityList(initial: List<SewMethod>): List<SewEntity>{
+    fun toEntityList(initial: List<Post>): List<PostEntity>{
         return initial.map { mapFromDomainModel(it) }
     }
 }

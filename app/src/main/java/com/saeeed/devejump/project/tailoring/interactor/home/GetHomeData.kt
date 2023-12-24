@@ -1,21 +1,18 @@
 package com.saeeed.devejump.project.tailoring.interactor.home
 
-import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
-import com.saeeed.devejump.project.tailoring.cash.model.SewEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.Banner
-import com.saeeed.devejump.project.tailoring.domain.model.SewMethod
+import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodMapper
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.STATE_KEY_PAGE
+import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class GetHomeData(
     private val retrofitService: RetrofitService,
     private val bannerMapper: BannerMapper,
-    private val dtoMapper: SewMethodMapper
+    private val dtoMapper: PostMapper
 ) {
 
 
@@ -57,7 +54,7 @@ class GetHomeData(
         userId: Int,
         page:Int,
         isNetworkAvailable: Boolean
-    ):Flow<DataState<List<SewMethod>>> = flow{
+    ):Flow<DataState<List<Post>>> = flow{
         try {
             emit(DataState.loading())
 
@@ -84,7 +81,7 @@ class GetHomeData(
         token: String,
         page: Int,
         userId: Int
-    ): List<SewMethod> {
+    ): List<Post> {
         return dtoMapper.toDomainList(
             retrofitService.followingsPosts()
             //  token = token,

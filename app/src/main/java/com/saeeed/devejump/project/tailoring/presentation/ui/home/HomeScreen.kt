@@ -1,23 +1,15 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -32,15 +24,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
-import com.saeeed.devejump.project.tailoring.presentation.components.BestsRowsOfHome
 import com.saeeed.devejump.project.tailoring.presentation.components.BannerViewPager
 import com.saeeed.devejump.project.tailoring.presentation.components.SewMethodCard
-import com.saeeed.devejump.project.tailoring.presentation.components.SewMethodList
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.SearchEvent
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -166,7 +154,7 @@ fun HomeScreen(
                                     viewModel.onTriggerEvent(FollowingsPostsEvent.NextPageEvent)
                                 }
                                 SewMethodCard(
-                                    sewMethod = sewMethod,
+                                    post = sewMethod,
                                     onClick = {
                                         val route = Screen.SewDescription.route + "/${sewMethod.id}"
                                         onNavigateToDescriptionScreen(route)

@@ -7,11 +7,11 @@ import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.cash.model.FollowersEntity
 import com.saeeed.devejump.project.tailoring.cash.model.FollowingEntity
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntity
-import com.saeeed.devejump.project.tailoring.cash.model.SewEntity
+import com.saeeed.devejump.project.tailoring.cash.model.PostEntity
 
 @Database(
     entities = [
-        SewEntity::class,
+        PostEntity::class,
         UserDataEntity::class,
                CommentEntity::class,
                FollowersEntity::class,

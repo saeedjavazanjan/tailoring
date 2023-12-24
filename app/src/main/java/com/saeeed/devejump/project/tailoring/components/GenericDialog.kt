@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -43,7 +44,7 @@ fun GenericDialog(
             negativeAction?.let {
                 Button(
                     modifier = Modifier.padding(end = 8.dp),
-                    colors = ButtonDefaults.buttonColors( containerColor =  MaterialTheme.colorScheme.onError),
+                    colors = ButtonDefaults.buttonColors( containerColor =  Color.Gray),
                     onClick = it.onNegativeAction
                 ) {
                     Text(text = negativeAction.negativeBtnTxt)

@@ -3,7 +3,7 @@ package com.saeeed.devejump.project.tailoring.network
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesDto
-import com.saeeed.devejump.project.tailoring.network.model.SewMethodDto
+import com.saeeed.devejump.project.tailoring.network.model.PostDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import com.saeeed.devejump.project.tailoring.network.response.SewMethodSearchResponse
 import retrofit2.http.Field
@@ -27,14 +27,14 @@ interface RetrofitService {
         // @Header("Authorization") token: String,
         //  @Query("page") page: Int,
         //  @Query("userId") userId: Int
-    ): List<SewMethodDto>
+    ): List<PostDto>
 
     @GET("followings-post")
     suspend fun userPosts(
         // @Header("Authorization") token: String,
         //  @Query("page") page: Int,
         //  @Query("userId") userId: Int
-    ): List<SewMethodDto>
+    ): List<PostDto>
 
     @GET("following_state")
     suspend fun followingState(
@@ -46,7 +46,7 @@ interface RetrofitService {
     suspend fun get(
         @Header("Authorization") token: String,
         @Query("id") id: Int
-    ): SewMethodDto
+    ): PostDto
 
 
     @GET("get_banners")
@@ -59,7 +59,7 @@ interface RetrofitService {
     suspend fun bestsOfMonth(
         //  @Header("Authorization") token: String,
         @Query("query") query: String
-    ): List<SewMethodDto>
+    ): List<PostDto>
 
 
     @GET("userData")
@@ -74,6 +74,21 @@ interface RetrofitService {
         @Field("UserId") userId: Int,
         @Field("userDto") userDto: UserDataDto
     ): Int
+
+   /* suspend fun addPassport(profile_picture: MultipartBody.Part?,
+                            userid: String,
+                            fistname:String,
+                            surname:String,
+                            nationality:String,
+                            dof:String,
+                            gender:String,
+                            age:String,
+                            sig:String,
+                            salt:String,
+                            image:Image):
+            Response<PassportInsertApiClass>{
+        return RetrofitInstance.api.addPassport(profile_picture, userid,fistname,surname,nationality,dof,gender,age,sig,salt)
+    }*/
 
     @GET("comments")
     suspend fun onePostComments(
