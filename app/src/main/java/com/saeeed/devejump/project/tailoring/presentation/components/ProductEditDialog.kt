@@ -103,7 +103,8 @@ fun ProductEditDialog(
     zipSelectedFile:(List<Uri?>)->Unit,
     setProduct:(Product)->Unit,
     digitalFileStatus:Boolean,
-    fileZippingLoading: Boolean
+    fileZippingLoading: Boolean,
+    product: Product
     )
 
 {
@@ -119,27 +120,31 @@ fun ProductEditDialog(
 
 
     var mas= remember {
-        mutableStateOf<String>("")
+        mutableStateOf<String>(product.mas)
     }
     var price= remember {
-        mutableStateOf<String>("")
+        mutableStateOf<String>(product.price)
     }
     val supply= remember {
-        mutableStateOf<String>("")
+        mutableStateOf<String>(product.supply)
     }
     val unit= remember {
-        mutableStateOf<String>("عدد")
+        mutableStateOf<String>(product.unit)
     }
 
-    val selectedImages= remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
+
+    val selectedImages= remember {
+        mutableStateListOf<Uri?>(Uri.EMPTY)
+
+    }
 
     val name= remember {
-        mutableStateOf<String>("")
+        mutableStateOf<String>(product.name)
     }
     val description= remember {
-        mutableStateOf<String>("")
+        mutableStateOf<String>(product.description)
     }
-    val selectedTypeOfProduct = remember { mutableStateOf("محصول فیزیکی") }
+    val selectedTypeOfProduct = remember { mutableStateOf(product.typeOfProduct) }
 
 
 
@@ -390,6 +395,13 @@ fun ProductEditDialog(
                                             Toast.LENGTH_SHORT)
                                             .show()
 
+                                    }
+                                    "there is not file"->{
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.not_file_attached_warning),
+                                            Toast.LENGTH_SHORT)
+                                            .show()
                                     }
 
                                         "Ok"->{

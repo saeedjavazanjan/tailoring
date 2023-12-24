@@ -33,7 +33,18 @@ class UploadPostViewModel
     val loading = mutableStateOf(false)
     val fileZippingLoading= mutableStateOf(false)
     val dialogQueue = DialogQueue()
-    val product: MutableState<Product?> = mutableStateOf(null)
+    val product: MutableState<Product?> =
+        mutableStateOf(
+            Product(
+                id=0,
+                name = "",
+                description = "",
+                typeOfProduct = "محصول فیزیکی",
+                unit = "عدد",
+                price = "",
+                postId = 0
+    )
+        )
 
     val zipFilePath= mutableStateOf("")
     val digitalFileStatus= mutableStateOf(false)
@@ -94,7 +105,7 @@ class UploadPostViewModel
         if(!file.exists()){
             file.mkdirs()
         }
-        return file.path+"product"
+        return file.path+"products"
     }
 
 }

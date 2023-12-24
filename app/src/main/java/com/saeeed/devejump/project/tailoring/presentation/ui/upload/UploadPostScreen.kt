@@ -141,6 +141,10 @@ fun UploadPostScreen(
         mutableStateOf(false)
     }
 
+    val removeDialogShow= remember {
+        mutableStateOf(false)
+    }
+
     val context = LocalContext.current
     val activity =context as Activity
 
@@ -250,7 +254,28 @@ fun UploadPostScreen(
                 )
             )
         }
-        
+        if (removeDialogShow.value){
+            GenericDialog(
+                onDismiss = { /*TODO*/ },
+                title = "",
+                description = stringResource(id = R.string.remove_product_warning) ,
+                positiveAction = PositiveAction(
+                    positiveBtnTxt =   "بله",
+                    onPositiveAction = {
+                        removeDialogShow.value=false
+                    viewModel.product.value=null
+                    }
+                ),
+                negativeAction = NegativeAction(
+                    negativeBtnTxt="خیر",
+                    onNegativeAction = {
+                        removeDialogShow.value=false
+
+                    }
+
+                )
+            )
+        }
         
         
         
@@ -260,6 +285,7 @@ fun UploadPostScreen(
             val digitalFileStatus=viewModel.digitalFileStatus.value
 
             ProductEditDialog(
+                product=viewModel.product.value!!,
                 showDialog = {
                     showDialog.value=it
                              },
@@ -462,9 +488,16 @@ fun UploadPostScreen(
                         description=description
                     )
 
-                    if(viewModel.product.value != null){
+                    if(viewModel.product.value!!.name!=""){
                         ProductPreview(
-                            product = viewModel.product.value!!
+                            product = viewModel.product.value!!,
+                            removeProduct = {
+                                removeDialogShow.value=true
+
+                            },
+                            editProduct = {
+                                showDialog.value=true
+                            }
                         )
                     }else{
                         Button(
@@ -564,7 +597,9 @@ fun UploadPostScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProductPreview(
-    product: Product
+    product: Product,
+    removeProduct:()->Unit,
+    editProduct:()->Unit
 ){
     Card(
         modifier=Modifier.padding(20.dp),
@@ -597,8 +632,19 @@ fun ProductPreview(
                     text =product.name
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Icon(Icons.Default.Edit , contentDescription =null )
-                Icon(Icons.Default.Delete , contentDescription =null )
+                IconButton(onClick = {
+                    editProduct()
+
+                }) {
+                    Icon(Icons.Default.Edit , contentDescription =null )
+
+                }
+                IconButton(onClick = {
+                    removeProduct()
+                }) {
+                    Icon(Icons.Default.Delete , contentDescription =null )
+
+                }
 
             }
             Text(

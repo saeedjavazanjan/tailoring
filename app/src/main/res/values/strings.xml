@@ -58,6 +58,7 @@
     <string name="post_description">توضیحات</string>
     <string name="attach_product">افزودن محصول به این پست</string>
     <string name="not_saved_warning">اطلاعات ذخیره نشده است آیا قصد انصراف دارید؟</string>
+    <string name="remove_product_warning">آیا می خواهید محصول ثبت شده را حذف کنید؟</string>
 
     <!--productEdit-->
     <string name="choose_photo_from_gallery">انتخاب از گالری</string>
