@@ -41,6 +41,8 @@ class UploadPostViewModel
                 description = "",
                 typeOfProduct = "محصول فیزیکی",
                 unit = "عدد",
+                mas = "",
+                supply = "",
                 price = "",
                 postId = 0
     )

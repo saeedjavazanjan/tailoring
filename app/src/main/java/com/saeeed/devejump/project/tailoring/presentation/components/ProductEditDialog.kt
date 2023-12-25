@@ -137,6 +137,8 @@ fun ProductEditDialog(
         mutableStateListOf<Uri?>(Uri.EMPTY)
 
     }
+    selectedImages.clear()
+    selectedImages.addAll(product.images)
 
     val name= remember {
         mutableStateOf<String>(product.name)
