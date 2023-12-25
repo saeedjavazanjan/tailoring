@@ -6,7 +6,7 @@ data class Product(
     val id:Int,
     val name:String,
     val description:String,
-    val images:List<Uri?> = mutableListOf(),
+    val images:List<Uri?> = mutableListOf(Uri.EMPTY),
     val typeOfProduct:String,
     val mas:String="0",
     val supply:String="0",

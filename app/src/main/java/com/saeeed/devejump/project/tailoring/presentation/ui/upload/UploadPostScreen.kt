@@ -263,7 +263,17 @@ fun UploadPostScreen(
                     positiveBtnTxt =   "بله",
                     onPositiveAction = {
                         removeDialogShow.value=false
-                    viewModel.product.value=null
+                    viewModel.product.value=Product(
+                        id=0,
+                        name = "",
+                        description = "",
+                        typeOfProduct = "محصول فیزیکی",
+                        unit = "عدد",
+                        mas = "",
+                        supply = "",
+                        price = "",
+                        postId = 0
+                    )
                     }
                 ),
                 negativeAction = NegativeAction(
@@ -655,7 +665,7 @@ fun ProductPreview(
             Text(
                 modifier=Modifier.padding(10.dp),
 
-                text ="قیمت ${product.price} تومان "
+                text ="قیمت:  ${product.price} تومان "
             )
             TextButton(
                 modifier=Modifier
