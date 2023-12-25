@@ -9,9 +9,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
 import com.saeeed.devejump.project.tailoring.domain.model.Product
-import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -109,5 +109,8 @@ class UploadPostViewModel
         }
         return file.path+"products"
     }
-
+    fun jsonStringOfProduct(product: Product): String {
+        var gson = Gson()
+        return gson.toJson(product)
+    }
 }

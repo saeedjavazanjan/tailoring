@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.domain.model
 
 import android.net.Uri
+import java.io.Serializable
 
 data class Product(
     val id:Int,

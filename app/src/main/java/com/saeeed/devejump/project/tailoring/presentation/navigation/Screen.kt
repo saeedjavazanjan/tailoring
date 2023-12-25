@@ -17,5 +17,6 @@ sealed class Screen(
     object Followings:Screen("followings")
     object AuthorProfile : Screen("authorProfile")
     object UploadPost:Screen("uploadPost")
+    object ProductDetail:Screen("productDetail")
 
 }

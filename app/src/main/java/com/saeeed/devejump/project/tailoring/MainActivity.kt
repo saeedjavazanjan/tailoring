@@ -137,6 +137,9 @@ class MainActivity : ComponentActivity() {
                 Screen.UploadPost.route->{
                     bottomBarState.value=false
                 }
+                Screen.ProductDetail.route->{
+                    bottomBarState.value=false
+                }
 
             }
 
