@@ -13,5 +13,6 @@ data class Product(
     val supply:String="0",
     val unit:String,
     val price:String,
-    val postId:Int
+    val postId:Int,
+    val attachedFile:String=""
 )

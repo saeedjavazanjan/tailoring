@@ -33,6 +33,7 @@ class UploadPostViewModel
     val loading = mutableStateOf(false)
     val fileZippingLoading= mutableStateOf(false)
     val dialogQueue = DialogQueue()
+
     val product: MutableState<Product?> =
         mutableStateOf(
             Product(
@@ -49,7 +50,7 @@ class UploadPostViewModel
         )
 
     val zipFilePath= mutableStateOf("")
-    val digitalFileStatus= mutableStateOf(false)
+    val productAttachedFile= mutableStateOf("")
 
 
     val visiblePermissionDialogQueue = mutableStateListOf<String>()
@@ -75,18 +76,17 @@ class UploadPostViewModel
 
                 dataState.data?.let {
                     zipFilePath.value=it
-                    digitalFileStatus.value=true
+                    productAttachedFile.value=it
+
                     Toast.makeText(context,"compressed successfull",Toast.LENGTH_SHORT).show()
                 }
                 dataState.error?.let {
                     dialogQueue.appendErrorMessage("خطا",it)
-                    digitalFileStatus.value=false
 
                 }
 
             }.catch {error->
                 dialogQueue.appendErrorMessage("خطا",error.message.toString())
-                digitalFileStatus.value=false
 
 
             }
@@ -107,7 +107,7 @@ class UploadPostViewModel
         if(!file.exists()){
             file.mkdirs()
         }
-        return file.path+"products"
+        return file.path+"productst"
     }
     fun jsonStringOfProduct(product: Product): String {
         var gson = Gson()

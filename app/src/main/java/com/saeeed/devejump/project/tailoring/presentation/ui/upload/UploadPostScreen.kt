@@ -93,7 +93,6 @@ import com.saeeed.devejump.project.tailoring.components.PermissionDialog
 import com.saeeed.devejump.project.tailoring.components.PositiveAction
 import com.saeeed.devejump.project.tailoring.components.StoragePermissionTextProvider
 import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
-import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
@@ -294,7 +293,7 @@ fun UploadPostScreen(
 
         if (showDialog.value){
             val fileZippingLoading=viewModel.fileZippingLoading.value
-            val digitalFileStatus=viewModel.digitalFileStatus.value
+            val productAttachedFile=viewModel.productAttachedFile.value
 
             ProductEditDialog(
                 product=viewModel.product.value!!,
@@ -311,7 +310,7 @@ fun UploadPostScreen(
                              viewModel.product.value=it
 
                 },
-                digitalFileStatus = digitalFileStatus,
+                productAttachedFile = productAttachedFile,
                 fileZippingLoading=fileZippingLoading
             )
         }
@@ -675,7 +674,7 @@ fun ProductPreview(
 
                 text ="قیمت:  ${product.price} تومان "
             )
-            TextButton(
+         /*   TextButton(
                 modifier=Modifier
                     .align(Alignment.End),
                 onClick = {
@@ -687,7 +686,7 @@ fun ProductPreview(
                     text = stringResource(id =R.string.more),
                     color= Color.Blue
                 )
-            }
+            }*/
 
         }
 
