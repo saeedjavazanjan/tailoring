@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.Post
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
@@ -46,10 +47,13 @@ constructor(
     val post: MutableState<Post?> = mutableStateOf(null)
 
     val loading = mutableStateOf(false)
+    val productLoading = mutableStateOf(false)
+
     val commentSendLoading= mutableStateOf(false)
     val bookMarkState= mutableStateOf(false)
     val liKeState= mutableStateOf(false)
     val likeCount= mutableStateOf(0)
+    val product:MutableState<Product?> = mutableStateOf(null)
  /*   private val _comments = MutableLiveData<MutableList<Comment>>()
      val comments: LiveData<MutableList<Comment>>
         get() = _comments*/
@@ -100,7 +104,9 @@ constructor(
                 checkLikeState()
                 getPostComments(data.id)
                 likeCount.value=data.like
-
+                if(data.haveProduct==1){
+                    getProductOfCurrentPost(data.id)
+                }
               //  _comments.value=data.comments.toMutableList()
             }
 
@@ -111,6 +117,24 @@ constructor(
             }
         }.launchIn(viewModelScope)
     }
+
+    private fun getProductOfCurrentPost(postId: Int) {
+        getSewMethod.getProductOfCurrentPost(
+            postId,
+            token,
+            connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState->
+            productLoading.value=dataState.loading
+        dataState.data.let {
+            product.value=it
+        }
+
+        }.catch {
+            dialogQueue.appendErrorMessage("خطای دریافت محصول",it.message.toString())
+        }
+
+    }
+
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalMaterialApi::class)
      fun bookMark(scaffoldState: ScaffoldState, scope:CoroutineScope) {

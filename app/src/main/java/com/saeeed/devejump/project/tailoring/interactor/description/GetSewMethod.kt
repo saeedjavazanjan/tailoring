@@ -4,8 +4,10 @@ import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.Post
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.PostMapper
+import com.saeeed.devejump.project.tailoring.network.model.ProductDtoMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -14,6 +16,7 @@ class GetSewMethod (
     private val entityMapper: PostEntityMapper,
     private val retrofitService: RetrofitService,
     private val postMapper:PostMapper,
+    private val productDtoMapper: ProductDtoMapper
 ){
 
     fun execute(
@@ -64,6 +67,15 @@ class GetSewMethod (
     }
 
 
+    fun getProductOfCurrentPost(
+        postId: Int,
+        token: String,
+        isNetworkAvailable: Boolean,
+    ):Flow<DataState<Product>> = flow {
+        emit(DataState.loading())
+      val product= productDtoMapper.mapToDomainModel( retrofitService.getProduct(token, postId))
+        emit(DataState(product))
+    }
 
 
     private suspend fun getSewFromCache(postId: Int): Post? {

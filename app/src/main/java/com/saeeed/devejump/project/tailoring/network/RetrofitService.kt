@@ -1,9 +1,11 @@
 package com.saeeed.devejump.project.tailoring.network
 
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesDto
 import com.saeeed.devejump.project.tailoring.network.model.PostDto
+import com.saeeed.devejump.project.tailoring.network.model.ProductDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import com.saeeed.devejump.project.tailoring.network.response.SewMethodSearchResponse
 import retrofit2.http.Field
@@ -47,6 +49,12 @@ interface RetrofitService {
         @Header("Authorization") token: String,
         @Query("id") id: Int
     ): PostDto
+
+    @GET("get")
+    suspend fun getProduct(
+        @Header("Authorization") token: String,
+        @Query("post_id") postId: Int
+    ): ProductDto
 
 
     @GET("get_banners")
