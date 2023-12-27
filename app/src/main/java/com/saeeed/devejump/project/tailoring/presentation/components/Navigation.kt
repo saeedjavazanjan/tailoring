@@ -108,8 +108,10 @@ fun Navigation(
                 sewId = navBackStackEntry.arguments?.getInt("sewId"),
                 viewModel = descriptionViewModel,
                 scaffoldState = scaffoldState,
-                onNavigateToProfile = navController::navigate
-
+                onNavigateToProfile = navController::navigate,
+                onNavigateToProductDetailScreen= {
+                    navController.navigate(Screen.ProductDetail.route)
+                }
             )
 
 
@@ -205,18 +207,14 @@ fun Navigation(
 
         }
 
-        composable(
-            route = Screen.ProductDetail.route + "/{product}",
-            arguments = listOf(navArgument("product") {
-                type = NavType.StringType
-            })
-        ) { navBackStackEntry ->
-            navBackStackEntry.arguments?.getString("product")?.let {
+        composable(route = Screen.ProductDetail.route) { navBackStackEntry ->
                 ProductDetailScreen(
-                    productJson = it
-
+                    viewModel = descriptionViewModel,
+                    isDarkTheme = appDataStore.isDark.value,
+                    isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                    scaffoldState = scaffoldState
                 )
-            }
+
         }
         /*  composable(route = Screen.SewList.route) { navBackStackEntry ->
 

@@ -112,17 +112,19 @@ fun DescriptionScreen(
     sewId: Int?,
     viewModel: DescriptionViewModel,
     scaffoldState: ScaffoldState,
-    onNavigateToProfile: (String)->Unit
+    onNavigateToProfile: (String)->Unit,
+    onNavigateToProductDetailScreen: () -> Unit
 ){
     if (sewId == null){
        // TODO("Show Invalid Recipe")
-    }else {
+    }else
+    {
 
         LaunchedEffect(Unit){
             viewModel.onTriggerEvent(SewEvent.GetSewEvent(sewId))
         }
         val comments=viewModel.comments.value
-
+        val product=viewModel.product.value
         val loading = viewModel.loading.value
         val productLoading=viewModel.productLoading.value
         val commentSendLoading=viewModel.commentSendLoading.value
@@ -156,7 +158,7 @@ fun DescriptionScreen(
                         } else if (!loading && sewMethod == null ) {
                             // TODO("Show Invalid Recipe")
                         } else {
-                            sewMethod?.let {
+                            sewMethod?.let {post->
 
                                 val openDialog = remember { mutableStateOf(false) }
                                 val removeState = remember { mutableStateOf(false) }
@@ -207,7 +209,7 @@ fun DescriptionScreen(
                                                .wrapContentHeight()
                                        ) {
                                            imageAndVideoHolder(
-                                               post = it,
+                                               post = post,
                                                bookMarkState = bookMarkState,
                                                save = {
                                                    viewModel.bookMark(scaffoldState, composableScope)
@@ -220,7 +222,7 @@ fun DescriptionScreen(
                                                }
                                            )
                                            detail(
-                                               post = it,
+                                               post = post,
                                                likesCount = likesCount,
                                                likeState = likeState,
                                                like = {
@@ -236,18 +238,20 @@ fun DescriptionScreen(
                                                }
 
                                            )
-                                           if(it.haveProduct==1) {
+                                           if(post.haveProduct==1) {
                                                if(productLoading){
                                                    DotsFlashing()
-                                               }else {
+                                               }else product?.let {
                                                    fileOrProductOfPost(
-                                                       product = viewModel.product.value!!,
+                                                       product = product,
                                                        onNavigateTpProductDetailScreen = {
 
+                                                           onNavigateToProductDetailScreen()
                                                        }
                                                    )
                                                }
                                            }
+                                           Spacer(modifier = Modifier.size(100.dp))
                                            Text(
                                                modifier = Modifier.padding(10.dp),
 
@@ -304,7 +308,7 @@ fun DescriptionScreen(
                                 }
 
                                 commentTextField(
-                                    post = it,
+                                    post = post,
                                     scrollState = scrollState ,
                                     query = query ,
                                     commentState = commentState,
@@ -675,7 +679,7 @@ fun detail(
 @Composable
 fun fileOrProductOfPost(
     product:Product,
-onNavigateTpProductDetailScreen:(Int)->Unit
+onNavigateTpProductDetailScreen:()->Unit
 ){
     Card(
         modifier=Modifier.padding(20.dp),
@@ -683,7 +687,7 @@ onNavigateTpProductDetailScreen:(Int)->Unit
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         ),
-        border = BorderStroke(1.dp, color = Color.Gray)
+        border = BorderStroke(1.dp, color = Color.LightGray)
     ) {
         Column(
             modifier = Modifier.padding(10.dp)
@@ -724,7 +728,7 @@ onNavigateTpProductDetailScreen:(Int)->Unit
                    modifier=Modifier
                        .align(Alignment.End),
                    onClick = {
-                       onNavigateTpProductDetailScreen(product.id)
+                       onNavigateTpProductDetailScreen()
 
                    }) {
                    Text(

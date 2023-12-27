@@ -50,7 +50,7 @@ interface RetrofitService {
         @Query("id") id: Int
     ): PostDto
 
-    @GET("get")
+    @GET("get_product")
     suspend fun getProduct(
         @Header("Authorization") token: String,
         @Query("post_id") postId: Int

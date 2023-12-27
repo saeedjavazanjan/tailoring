@@ -73,8 +73,13 @@ class GetSewMethod (
         isNetworkAvailable: Boolean,
     ):Flow<DataState<Product>> = flow {
         emit(DataState.loading())
-      val product= productDtoMapper.mapToDomainModel( retrofitService.getProduct(token, postId))
-        emit(DataState(product))
+        try {
+            val product= productDtoMapper.mapToDomainModel( retrofitService.getProduct(token, postId))
+            emit(DataState(product))
+        }catch (e:Exception){
+            emit(DataState.error(e.message?:"خطای نا شناخته"))
+        }
+
     }
 
 

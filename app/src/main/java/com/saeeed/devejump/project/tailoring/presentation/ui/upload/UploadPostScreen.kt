@@ -624,7 +624,7 @@ fun ProductPreview(
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         ),
-                border = BorderStroke(1.dp, color = Color.Gray)
+                border = BorderStroke(1.dp, color = Color.LightGray)
     ) {
         Column(
             modifier = Modifier.padding(10.dp)

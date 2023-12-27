@@ -102,7 +102,7 @@ constructor(
                 state.set(STATE_KEY_SEW, data.id)
                 checkSewBookMarkState()
                 checkLikeState()
-                getPostComments(data.id)
+               // getPostComments(data.id)
                 likeCount.value=data.like
                 if(data.haveProduct==1){
                     getProductOfCurrentPost(data.id)
@@ -118,7 +118,7 @@ constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getProductOfCurrentPost(postId: Int) {
+    fun getProductOfCurrentPost(postId: Int) {
         getSewMethod.getProductOfCurrentPost(
             postId,
             token,
@@ -128,10 +128,14 @@ constructor(
         dataState.data.let {
             product.value=it
         }
+            dataState.error?.let {
+                dialogQueue.appendErrorMessage("خطای دریافت محصول",it)
+
+            }
 
         }.catch {
             dialogQueue.appendErrorMessage("خطای دریافت محصول",it.message.toString())
-        }
+        }.launchIn(viewModelScope)
 
     }
 
