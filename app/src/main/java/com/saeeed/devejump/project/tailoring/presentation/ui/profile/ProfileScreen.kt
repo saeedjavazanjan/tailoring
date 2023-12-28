@@ -86,7 +86,6 @@ fun ProfileScreen(
             scaffoldState = scaffoldState
 
         ) {
-            val pagerState = rememberPagerState(pageCount = 2, initialPage = 0)
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
                 Scaffold(

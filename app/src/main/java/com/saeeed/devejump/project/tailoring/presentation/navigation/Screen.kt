@@ -15,6 +15,8 @@ sealed class Screen(
     object School : Screen("school")
     object Followers:Screen("followers")
     object Followings:Screen("followings")
+
+    object Article:Screen("article")
     object AuthorProfile : Screen("authorProfile")
     object UploadPost:Screen("uploadPost")
     object ProductDetail:Screen("productDetail")

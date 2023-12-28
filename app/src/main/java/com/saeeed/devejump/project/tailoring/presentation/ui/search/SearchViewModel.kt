@@ -75,13 +75,13 @@ class ListViewModel
             try {
                 when(event){
                     is SearchEvent.NewSearchEvent -> {
-                        newSearch()
+                     //   newSearch()
                     }
                     is SearchEvent.NextPageEvent -> {
-                        nextPage()
+                      //  nextPage()
                     }
                     is SearchEvent.RestoreStateEvent -> {
-                        restoreState()
+                      //  restoreState()
                     }
                 }
             }catch (e: Exception){

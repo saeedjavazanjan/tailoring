@@ -102,7 +102,7 @@ constructor(
                 state.set(STATE_KEY_SEW, data.id)
                 checkSewBookMarkState()
                 checkLikeState()
-               // getPostComments(data.id)
+                getPostComments(data.id)
                 likeCount.value=data.like
                 if(data.haveProduct==1){
                     getProductOfCurrentPost(data.id)
