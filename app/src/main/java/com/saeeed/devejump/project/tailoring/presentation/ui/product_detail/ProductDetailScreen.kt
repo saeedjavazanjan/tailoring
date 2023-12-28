@@ -110,10 +110,6 @@ fun ProductDetailScreen(
             scaffoldState = scaffoldState
         ){
 
-
-
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     scaffoldState = scaffoldState
@@ -165,7 +161,7 @@ fun ProductDetailScreen(
                 }
             }
 
-        }
+
     }
 
 

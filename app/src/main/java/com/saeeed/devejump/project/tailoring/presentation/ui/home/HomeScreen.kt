@@ -92,12 +92,8 @@ fun HomeScreen(
             }
 
         }
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
             Scaffold(
-                topBar = {
-                    TopBar()
-                }
 
             ) {
 
@@ -195,5 +191,5 @@ fun HomeScreen(
             }
 
         }
-    }
+
 }

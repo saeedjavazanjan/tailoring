@@ -17,12 +17,15 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -33,6 +36,7 @@ import com.saeeed.devejump.project.tailoring.presentation.components.Navigation
 import com.saeeed.devejump.project.tailoring.presentation.components.currentRoute
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.components.BottomNavItem
+import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -80,7 +84,7 @@ class MainActivity : ComponentActivity() {
                 Screen.SewDescription.route + "/{sewId}"-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = false
-                    // topBarState.value = true
+                     topBarState.value = false
 
                 }
                 Screen.MoreOfBests.route + "/{type}"->{
@@ -90,55 +94,70 @@ class MainActivity : ComponentActivity() {
                 Screen.Home.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
-                    // topBarState.value = true
+                     topBarState.value = true
 
                 }
                 Screen.AuthorProfile.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
-                    // topBarState.value = true
+                     topBarState.value = true
 
                 }
                 Screen.Profile.route+ "/{authorID}"-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = false
-                    // topBarState.value = true
-
-                }
-                Screen.Courses.route-> {
-                    // Show BottomBar and TopBar
-                    bottomBarState.value = true
-                    // topBarState.value = true
+                     topBarState.value = true
 
                 }
                 Screen.Search.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = true
-                    // topBarState.value = true
+                     topBarState.value = false
 
                 }
                 Screen.Splash.route-> {
                     // Show BottomBar and TopBar
                     bottomBarState.value = false
-                    // topBarState.value = true
+                     topBarState.value = false
 
                 }
                 Screen.Followers.route->{
 
                     bottomBarState.value = false
+                    topBarState.value = false
 
                 }
                 Screen.Followings.route->{
 
                     bottomBarState.value = false
+                    topBarState.value = false
 
                 }
 
                 Screen.UploadPost.route->{
                     bottomBarState.value=false
+                    topBarState.value = false
+
                 }
                 Screen.ProductDetail.route->{
                     bottomBarState.value=false
+                    topBarState.value = false
+                }
+                Screen.Article.route->{
+                    bottomBarState.value=false
+                    topBarState.value = false
+                }
+                Screen.Notifications.route->{
+                    bottomBarState.value=false
+                    topBarState.value = false
+                }
+                Screen.Home.route->{
+                    topBarState.value = true
+
+                }
+                Screen.Courses.route->{
+                    topBarState.value = true
+
                 }
 
             }
@@ -149,86 +168,94 @@ class MainActivity : ComponentActivity() {
 
                 openDialog.value = true
             }
-            Scaffold(
-                bottomBar = {
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
-                    BottomNavigationBar(
-                        items = listOf(
-                            BottomNavItem(
-                                name = "پروفایل",
-                                route = Screen.AuthorProfile.route,
-                                icon = Icons.Default.Person
-                            ),
-                            BottomNavItem(
-                                name = "فروشگاه",
-                                route = Screen.Courses.route,
-                                icon = Icons.Default.ShoppingCart
-                            ),
-                            BottomNavItem(
-                                name = "خانه",
-                                route = Screen.Home.route,
-                                icon = Icons.Default.Home
-                            ),
-                            BottomNavItem(
-                                name = "جست و جو",
-                                route = Screen.Search.route,
-                                icon = Icons.Default.Search
-                            ),
-                            BottomNavItem(
-                                name = "آموزشگاه",
-                                route = Screen.School.route,
-                                icon = Icons.Default.DateRange
-                            )
+                Scaffold(
+                    topBar = {
+                        TopBar(
+                            topBarState = topBarState,
+                            onNotifClicked = {
+                                navController.navigate(Screen.Notifications.route)
 
-                        ),
-                        navController = navController,
-                        onItemClick = {
-                            navController.navigate(it.route) {
-                                /*  launchSingleTop=true
+                            }
+                        )
+                    },
+                    bottomBar = {
+
+                        BottomNavigationBar(
+                            items = listOf(
+                                BottomNavItem(
+                                    name = "پروفایل",
+                                    route = Screen.AuthorProfile.route,
+                                    icon = Icons.Default.Person
+                                ),
+                                BottomNavItem(
+                                    name = "فروشگاه",
+                                    route = Screen.Courses.route,
+                                    icon = Icons.Default.ShoppingCart
+                                ),
+                                BottomNavItem(
+                                    name = "خانه",
+                                    route = Screen.Home.route,
+                                    icon = Icons.Default.Home
+                                ),
+                                BottomNavItem(
+                                    name = "جست و جو",
+                                    route = Screen.Search.route,
+                                    icon = Icons.Default.Search
+                                ),
+                                BottomNavItem(
+                                    name = "آموزشگاه",
+                                    route = Screen.School.route,
+                                    icon = Icons.Default.DateRange
+                                )
+
+                            ),
+                            navController = navController,
+                            onItemClick = {
+                                navController.navigate(it.route) {
+                                    /*  launchSingleTop=true
                                 popUpTo(Screen.HomeSubNavigation.route){
                                  //   inclusive=true
                                     saveState = true
                                 }
                                 restoreState=true*/
-                                launchSingleTop = true
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                                    launchSingleTop = true
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    restoreState = true
                                 }
-                                restoreState = true
-                            }
 
-                        },
-                        bottomBarState = bottomBarState,
+                            },
+                            bottomBarState = bottomBarState,
 
-
-
-                    )
-                },
-                snackbarHost = {
-                    scaffoldState.snackbarHostState
-                }
-            ) {
-                Box(modifier = Modifier.padding(it)){
-                    Navigation(
-                        appDataStore = appDataStore,
-                        connectivityManager = connectivityManager,
-                        navController = navController,
-                        scaffoldState=scaffoldState
-
-                    )
-                    if (openDialog.value) {
-                        ExitAlertDialog(navController, {
-                            openDialog.value = it
-                        }, {
-                            finish()
-                        })
-
+                            )
+                    },
+                    snackbarHost = {
+                        scaffoldState.snackbarHostState
                     }
-                }
+                ) {
+                    Box(modifier = Modifier.padding(it)) {
+                        Navigation(
+                            appDataStore = appDataStore,
+                            connectivityManager = connectivityManager,
+                            navController = navController,
+                            scaffoldState = scaffoldState
+
+                        )
+                        if (openDialog.value) {
+                            ExitAlertDialog(navController, {
+                                openDialog.value = it
+                            }, {
+                                finish()
+                            })
+
+                        }
+                    }
 
 
-
-                /*   val listViewModel: ListViewModel = viewModel()
+                    /*   val listViewModel: ListViewModel = viewModel()
             val descriptionViewModel: DescriptionViewModel = viewModel()
 
             val navController = rememberNavController()
@@ -258,6 +285,7 @@ class MainActivity : ComponentActivity() {
                 }
             }*/
 
+                }
             }
         }
     }

@@ -58,7 +58,6 @@ fun FollowersScreen(
         scaffoldState = scaffoldState
 
     ) {
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -95,7 +94,7 @@ fun FollowersScreen(
         
     }
 
-        }
+
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
