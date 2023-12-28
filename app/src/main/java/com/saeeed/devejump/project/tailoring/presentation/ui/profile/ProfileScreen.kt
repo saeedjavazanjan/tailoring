@@ -86,14 +86,11 @@ fun ProfileScreen(
             scaffoldState = scaffoldState
 
         ) {
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     scaffoldState = scaffoldState,
-                    topBar = {
-                        TopBar()
-                    }
+
                 ) {
                     Column(
                         modifier = Modifier
@@ -230,7 +227,7 @@ fun ProfileScreen(
                     }
                 }
             }
-        }
+
 
     }
 

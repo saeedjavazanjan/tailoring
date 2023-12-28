@@ -361,14 +361,11 @@ fun UploadPostScreen(
 
 
 
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 scaffoldState = scaffoldState,
-                topBar = {
-                    TopBar()
-                }
+
             ) {
 
                 Column(
@@ -597,7 +594,7 @@ fun UploadPostScreen(
 
                 }
             }
-        }
+
     }
 
  BackHandler {

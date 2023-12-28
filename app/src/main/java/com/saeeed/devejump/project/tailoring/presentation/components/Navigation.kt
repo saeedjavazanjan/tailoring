@@ -30,6 +30,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.UserProfileScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.AuthorProfileViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.notifications.NotificationsScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.product_detail.ProductDetailScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.school.SchoolViewModel
@@ -69,22 +70,7 @@ fun Navigation(
             )
         }
 
-        composable(Screen.Followers.route) {
-            FollowersScreen(
-                isDarkTheme = appDataStore.isDark.value,
-                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                viewModel = followersViewModel,
-                onNavigateToProfile = navController::navigate
-            )
-        }
-        composable(Screen.Followings.route) {
-            FollowingsScreen(
-                isDarkTheme = appDataStore.isDark.value,
-                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                viewModel = followingsViewModel,
-                onNavigateToProfile = navController::navigate
-            )
-        }
+
         composable(Screen.Home.route) {
 
             HomeScreen(
@@ -96,6 +82,45 @@ fun Navigation(
 
             )
 
+        }
+        composable(Screen.Courses.route) {
+            CoursesScreen()
+
+        }
+        composable(Screen.School.route) {
+            SchoolScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                viewModel = schoolViewModel,
+                onNavigateToBannerDestination = navController::navigate,
+                onNavigateToArticleScreen ={
+                    navController.navigate(it)
+                }
+
+            )
+
+        }
+        composable(Screen.AuthorProfile.route) {
+            UserProfileScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                onNavigateToDescriptionScreen = navController::navigate,
+                onNavigateToFollowersScreen = {
+                    navController.navigate(Screen.Followers.route)
+                },
+                onNavigateToFollowingsScreen = {
+                    navController.navigate(Screen.Followings.route)
+
+                },
+                viewModel = authorProfileViewModel,
+                onNavigateToUploadPostScreen = {
+                    navController.navigate(Screen.UploadPost.route)
+                }
+            )
+
+        }
+        composable(Screen.Notifications.route){
+            NotificationsScreen()
         }
         composable(
             route = Screen.SewDescription.route + "/{sewId}",
@@ -143,23 +168,23 @@ fun Navigation(
                 )
             }
         }
-        composable(Screen.Courses.route) {
-            CoursesScreen()
-
-        }
-        composable(Screen.School.route) {
-            SchoolScreen(
+        composable(Screen.Followers.route) {
+            FollowersScreen(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                viewModel = schoolViewModel,
-                onNavigateToBannerDestination = navController::navigate,
-                onNavigateToArticleScreen ={
-                    navController.navigate(it)
-                }
-
+                viewModel = followersViewModel,
+                onNavigateToProfile = navController::navigate
             )
-
         }
+        composable(Screen.Followings.route) {
+            FollowingsScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                viewModel = followingsViewModel,
+                onNavigateToProfile = navController::navigate
+            )
+        }
+
 
         composable(
             route = Screen.Article.route + "/{articleID}",
@@ -179,25 +204,7 @@ fun Navigation(
         }
 
 
-        composable(Screen.AuthorProfile.route) {
-            UserProfileScreen(
-                isDarkTheme = appDataStore.isDark.value,
-                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                onNavigateToDescriptionScreen = navController::navigate,
-                onNavigateToFollowersScreen = {
-                    navController.navigate(Screen.Followers.route)
-                },
-                onNavigateToFollowingsScreen = {
-                    navController.navigate(Screen.Followings.route)
 
-                },
-                viewModel = authorProfileViewModel,
-                onNavigateToUploadPostScreen = {
-                    navController.navigate(Screen.UploadPost.route)
-                }
-            )
-
-        }
 
 
 

@@ -119,14 +119,10 @@ LaunchedEffect(Unit ){
 
         ) {
             val pagerState = rememberPagerState(pageCount = 2, initialPage = 0)
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     scaffoldState = scaffoldState,
-                    topBar = {
-                        TopBar()
-                    },
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = {
@@ -292,7 +288,7 @@ LaunchedEffect(Unit ){
             }
         }
 
-    }
+    
 }
 @ExperimentalPagerApi
 @Composable

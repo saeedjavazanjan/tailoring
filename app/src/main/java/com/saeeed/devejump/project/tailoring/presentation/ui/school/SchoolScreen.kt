@@ -70,12 +70,8 @@ fun SchoolScreen(
         scaffoldState = scaffoldState
 
     ) {
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
             Scaffold(
-                topBar = {
-                    TopBar()
-                }
 
             ) {
 
@@ -131,5 +127,5 @@ fun SchoolScreen(
                 }
             }
         }
-    }
+
 }

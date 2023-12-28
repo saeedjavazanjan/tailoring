@@ -144,7 +144,6 @@ fun DescriptionScreen(
 
 
 
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -382,7 +381,7 @@ fun DescriptionScreen(
             }
 
         }
-    }
+
 
 }
 

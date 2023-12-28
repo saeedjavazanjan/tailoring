@@ -53,7 +53,6 @@ fun ListScreen(
         dialogQueue = dialogQueue.queue.value,
         scaffoldState = scaffoldState
     ) {
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
         Scaffold(
             topBar = {
@@ -89,5 +88,5 @@ fun ListScreen(
 
 
         }
-    }
+
 }
