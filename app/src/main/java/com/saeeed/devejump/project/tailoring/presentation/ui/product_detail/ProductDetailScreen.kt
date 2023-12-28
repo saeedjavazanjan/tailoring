@@ -30,10 +30,13 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.IconButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -327,10 +330,13 @@ fun AnimatedCounter(
         mutableIntStateOf(count.value)
     }
 Row(modifier = modifier) {
-    Button(
+    
+    IconButton(
         modifier=Modifier.padding(10.dp),
-        onClick = { count.value++ }) {
-        Text(text = "+")
+
+        onClick = {count.value++  }) {
+        Icon(Icons.Default.Add, contentDescription = null)
+        
     }
     Row(
         modifier=Modifier.align(Alignment.CenterVertically),
@@ -362,10 +368,12 @@ Row(modifier = modifier) {
 
         }
     }
-    Button(
+    IconButton(
         modifier=Modifier.padding(10.dp),
-        onClick = { count.value-- }) {
-        Text(text = "-")
+
+        onClick = {count.value--  }) {
+        Icon(painterResource(id = R.drawable.baseline_indeterminate_check_box_24), contentDescription = null)
+
     }
 }
 
