@@ -9,9 +9,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
 import com.saeeed.devejump.project.tailoring.domain.model.Product
-import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,6 +33,7 @@ class UploadPostViewModel
     val loading = mutableStateOf(false)
     val fileZippingLoading= mutableStateOf(false)
     val dialogQueue = DialogQueue()
+
     val product: MutableState<Product?> =
         mutableStateOf(
             Product(
@@ -49,7 +50,7 @@ class UploadPostViewModel
         )
 
     val zipFilePath= mutableStateOf("")
-    val digitalFileStatus= mutableStateOf(false)
+    val productAttachedFile= mutableStateOf("")
 
 
     val visiblePermissionDialogQueue = mutableStateListOf<String>()
@@ -75,18 +76,17 @@ class UploadPostViewModel
 
                 dataState.data?.let {
                     zipFilePath.value=it
-                    digitalFileStatus.value=true
+                    productAttachedFile.value=it
+
                     Toast.makeText(context,"compressed successfull",Toast.LENGTH_SHORT).show()
                 }
                 dataState.error?.let {
                     dialogQueue.appendErrorMessage("خطا",it)
-                    digitalFileStatus.value=false
 
                 }
 
             }.catch {error->
                 dialogQueue.appendErrorMessage("خطا",error.message.toString())
-                digitalFileStatus.value=false
 
 
             }
@@ -107,7 +107,10 @@ class UploadPostViewModel
         if(!file.exists()){
             file.mkdirs()
         }
-        return file.path+"products"
+        return file.path+"productst"
     }
-
+    fun jsonStringOfProduct(product: Product): String {
+        var gson = Gson()
+        return gson.toJson(product)
+    }
 }

@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.description
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
@@ -35,8 +37,12 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -63,18 +69,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.substring
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
+import com.saeeed.devejump.project.tailoring.components.progress_bar.DotsFlashing
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.Post
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.components.CommentCard
 import com.saeeed.devejump.project.tailoring.presentation.components.ReportAlertDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
@@ -83,6 +97,7 @@ import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
 import com.saeeed.devejump.project.tailoring.utils.USER_NAME
+import com.saeeed.devejump.project.tailoring.utils.posts
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -97,18 +112,21 @@ fun DescriptionScreen(
     sewId: Int?,
     viewModel: DescriptionViewModel,
     scaffoldState: ScaffoldState,
-    onNavigateToProfile: (String)->Unit
+    onNavigateToProfile: (String)->Unit,
+    onNavigateToProductDetailScreen: () -> Unit
 ){
     if (sewId == null){
        // TODO("Show Invalid Recipe")
-    }else {
+    }else
+    {
 
         LaunchedEffect(Unit){
             viewModel.onTriggerEvent(SewEvent.GetSewEvent(sewId))
         }
         val comments=viewModel.comments.value
-
+        val product=viewModel.product.value
         val loading = viewModel.loading.value
+        val productLoading=viewModel.productLoading.value
         val commentSendLoading=viewModel.commentSendLoading.value
         val sewMethod = viewModel.post.value
         val dialogQueue = viewModel.dialogQueue
@@ -140,7 +158,7 @@ fun DescriptionScreen(
                         } else if (!loading && sewMethod == null ) {
                             // TODO("Show Invalid Recipe")
                         } else {
-                            sewMethod?.let {
+                            sewMethod?.let {post->
 
                                 val openDialog = remember { mutableStateOf(false) }
                                 val removeState = remember { mutableStateOf(false) }
@@ -191,7 +209,7 @@ fun DescriptionScreen(
                                                .wrapContentHeight()
                                        ) {
                                            imageAndVideoHolder(
-                                               post = it,
+                                               post = post,
                                                bookMarkState = bookMarkState,
                                                save = {
                                                    viewModel.bookMark(scaffoldState, composableScope)
@@ -204,7 +222,7 @@ fun DescriptionScreen(
                                                }
                                            )
                                            detail(
-                                               post = it,
+                                               post = post,
                                                likesCount = likesCount,
                                                likeState = likeState,
                                                like = {
@@ -220,9 +238,20 @@ fun DescriptionScreen(
                                                }
 
                                            )
+                                           if(post.haveProduct==1) {
+                                               if(productLoading){
+                                                   DotsFlashing()
+                                               }else product?.let {
+                                                   fileOrProductOfPost(
+                                                       product = product,
+                                                       onNavigateTpProductDetailScreen = {
 
-                                           fileOrProductOfPost()
-
+                                                           onNavigateToProductDetailScreen()
+                                                       }
+                                                   )
+                                               }
+                                           }
+                                           Spacer(modifier = Modifier.size(100.dp))
                                            Text(
                                                modifier = Modifier.padding(10.dp),
 
@@ -279,7 +308,7 @@ fun DescriptionScreen(
                                 }
 
                                 commentTextField(
-                                    post = it,
+                                    post = post,
                                     scrollState = scrollState ,
                                     query = query ,
                                     commentState = commentState,
@@ -469,6 +498,10 @@ fun detail(
     val likes = mutableStateOf( likesCount)
     val likeIconState= mutableStateOf(likeState)
 
+    val expanded= remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth(1f)
@@ -529,7 +562,7 @@ fun detail(
             {
                 Icon(
                     painter = painterResource(R.drawable.gray_heart),
-                    contentDescription = "Radio button icon",
+                    contentDescription = "",
                     tint = if (likeIconState.value) Color.Red else Color.LightGray
                 )
             }
@@ -592,28 +625,127 @@ fun detail(
             .padding(start = 10.dp),
         style = MaterialTheme.typography.bodySmall
     )
-    val description = post.description
+    if(post.description.length>100){
+        val description = remember {
+            mutableStateOf(post.description.substring(0,90))
+        }
+        Text(buildAnnotatedString {
+            withStyle(style = SpanStyle(color = Color.DarkGray)) {
+                append(description.value)
+            }
+            withStyle(style = SpanStyle(color = Color.Blue)) {
+                append(
+                    text =
+                    if (!expanded.value)
+                        "\n...بیشتر"
+                    else
+                        "\n...کمتر"
+                )
+            }
+        },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp, top = 20.dp, end = 10.dp)
+                .clickable(
+                    onClick = {
+                        if (!expanded.value) {
+                            expanded.value = true
+                            description.value = post.description
+                        } else {
+                            expanded.value = false
+                            description.value = post.description.substring(0, 90)
+                        }
 
-    Text(
-        text = description,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 10.dp, top = 20.dp, end = 10.dp),
-        style = MaterialTheme.typography.bodyMedium
-    )
+                    }
+                ),
+        )
+    }else{
+        val description=post.description
+         Text(
+
+                text = description,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, top = 20.dp, end = 10.dp),
+                style = MaterialTheme.typography.bodyMedium
+            )
+    }
+
 
 
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun fileOrProductOfPost(){
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(250.dp)
+fun fileOrProductOfPost(
+    product:Product,
+onNavigateTpProductDetailScreen:()->Unit
+){
+    Card(
+        modifier=Modifier.padding(20.dp),
+        elevation= CardDefaults.cardElevation(10.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        ),
+        border = BorderStroke(1.dp, color = Color.LightGray)
     ) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ){
+                GlideImage(
+                    model = product.images[0],
+                    contentDescription = "",
+                    loading=placeholder(R.drawable.empty_plate),
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(100.dp)
+                        .padding(5.dp)
+                        .clip(RoundedCornerShape(10.dp)),
+                    contentScale = ContentScale.Crop,
+                )
+                Text(
+                    modifier=Modifier.align(Alignment.Bottom),
+                    text =product.name
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+            }
+            Text(
+                modifier=Modifier.padding(10.dp),
+                text =product.description
+            )
+
+            Text(
+                modifier=Modifier.padding(10.dp),
+
+                text ="قیمت:  ${product.price} تومان "
+            )
+               TextButton(
+                   modifier=Modifier
+                       .align(Alignment.End),
+                   onClick = {
+                       onNavigateTpProductDetailScreen()
+
+                   }) {
+                   Text(
+                       modifier=Modifier.padding(10.dp),
+                       text = stringResource(id =R.string.more),
+                       color= Color.Blue
+                   )
+               }
+
+        }
+
+
+
 
     }
+
+
 }
 
 @SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")

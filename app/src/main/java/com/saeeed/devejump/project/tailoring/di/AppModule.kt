@@ -28,6 +28,7 @@ import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesMapper
 import com.saeeed.devejump.project.tailoring.network.model.PostMapper
+import com.saeeed.devejump.project.tailoring.network.model.ProductDtoMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
 import com.saeeed.devejump.project.tailoring.repository.SewRepositoryImpl
@@ -57,6 +58,12 @@ object AppModule {
     @Provides
     fun provideMapper():PostMapper {
         return PostMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideProductDtoMapper():ProductDtoMapper {
+        return ProductDtoMapper()
     }
 
     @Singleton
@@ -310,12 +317,15 @@ object AppModule {
         postEntityMapper: PostEntityMapper,
         retrofitService: RetrofitService,
         postDtoMapper: PostMapper,
+        productDtoMapper: ProductDtoMapper
     ): GetSewMethod {
         return GetSewMethod(
             sewMethodDao= sewMethodDao,
             entityMapper = postEntityMapper,
             retrofitService= retrofitService,
             postMapper =  postDtoMapper,
+            productDtoMapper=productDtoMapper
+
 
         )
     }

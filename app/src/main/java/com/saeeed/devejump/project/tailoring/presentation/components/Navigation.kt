@@ -29,6 +29,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.UserProfileScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.AuthorProfileViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.product_detail.ProductDetailScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.upload.UploadPostScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.upload.UploadPostViewModel
@@ -50,9 +51,9 @@ fun Navigation(
     val splashViewModel: SplashViewModel = viewModel()
     val authorProfileViewModel: AuthorProfileViewModel = viewModel()
     val followersViewModel: FollowersViewModel = viewModel()
-    val followingsViewModel:FollowingsViewModel = viewModel()
-    val profileViewModel:ProfileViewModel= viewModel()
-    val uploadPostViewModel:UploadPostViewModel= viewModel()
+    val followingsViewModel: FollowingsViewModel = viewModel()
+    val profileViewModel: ProfileViewModel = viewModel()
+    val uploadPostViewModel: UploadPostViewModel = viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
@@ -107,8 +108,10 @@ fun Navigation(
                 sewId = navBackStackEntry.arguments?.getInt("sewId"),
                 viewModel = descriptionViewModel,
                 scaffoldState = scaffoldState,
-                onNavigateToProfile = navController::navigate
-
+                onNavigateToProfile = navController::navigate,
+                onNavigateToProductDetailScreen= {
+                    navController.navigate(Screen.ProductDetail.route)
+                }
             )
 
 
@@ -128,12 +131,12 @@ fun Navigation(
                     onNavigateToFollowersScreen = {
                         navController.navigate(Screen.Followers.route)
                     },
-                    onNavigateToFollowingsScreen={
+                    onNavigateToFollowingsScreen = {
                         navController.navigate(Screen.Followings.route)
 
                     },
                     viewModel = profileViewModel,
-                    userId = navBackStackEntry.arguments?.getInt("authorID")
+                    userId =it
                 )
             }
         }
@@ -152,8 +155,8 @@ fun Navigation(
                 onNavigateToDescriptionScreen = navController::navigate,
                 onNavigateToFollowersScreen = {
                     navController.navigate(Screen.Followers.route)
-                                              },
-                onNavigateToFollowingsScreen={
+                },
+                onNavigateToFollowingsScreen = {
                     navController.navigate(Screen.Followings.route)
 
                 },
@@ -164,15 +167,22 @@ fun Navigation(
             )
 
         }
+
+
+
         composable(Screen.UploadPost.route) {
             UploadPostScreen(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                 viewModel = uploadPostViewModel,
-                navController
+                navController = navController,
+                onNavigateTpProductDetailScreen = navController::navigate
             )
 
         }
+
+
+
 
 
         composable(Screen.Search.route) {
@@ -197,7 +207,15 @@ fun Navigation(
 
         }
 
+        composable(route = Screen.ProductDetail.route) { navBackStackEntry ->
+                ProductDetailScreen(
+                    viewModel = descriptionViewModel,
+                    isDarkTheme = appDataStore.isDark.value,
+                    isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                    scaffoldState = scaffoldState
+                )
 
+        }
         /*  composable(route = Screen.SewList.route) { navBackStackEntry ->
 
             ListScreen(

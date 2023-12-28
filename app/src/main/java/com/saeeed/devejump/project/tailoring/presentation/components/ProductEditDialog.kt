@@ -102,10 +102,10 @@ fun ProductEditDialog(
     requestPermission:()->Unit,
     zipSelectedFile:(List<Uri?>)->Unit,
     setProduct:(Product)->Unit,
-    digitalFileStatus:Boolean,
+    productAttachedFile:String,
     fileZippingLoading: Boolean,
-    product: Product
-    )
+    product: Product,
+)
 
 {
 
@@ -137,8 +137,7 @@ fun ProductEditDialog(
         mutableStateListOf<Uri?>(Uri.EMPTY)
 
     }
-    selectedImages.clear()
-    selectedImages.addAll(product.images)
+
 
     val name= remember {
         mutableStateOf<String>(product.name)
@@ -164,6 +163,11 @@ fun ProductEditDialog(
 
 
     ) {
+        LaunchedEffect(Unit){
+            selectedImages.clear()
+            selectedImages.addAll(product.images)
+        }
+
 
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
 
@@ -379,7 +383,7 @@ fun ProductEditDialog(
                                         supply = supply.value,
                                         unit = unit.value,
                                         price=price.value,
-                                        digitalFileStatus = digitalFileStatus
+                                        productAttachedFile = productAttachedFile
                                     )
 
                                 ){
@@ -424,7 +428,8 @@ fun ProductEditDialog(
                                                     unit = unit.value,
                                                     supply = supply.value,
                                                     mas = mas.value,
-                                                    postId = 0
+                                                    postId = 0,
+                                                    attachedFile =productAttachedFile
 
                                                 )
                                             )
@@ -476,7 +481,7 @@ fun checkCondition(
     supply:String,
     unit:String,
     price: String,
-    digitalFileStatus:Boolean
+    productAttachedFile:String
 ):String {
 
     if (name == "" || description=="" || price==""){
@@ -490,7 +495,7 @@ fun checkCondition(
     if (description.length < 50){
         return "short description"
     }
-    return if(!digitalFileStatus &&  typeOfProduct != "محصول فیزیکی"){
+    return if(productAttachedFile=="" &&  typeOfProduct != "محصول فیزیکی"){
         "there is not file"
     } else   "Ok"
 }

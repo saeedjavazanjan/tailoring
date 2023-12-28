@@ -93,11 +93,11 @@ import com.saeeed.devejump.project.tailoring.components.PermissionDialog
 import com.saeeed.devejump.project.tailoring.components.PositiveAction
 import com.saeeed.devejump.project.tailoring.components.StoragePermissionTextProvider
 import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
-import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
+import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import java.io.File
@@ -115,7 +115,8 @@ fun UploadPostScreen(
     isDarkTheme: Boolean,
     isNetworkAvailable: Boolean,
     viewModel: UploadPostViewModel,
-    navController:NavController
+    navController:NavController,
+    onNavigateTpProductDetailScreen: (String) -> Unit
 ){
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
@@ -292,7 +293,7 @@ fun UploadPostScreen(
 
         if (showDialog.value){
             val fileZippingLoading=viewModel.fileZippingLoading.value
-            val digitalFileStatus=viewModel.digitalFileStatus.value
+            val productAttachedFile=viewModel.productAttachedFile.value
 
             ProductEditDialog(
                 product=viewModel.product.value!!,
@@ -309,7 +310,7 @@ fun UploadPostScreen(
                              viewModel.product.value=it
 
                 },
-                digitalFileStatus = digitalFileStatus,
+                productAttachedFile = productAttachedFile,
                 fileZippingLoading=fileZippingLoading
             )
         }
@@ -507,6 +508,11 @@ fun UploadPostScreen(
                             },
                             editProduct = {
                                 showDialog.value=true
+                            },
+                            onNavigateTpProductDetailScreen = { prod->
+                                val productJson=viewModel.jsonStringOfProduct(prod)
+                                val route = Screen.ProductDetail.route + "/" + productJson
+                                onNavigateTpProductDetailScreen(route)
                             }
                         )
                     }else{
@@ -609,7 +615,8 @@ fun UploadPostScreen(
 fun ProductPreview(
     product: Product,
     removeProduct:()->Unit,
-    editProduct:()->Unit
+    editProduct:()->Unit,
+    onNavigateTpProductDetailScreen:(Product)->Unit
 ){
     Card(
         modifier=Modifier.padding(20.dp),
@@ -617,7 +624,7 @@ fun ProductPreview(
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         ),
-                border = BorderStroke(1.dp, color = Color.Gray)
+                border = BorderStroke(1.dp, color = Color.LightGray)
     ) {
         Column(
             modifier = Modifier.padding(10.dp)
@@ -667,16 +674,19 @@ fun ProductPreview(
 
                 text ="قیمت:  ${product.price} تومان "
             )
-            TextButton(
+         /*   TextButton(
                 modifier=Modifier
                     .align(Alignment.End),
-                onClick = { /*TODO*/ }) {
+                onClick = {
+                    onNavigateTpProductDetailScreen(product)
+
+                }) {
                 Text(
                     modifier=Modifier.padding(10.dp),
                     text = stringResource(id =R.string.more),
                     color= Color.Blue
                 )
-            }
+            }*/
 
         }
 

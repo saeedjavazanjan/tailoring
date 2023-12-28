@@ -21,6 +21,12 @@ val banner ="\n      [\n        { \n       " +
 
 val comments=       "[{\"id\":0,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"saeed\",\"user_id\":1,\"date\":\"یکمهر\",\"postId\":1},{\"id\":1,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"mehdi\",\"user_id\":5,\"date\":\"یکمهر\",\"postId\":1},{\"id\":2,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":2},{\"id\":3,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":2},{\"id\":4,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":2},{\"id\":5,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":4},{\"id\":6,\"comment\":\"somthing\",\"avatar\":\"https://nyc3.digitaloceanspaces.com/food2fork/food2fork-static/featured_images/583/featured_image.png\",\"userName\":\"ali\",\"user_id\":7,\"date\":\"یکمهر\",\"postId\":4}]"
 
+val product="{\"id\":0,\"name\":\"کیف چرمی\"," +
+        "\"description\":\"کیفاداریچرمیمردانهدستدوزتکدستهچرمگاویدوقفلدورمزهیراقآلاتتمامفلزیبافتتزئینیرویکیفبندرودوشیتمامچرمدوطبله)دوفضایجداگانه(یکجیبزیپداردرپشتکیفجایخودکاروجاکارتیداخلکیف\",\"images\":[\"https://www.pekbag.ir/pic-bag/13/43/Natural-Leather-Briefcase-Handbag-2726F-1000.jpg\",\"https://www.pekbag.ir/pic-bag/13/43/Natural-Leather-Briefcase-Handbag-2726F-4-1000.jpg\"]," +
+        "\"type_of_product\":\"محصول فیزیکی\"," +
+        "\"mas\":\"1000\",\"supply\":\"10\",\"unit\":\"عدد\"," +
+        "\"price\":\"2.500.000\",\"post_id\":1," +
+        "\"attached_file\":\"\"}"
 
 val userData ="{\"userid\":1," +
         "\"user_name\":\"fati\"," +
