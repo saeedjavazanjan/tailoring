@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.network
 
 import com.saeeed.devejump.project.tailoring.domain.model.Product
+import com.saeeed.devejump.project.tailoring.network.model.ArticleDto
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesDto
@@ -62,6 +63,11 @@ interface RetrofitService {
         //  @Header("Authorization") token: String,
         @Query("query") query: String
     ): List<BannerDto>
+
+    @GET("get_articles")
+    suspend fun getArticles(
+        //  @Header("Authorization") token: String,
+    ): List<ArticleDto>
 
     @GET("bests")
     suspend fun bestsOfMonth(

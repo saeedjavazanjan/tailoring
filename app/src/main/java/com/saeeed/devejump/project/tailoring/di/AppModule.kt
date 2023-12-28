@@ -19,11 +19,13 @@ import com.saeeed.devejump.project.tailoring.interactor.followers.GetFollowersLi
 import com.saeeed.devejump.project.tailoring.interactor.followings.GetFollowingsList
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetHomeData
+import com.saeeed.devejump.project.tailoring.interactor.school.GetSchoolData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
 import com.saeeed.devejump.project.tailoring.interactor.user_profile.GetUserProfileData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
+import com.saeeed.devejump.project.tailoring.network.model.ArticleDtoMapper
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesMapper
@@ -327,6 +329,26 @@ object AppModule {
             productDtoMapper=productDtoMapper
 
 
+        )
+    }
+    @Singleton
+    @Provides
+    fun  provideArticleDtoMapper():ArticleDtoMapper{
+        return ArticleDtoMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetSchoolData(
+        retrofitService: RetrofitService,
+        bannerMapper: BannerMapper,
+        articleDtoMapper:ArticleDtoMapper
+
+        ): GetSchoolData {
+        return GetSchoolData(
+            retrofitService= retrofitService,
+            bannerMapper=bannerMapper,
+            dtoMapper = articleDtoMapper
         )
     }
 

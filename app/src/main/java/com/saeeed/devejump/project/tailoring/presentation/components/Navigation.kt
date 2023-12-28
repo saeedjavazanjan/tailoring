@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
+import com.saeeed.devejump.project.tailoring.presentation.ui.article.ArticleScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.bests.BestsScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.courses.CoursesScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.description.DescriptionScreen
@@ -31,6 +32,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.User
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.AuthorProfileViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.product_detail.ProductDetailScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileViewModel
+import com.saeeed.devejump.project.tailoring.presentation.ui.school.SchoolViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.upload.UploadPostScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.upload.UploadPostViewModel
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
@@ -54,6 +56,7 @@ fun Navigation(
     val followingsViewModel: FollowingsViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
     val uploadPostViewModel: UploadPostViewModel = viewModel()
+    val schoolViewModel:SchoolViewModel= viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
@@ -145,9 +148,37 @@ fun Navigation(
 
         }
         composable(Screen.School.route) {
-            SchoolScreen()
+            SchoolScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                viewModel = schoolViewModel,
+                onNavigateToBannerDestination = navController::navigate,
+                onNavigateToArticleScreen ={
+                    navController.navigate(it)
+                }
+
+            )
 
         }
+
+        composable(
+            route = Screen.Article.route + "/{articleID}",
+            arguments = listOf(navArgument("articleID") {
+                type = NavType.IntType
+            })
+        ){navBackStackEntry->
+
+            navBackStackEntry.arguments?.getInt("articleID")?.let {
+                ArticleScreen(
+                    viewModel =schoolViewModel ,
+                    id = it,
+                    isDarkTheme = appDataStore.isDark.value,
+                    isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                )
+            }
+        }
+
+
         composable(Screen.AuthorProfile.route) {
             UserProfileScreen(
                 isDarkTheme = appDataStore.isDark.value,
