@@ -65,7 +65,8 @@
     <string name="there_is_not_in_warehouse">ناموجود</string>
     <string name="buy">خرید</string>
 
-
+     <!--notifications-->
+    <string name="there_is_not_message">پیامی وجود ندارد</string>
 
 
 

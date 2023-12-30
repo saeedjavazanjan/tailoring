@@ -4,6 +4,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.network.model.ArticleDto
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
+import com.saeeed.devejump.project.tailoring.network.model.NotificationDto
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesDto
 import com.saeeed.devejump.project.tailoring.network.model.PostDto
 import com.saeeed.devejump.project.tailoring.network.model.ProductDto
@@ -63,6 +64,11 @@ interface RetrofitService {
         //  @Header("Authorization") token: String,
         @Query("query") query: String
     ): List<BannerDto>
+
+    @GET("bests")
+    suspend fun getNotifications(
+        //  @Header("Authorization") token: String,
+    ): List<NotificationDto>
 
     @GET("get_articles")
     suspend fun getArticles(

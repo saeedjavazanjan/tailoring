@@ -19,6 +19,7 @@ import com.saeeed.devejump.project.tailoring.interactor.followers.GetFollowersLi
 import com.saeeed.devejump.project.tailoring.interactor.followings.GetFollowingsList
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetHomeData
+import com.saeeed.devejump.project.tailoring.interactor.notifications.GetNotifications
 import com.saeeed.devejump.project.tailoring.interactor.school.GetSchoolData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
@@ -28,6 +29,7 @@ import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.ArticleDtoMapper
 import com.saeeed.devejump.project.tailoring.network.model.BannerMapper
 import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
+import com.saeeed.devejump.project.tailoring.network.model.NotificationMapper
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesMapper
 import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import com.saeeed.devejump.project.tailoring.network.model.ProductDtoMapper
@@ -337,6 +339,22 @@ object AppModule {
         return ArticleDtoMapper()
     }
 
+    @Singleton
+    @Provides
+    fun  provideNotificationDtoMapper():NotificationMapper{
+        return NotificationMapper()
+    }
+    @Singleton
+    @Provides
+    fun provideGetNotificationsData(
+        retrofitService: RetrofitService,
+        dtoMapper: NotificationMapper,
+    ): GetNotifications {
+        return GetNotifications(
+            retrofitService= retrofitService,
+            dtoMapper = dtoMapper
+        )
+    }
     @Singleton
     @Provides
     fun provideGetSchoolData(

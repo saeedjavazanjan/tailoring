@@ -31,6 +31,7 @@ import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewMo
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.UserProfileScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.author_profile.AuthorProfileViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.notifications.NotificationsScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.notifications.NotificationsViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.product_detail.ProductDetailScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.profile.ProfileViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.school.SchoolViewModel
@@ -58,6 +59,7 @@ fun Navigation(
     val profileViewModel: ProfileViewModel = viewModel()
     val uploadPostViewModel: UploadPostViewModel = viewModel()
     val schoolViewModel:SchoolViewModel= viewModel()
+    val notificationViewModel:NotificationsViewModel= viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
@@ -120,7 +122,12 @@ fun Navigation(
 
         }
         composable(Screen.Notifications.route){
-            NotificationsScreen()
+            NotificationsScreen(
+                isDarkTheme = appDataStore.isDark.value,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                viewModel = notificationViewModel,
+                scaffoldState = scaffoldState
+            )
         }
         composable(
             route = Screen.SewDescription.route + "/{sewId}",
