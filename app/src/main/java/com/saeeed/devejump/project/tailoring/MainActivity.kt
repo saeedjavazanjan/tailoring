@@ -177,7 +177,8 @@ class MainActivity : ComponentActivity() {
                             onNotifClicked = {
                                 navController.navigate(Screen.Notifications.route)
 
-                            }
+                            },
+                            badgeCount=0
                         )
                     },
                     bottomBar = {

@@ -5,9 +5,13 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -18,14 +22,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.saeeed.devejump.project.tailoring.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     topBarState: MutableState<Boolean>,
-    onNotifClicked:()->Unit
+    onNotifClicked:()->Unit,
+    badgeCount:Int
 ){
 
     AnimatedVisibility(
@@ -75,18 +82,32 @@ fun TopBar(
                                 .constrainAs(notification) {
                                     end.linkTo(parent.end)
                                     linkTo(top = parent.top, bottom = parent.bottom)
-                                },
+                                }.padding(end=10.dp),
                             onClick = {
                                 onNotifClicked()
                             },
                         ) {
-                            Icon(
-                                Icons.Filled.Notifications,
-                                contentDescription = null,
-                                tint = Color.White
-                            )
-                        }
+                            if (badgeCount > 0) {
 
+                                BadgedBox(
+                                    badge =
+                                    { Badge { Text("8") } }) {
+                                    Icon(
+                                        Icons.Filled.Notifications,
+                                        contentDescription = null,
+                                        tint = Color.White
+                                    )
+
+                                }
+
+                            }else{
+                                Icon(
+                                    Icons.Filled.Notifications,
+                                    contentDescription = null,
+                                    tint = Color.White
+                                )
+                            }
+                        }
                     }
                 }
 
