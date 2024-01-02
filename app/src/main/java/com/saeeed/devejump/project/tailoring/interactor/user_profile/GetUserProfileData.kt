@@ -33,10 +33,12 @@ class GetUserProfileData(
 
 
             try {
-                emit(DataState.loading())
-                val userData=getUserDataFromNetwork(userId)
-                emit(DataState.success(userData))
+                if(isNetworkAvailable) {
 
+                    emit(DataState.loading())
+                    val userData = getUserDataFromNetwork(userId)
+                    emit(DataState.success(userData))
+                }
             }catch (e:Exception){
                 e.printStackTrace()
                 emit(DataState.error(e.message?:"خطایی رخ داده است"))

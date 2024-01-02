@@ -57,8 +57,12 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
             val hasInternetCapability = networkCapabilities?.hasCapability(NET_CAPABILITY_INTERNET)
             Log.d(TAG, "onAvailable: ${network}, $hasInternetCapability")
             if (hasInternetCapability == true) {
+                validNetworks.add(network)
+                checkValidNetworks()
+
+
                 // check if this network actually has internet
-                CoroutineScope(Dispatchers.IO).launch {
+              /*  CoroutineScope(Dispatchers.IO).launch {
                     val hasInternet = DoesNetworkHaveInternet.execute(network.socketFactory)
                     if(hasInternet){
                         withContext(Dispatchers.Main){
@@ -67,7 +71,7 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
                             checkValidNetworks()
                         }
                     }
-                }
+                }*/
             }
         }
 

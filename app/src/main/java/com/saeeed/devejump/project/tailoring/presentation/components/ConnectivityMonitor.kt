@@ -17,7 +17,7 @@ fun ConnectivityMonitor(
     if(!isNetworkAvailable){
         Column(modifier = Modifier.fillMaxWidth()){
             Text(
-                "No network connection",
+                "ارتباط با اینترنت برقرار نیست",
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(8.dp),
                 style = MaterialTheme.typography.bodyMedium
             )

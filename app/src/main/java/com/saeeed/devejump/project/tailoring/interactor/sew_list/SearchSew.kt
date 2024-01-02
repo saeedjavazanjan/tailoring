@@ -26,13 +26,9 @@ class SearchSew(
         try {
             emit(DataState.loading())
 
-           /* if (query == "error") {
-                throw Exception("Search FAILED!")
-            }*/
-
             try{
                 // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
-            //    if(isNetworkAvailable){
+                if(isNetworkAvailable){
                     val sewMethods = getSewMethodsFromNetwork(
                         token = token,
                         page = page,
@@ -44,7 +40,7 @@ class SearchSew(
 
 
 
-             //   }
+                }
 
                 // insert into cache
             }catch (e: Exception){
