@@ -137,7 +137,7 @@ fun SewMethodCard(
                             .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp),
 
                     ) {
-                        val avatar=post.featuredImage
+                        val avatar=post.authorAvatar
                         val (avatarHolder) = createRefs()
                         GlideImage(
                             model = avatar,

@@ -33,7 +33,6 @@ import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.home.FollowingsPostsEvent
 import com.saeeed.devejump.project.tailoring.presentation.ui.home.HomeViewModel
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy

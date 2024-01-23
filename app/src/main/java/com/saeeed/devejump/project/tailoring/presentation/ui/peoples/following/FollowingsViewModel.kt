@@ -9,10 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.domain.model.Peoples
 import com.saeeed.devejump.project.tailoring.interactor.followings.GetFollowingsList
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.STATE_KEY_QUERY
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
+import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -125,7 +125,7 @@ class FollowingsViewModel
     }
 
     private fun nextPage() {
-        if ((scrollPosition + 1) >= (page.value * PAGE_SIZE)) {
+        if ((scrollPosition + 1) >= (page.value * POSTS_PAGINATION_PAGE_SIZE)) {
             incrementPage()
             Log.d(TAG, "nextPage: triggered: ${page.value}")
 

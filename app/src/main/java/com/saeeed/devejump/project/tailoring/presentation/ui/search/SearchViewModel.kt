@@ -11,6 +11,7 @@ import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMetho
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.SearchSew
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
+import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +21,6 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
-const val PAGE_SIZE = 30
 
 const val STATE_KEY_PAGE = "sew.state.page.key"
 const val STATE_KEY_QUERY = "sew.state.query.key"
@@ -75,13 +75,13 @@ class ListViewModel
             try {
                 when(event){
                     is SearchEvent.NewSearchEvent -> {
-                     //   newSearch()
+                        newSearch()
                     }
                     is SearchEvent.NextPageEvent -> {
-                      //  nextPage()
+                        nextPage()
                     }
                     is SearchEvent.RestoreStateEvent -> {
-                      //  restoreState()
+                        restoreState()
                     }
                 }
             }catch (e: Exception){
@@ -108,7 +108,7 @@ class ListViewModel
         }.launchIn(viewModelScope)
     }
 
-    private fun newSearch() {
+     fun newSearch() {
         Log.d(TAG, "newSearch: query: ${query.value}, page: ${page.value}")
         // New search. Reset the state
         resetSearchState()
@@ -131,7 +131,7 @@ class ListViewModel
     }
 
     private fun nextPage() {
-        if ((categoryScrollPosition + 1) >= (page.value * PAGE_SIZE)) {
+        if ((categoryScrollPosition + 1) >= (page.value * POSTS_PAGINATION_PAGE_SIZE)) {
             incrementPage()
             Log.d(TAG, "nextPage: triggered: ${page.value}")
 
@@ -169,7 +169,9 @@ class ListViewModel
 
     private fun resetSearchState(){
         methods.value = listOf()
-        if(selectedCategory.value?.value != query.value) clearSelectedCategory()
+        if(selectedCategory.value?.value != query.value)
+            clearSelectedCategory()
+
     }
 
     private fun clearSelectedCategory(){
@@ -184,6 +186,8 @@ class ListViewModel
         val newCategory = getCategory(category)
         setSelectedCategory(newCategory)
         onQueryChanged(category)
+        setPage(1)
+
     }
     fun onChangeCategoryScrollPosition(position: Int){
         setListScrollPosition(position = position)

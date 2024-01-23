@@ -15,6 +15,9 @@ data class PostEntity(
     @ColumnInfo(name = "title")
     var title: String,
 
+    @ColumnInfo(name = "category")
+    var category: String,
+
     @ColumnInfo(name = "post_type")
     var postType: String,
 
@@ -24,6 +27,9 @@ data class PostEntity(
 
     @ColumnInfo(name = "author_id")
     var authorId: Int,
+
+    @ColumnInfo(name = "author_avatar")
+    var authorAvatar: String,
 // Value from API
     @ColumnInfo(name = "featured_image")
     var featuredImage: String,

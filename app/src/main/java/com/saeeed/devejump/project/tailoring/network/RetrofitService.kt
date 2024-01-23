@@ -18,13 +18,13 @@ import retrofit2.http.Query
 
 interface RetrofitService {
 
-    @GET("search")
+    @GET("posts/search")
     suspend fun search(
         // @Header("Authorization") token: String,
-        //  @Query("page") page: Int,
-        //  @Query("query") query: String
-    ): SewMethodSearchResponse
-
+          @Query("pageNumber") page: Int,
+          @Query("query") query: String,
+          @Query("pageSize") pagesize:Int
+    ): List<PostDto>
 
     @GET("followings-post")
     suspend fun followingsPosts(

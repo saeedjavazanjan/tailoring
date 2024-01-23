@@ -92,6 +92,7 @@ interface SewMethodDao {
         SELECT * FROM posts 
         WHERE title LIKE '%' || :query || '%'
         OR description LIKE '%' || :query || '%'  
+        OR category LIKE  '%' || :query || '%'
         ORDER BY date_added DESC LIMIT :pageSize OFFSET ((:page - 1) * :pageSize)
         """)
     suspend fun searchSewMethods(
@@ -149,6 +150,7 @@ interface SewMethodDao {
         SELECT * FROM posts 
         WHERE title LIKE '%' || :query || '%'
         OR description LIKE '%' || :query || '%' 
+        OR category LIKE  '%' || :query || '%' 
         ORDER BY date_added DESC LIMIT (:page * :pageSize)
         """)
     suspend fun restoreSewMethods(

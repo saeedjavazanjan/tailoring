@@ -9,6 +9,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -45,6 +46,9 @@ fun ListScreen(
     val dialogQueue = viewModel.dialogQueue
 
     val scaffoldState = rememberScaffoldState()
+    LaunchedEffect(Unit ){
+        viewModel.newSearch()
+    }
 
     AppTheme(
         displayProgressBar = loading,

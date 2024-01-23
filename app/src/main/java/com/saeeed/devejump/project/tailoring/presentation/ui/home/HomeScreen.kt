@@ -28,8 +28,8 @@ import com.saeeed.devejump.project.tailoring.presentation.components.BannerViewP
 import com.saeeed.devejump.project.tailoring.presentation.components.SewMethodCard
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
+import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -146,7 +146,7 @@ fun HomeScreen(
                                 items = sewMethods
                             ) { index, sewMethod ->
                                 viewModel.onChangeScrollPosition(index)
-                                if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
+                                if ((index + 1) >= (page * POSTS_PAGINATION_PAGE_SIZE) && !loading) {
                                     viewModel.onTriggerEvent(FollowingsPostsEvent.NextPageEvent)
                                 }
                                 SewMethodCard(

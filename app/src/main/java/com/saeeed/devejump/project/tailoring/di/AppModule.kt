@@ -124,8 +124,9 @@ object AppModule {
         client: OkHttpClient
     ): RetrofitService {
         return Retrofit.Builder()
-            .baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
+            //.baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
          //  .baseUrl("https://food2fork.ca/api/recipe/")
+            .baseUrl("http://10.0.2.2:5198/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .client(client)
             .build()

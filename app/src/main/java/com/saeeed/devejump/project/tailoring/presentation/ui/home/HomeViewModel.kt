@@ -11,7 +11,6 @@ import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.interactor.home.Bests
 import com.saeeed.devejump.project.tailoring.interactor.home.GetHomeData
 import com.saeeed.devejump.project.tailoring.interactor.sew_list.RestoreSewMethods
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.STATE_KEY_LIST_POSITION
 import com.saeeed.devejump.project.tailoring.utils.BEST_OF_DAY
 import com.saeeed.devejump.project.tailoring.utils.BEST_OF_MONTH
@@ -19,6 +18,7 @@ import com.saeeed.devejump.project.tailoring.utils.BEST_OF_WEEK
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.GET_HOME_BANNERS
+import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -208,7 +208,7 @@ constructor(
 
 
     private fun nextPage() {
-        if ((scrollPosition + 1) >= (page.value * PAGE_SIZE)) {
+        if ((scrollPosition + 1) >= (page.value * POSTS_PAGINATION_PAGE_SIZE)) {
             incrementPage()
             Log.d(TAG, "nextPage: triggered: ${page.value}")
 

@@ -122,7 +122,7 @@ class GetUserProfileData(
     ): List<Post> {
 
         return dtoMapper.toDomainList(
-            retrofitService.search().sewmethods
+            retrofitService.search(1,"",30)
             //  token = token,
             // page = page,
             //  userId = userId,
