@@ -11,7 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
+import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
+
 @Composable
 fun SewMethodList(
     loading: Boolean,
@@ -37,7 +38,7 @@ fun SewMethodList(
                 items = posts
             ) { index, sewMethod ->
                 onChangeScrollPosition(index)
-                if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
+                if ((index + 1) >= (page * POSTS_PAGINATION_PAGE_SIZE) && !loading) {
                     onTriggerNextPage()
                 }
                 SewMethodCard(

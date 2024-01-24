@@ -10,14 +10,17 @@ class PostEntityMapper : DomainMapper<PostEntity, Post> {
         return Post(
             id = model.id,
             title = model.title,
+            category=model.category,
             postType=model.postType,
             featuredImage = convertStringToList(model.featuredImage),
             like = model.like,
             publisher = model.publisher,
             authorId=model.authorId,
+            authorAvatar=model.authorAvatar,
             videoUrl = model.video,
             description = model.description,
-            dateAdded =DateUtils.longToDate(model.dateAdded),
+            dateAdded =model.dateAdded,
+            longDataAdded=model.longDateAdded,
             haveProduct = model.haveProduct,
         )
     }
@@ -27,14 +30,17 @@ class PostEntityMapper : DomainMapper<PostEntity, Post> {
         return PostEntity(
             id = domainModel.id,
             title = domainModel.title,
+            category=domainModel.category,
             postType=domainModel.postType,
             featuredImage =convertListToString( domainModel.featuredImage),
             like = domainModel.like,
             publisher = domainModel.publisher,
             authorId=domainModel.authorId,
+            authorAvatar=domainModel.authorAvatar,
             video = domainModel.videoUrl,
             description = domainModel.description,
-            dateAdded = DateUtils.dateToLong(domainModel.dateAdded),
+            dateAdded = domainModel.dateAdded,
+            longDateAdded=domainModel.longDataAdded,
             haveProduct = domainModel.haveProduct,
             dateCached = DateUtils.dateToLong(DateUtils.createTimestamp())
         )

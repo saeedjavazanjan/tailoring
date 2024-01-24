@@ -8,32 +8,39 @@ class PostMapper : DomainMapper<PostDto, Post> {
 
     override fun mapToDomainModel(model: PostDto): Post {
         return Post(
-            id = model.pk,
-            title = model.title,
-            postType=model.postType,
-            featuredImage = model.featuredImage,
-            like = model.like,
-            publisher = model.publisher,
-            authorId=model.authorId,
-            videoUrl = model.videoUrl,
-            description = model.description,
-            dateAdded =DateUtils.longToDate(model.longDateAdded),
-            haveProduct = model.haveProduct,
+            id = model.id!!,
+            title = model.title!!,
+            category=model.category!!,
+            postType=model.postType!!,
+            featuredImage = model.featuredImages!!,
+            like = model.like!!,
+            publisher = model.author!!,
+            authorId=model.authorId!!,
+            authorAvatar=model.authorAvatar!!,
+            videoUrl = model.video!!,
+            description = model.description!!,
+            dateAdded =model.dataAdded!!,
+            longDataAdded=model.longDataAdded!!,
+            haveProduct = model.haveProduct!!,
+
         )
     }
 
     override fun mapFromDomainModel(domainModel: Post): PostDto {
         return PostDto(
-            pk = domainModel.id,
+            id = domainModel.id,
             title = domainModel.title,
+            category=domainModel.category,
             postType=domainModel.postType,
-            featuredImage = domainModel.featuredImage,
+            featuredImages = domainModel.featuredImage,
             like = domainModel.like,
-            publisher = domainModel.publisher,
+            author = domainModel.publisher,
             authorId=domainModel.authorId,
-            videoUrl = domainModel.videoUrl,
+            authorAvatar=domainModel.authorAvatar,
+            video = domainModel.videoUrl,
             description = domainModel.description,
-            longDateAdded =  DateUtils.dateToLong(domainModel.dateAdded),
+            dataAdded=domainModel.dateAdded,
+            longDataAdded = domainModel.longDataAdded,
             haveProduct = domainModel.haveProduct,
         )
     }

@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.saeeed.devejump.project.tailoring.presentation.components.PeopleCard
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
-import com.saeeed.devejump.project.tailoring.presentation.ui.search.PAGE_SIZE
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
+import com.saeeed.devejump.project.tailoring.utils.POSTS_PAGINATION_PAGE_SIZE
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class)
@@ -78,7 +78,7 @@ fun FollowingsScreen(
                     items = followers.value
                 ) { index, follower ->
                     viewModel.onChangeScrollPosition(index)
-                    if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
+                    if ((index + 1) >= (page * POSTS_PAGINATION_PAGE_SIZE) && !loading) {
                        viewModel.onTriggerEvent(FollowingsEvent.NextPageEvent)
                     }
                     PeopleCard(

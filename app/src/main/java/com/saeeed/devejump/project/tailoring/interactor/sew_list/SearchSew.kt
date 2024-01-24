@@ -28,15 +28,15 @@ class SearchSew(
 
             try{
                 // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
+
                 if(isNetworkAvailable){
+
                     val sewMethods = getSewMethodsFromNetwork(
                         token = token,
                         page = page,
                         query = query,
                     )
                     sewMethodDao.insertSewMethods(entityMapper.toEntityList(sewMethods))
-
-
 
 
 
@@ -77,11 +77,14 @@ class SearchSew(
         page: Int,
         query: String
     ): List<Post> {
-        return dtoMapper.toDomainList(
-            retrofitService.search().sewmethods
-            //  token = token,
-            // page = page,
-            //  query = query,
-        )
+
+            return dtoMapper.toDomainList(
+                retrofitService.search(page, query,POSTS_PAGINATION_PAGE_SIZE)
+                //  token = token,
+                // page = page,
+                //  query = query,
+            )
+
+
     }
 }

@@ -19,6 +19,7 @@ import com.saeeed.devejump.project.tailoring.interactor.description.UserActivity
 import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarController
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
+import com.saeeed.devejump.project.tailoring.utils.LOGIN_STATE
 import com.saeeed.devejump.project.tailoring.utils.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -100,8 +101,10 @@ constructor(
             dataState.data?.let { data ->
                 post.value = data
                 state.set(STATE_KEY_SEW, data.id)
-                checkSewBookMarkState()
-                checkLikeState()
+                if(LOGIN_STATE) {
+                    checkSewBookMarkState()
+                    checkLikeState()
+                }
                 getPostComments(data.id)
                 likeCount.value=data.like
                 if(data.haveProduct==1){

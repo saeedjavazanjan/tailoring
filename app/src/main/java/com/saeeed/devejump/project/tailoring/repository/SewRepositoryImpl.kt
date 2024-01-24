@@ -12,7 +12,8 @@ class SewRepositoryImpl (
     override suspend fun search(token: String, page: Int, query: String): List<Post> {
         return mapper.toDomainList(recipeService.search(
           //  token = token, page = page, query = query
-        ).sewmethods)
+            1,"",30
+        ))
     }
 
     override suspend fun get(token: String, id: Int): Post {

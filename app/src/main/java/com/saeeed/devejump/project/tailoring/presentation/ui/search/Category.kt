@@ -5,8 +5,8 @@ enum class Category(val value: String){
     KNITTING("بافتنی"),
     LEATHERING("چرم دوزی"),
     EMBROIDERY("گل دوزی"),
-    TERMEHDOOZY("ترمه دوزی"),
-    DOLL_MAKING("عروسک دوزی"),
+    TERMEHDOOZY("سرمه دوزی"),
+    DOLL_MAKING("عروسک سازی"),
     OTHER("سایر"),
 
 }
