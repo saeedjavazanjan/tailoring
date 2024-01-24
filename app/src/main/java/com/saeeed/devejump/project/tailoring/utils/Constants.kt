@@ -6,6 +6,7 @@ package com.saeeed.devejump.project.tailoring.utils
 const val FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE = 30
 
 const val USERID=1
+const val LOGIN_STATE=false
 
 const val USER_AVATAR="https://i.pinimg.com/736x/c5/4b/f5/c54bf5aa68bad09d403495435b219319.jpg"
 const val USER_NAME="saeed"

@@ -19,7 +19,8 @@ class PostEntityMapper : DomainMapper<PostEntity, Post> {
             authorAvatar=model.authorAvatar,
             videoUrl = model.video,
             description = model.description,
-            dateAdded =DateUtils.longToDate(model.dateAdded),
+            dateAdded =model.dateAdded,
+            longDataAdded=model.longDateAdded,
             haveProduct = model.haveProduct,
         )
     }
@@ -38,7 +39,8 @@ class PostEntityMapper : DomainMapper<PostEntity, Post> {
             authorAvatar=domainModel.authorAvatar,
             video = domainModel.videoUrl,
             description = domainModel.description,
-            dateAdded = DateUtils.dateToLong(domainModel.dateAdded),
+            dateAdded = domainModel.dateAdded,
+            longDateAdded=domainModel.longDataAdded,
             haveProduct = domainModel.haveProduct,
             dateCached = DateUtils.dateToLong(DateUtils.createTimestamp())
         )

@@ -14,6 +14,7 @@ data class Post (
     val like: Int = 0,
     val videoUrl: String,
     val description:String,
-    val dateAdded: Date,
+    val dateAdded: String,
+    val longDataAdded:Long,
     val haveProduct: Int=0,
 )

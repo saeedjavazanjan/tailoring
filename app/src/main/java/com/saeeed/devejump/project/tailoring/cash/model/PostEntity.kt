@@ -50,8 +50,10 @@ data class PostEntity(
      * Value from API
      */
     @ColumnInfo(name = "date_added")
-    var dateAdded: Long,
+    var dateAdded: String,
 
+    @ColumnInfo(name = "long_date_added")
+    var longDateAdded: Long,
     /**
      * Value from API
      */

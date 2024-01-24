@@ -33,13 +33,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.IconToggleButton
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -51,7 +49,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -67,19 +64,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.substring
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -97,7 +90,6 @@ import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
 import com.saeeed.devejump.project.tailoring.utils.USER_NAME
-import com.saeeed.devejump.project.tailoring.utils.posts
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -427,7 +419,7 @@ fun imageAndVideoHolder(
         model = post.featuredImage[page],
         contentDescription = post.title,
         modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.Inside,
     )
 
             }
@@ -576,7 +568,7 @@ fun detail(
     ) {
         val (avatarHolder, authorText) = createRefs()
 
-        val avatar = post.featuredImage
+        val avatar = post.authorAvatar
         GlideImage(
             model = avatar,
             loading = placeholder(R.drawable.empty_plate),
@@ -616,9 +608,10 @@ fun detail(
         }
 
     }
-    val date = post.dateAdded
+    val date = post.longDataAdded
+    val dateText= timeAndTimeUnitCalculator(date)
     Text(
-        text = "Updated $date by ${post.publisher}",
+        text = dateText,//"Updated $diffrence by ${post.publisher}",
         color = Color.Gray,
         modifier = Modifier
             .padding(start = 10.dp),
@@ -628,20 +621,21 @@ fun detail(
         val description = remember {
             mutableStateOf(post.description.substring(0,90))
         }
-        Text(buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Color.DarkGray)) {
-                append(description.value)
-            }
-            withStyle(style = SpanStyle(color = Color.Blue)) {
-                append(
-                    text =
-                    if (!expanded.value)
-                        "\n...بیشتر"
-                    else
-                        "\n...کمتر"
-                )
-            }
-        },
+        Text(
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(color = Color.DarkGray)) {
+                    append(description.value)
+                }
+                withStyle(style = SpanStyle(color = Color.Blue)) {
+                    append(
+                        text =
+                        if (!expanded.value)
+                            "\n...بیشتر"
+                        else
+                            "\n...کمتر"
+                    )
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp, top = 20.dp, end = 10.dp)
@@ -673,6 +667,44 @@ fun detail(
 
 
 }
+
+ fun timeAndTimeUnitCalculator(date:Long):String{
+     val currentTime=System.currentTimeMillis()
+     var timeUnit="ثانیه"
+     val diffrence=(currentTime-date)/1000
+     var dif=diffrence
+
+     when(diffrence){
+         in 61..3599-> {
+             timeUnit="دقیقه"
+             dif=diffrence/60
+         }
+         in 3600..215999->{
+             timeUnit="ساعت"
+             dif=diffrence/3600
+
+         }
+         in 216000..5183999->{
+             timeUnit="روز"
+             dif=diffrence/216000
+         }
+         in 5184000..155519999->{
+             timeUnit="ماه"
+             dif=diffrence/5184000
+
+         }
+         in 155520000..Long.MAX_VALUE->{
+             timeUnit="سال"
+             dif=diffrence/155520000
+
+         }
+         else-> timeUnit="-"
+     }
+    return "$dif $timeUnit پیش "
+
+ }
+
+
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable

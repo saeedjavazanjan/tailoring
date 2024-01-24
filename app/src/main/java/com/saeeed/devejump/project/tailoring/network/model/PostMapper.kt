@@ -19,7 +19,8 @@ class PostMapper : DomainMapper<PostDto, Post> {
             authorAvatar=model.authorAvatar!!,
             videoUrl = model.video!!,
             description = model.description!!,
-            dateAdded =DateUtils.longToDate(model.longDataAdded!!),
+            dateAdded =model.dataAdded!!,
+            longDataAdded=model.longDataAdded!!,
             haveProduct = model.haveProduct!!,
 
         )
@@ -38,7 +39,8 @@ class PostMapper : DomainMapper<PostDto, Post> {
             authorAvatar=domainModel.authorAvatar,
             video = domainModel.videoUrl,
             description = domainModel.description,
-            longDataAdded =  DateUtils.dateToLong(domainModel.dateAdded),
+            dataAdded=domainModel.dateAdded,
+            longDataAdded = domainModel.longDataAdded,
             haveProduct = domainModel.haveProduct,
         )
     }
