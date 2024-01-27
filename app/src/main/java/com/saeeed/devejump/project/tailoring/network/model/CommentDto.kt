@@ -5,12 +5,12 @@ import com.google.gson.annotations.SerializedName
 data class CommentDto(
 
     @field:SerializedName("date")
-    val date: String? = null,
+    val date: Long? = null,
 
-    @field:SerializedName("user_id")
+    @field:SerializedName("userId")
     val userId: Int? = null,
 
-    @field:SerializedName("comment")
+    @field:SerializedName("commentText")
     val comment: String? = null,
 
     @field:SerializedName("id")

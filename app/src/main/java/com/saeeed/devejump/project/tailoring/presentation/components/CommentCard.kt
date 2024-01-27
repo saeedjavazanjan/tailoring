@@ -29,6 +29,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.cash.model.CommentEntity
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
+import com.saeeed.devejump.project.tailoring.utils.TimeConvertor
 import com.saeeed.devejump.project.tailoring.utils.USERID
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -39,6 +40,7 @@ fun CommentCard(
     report:()-> Unit,
     removeComment:()->Unit
     ){
+    val timeConverter= TimeConvertor
     Card(
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
@@ -113,7 +115,7 @@ fun CommentCard(
                             },
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    val updated = comment.date
+                    val updated = timeConverter.timeAndTimeUnitCalculator(comment.date)
                     Text(
                         text = updated,
                         color = Color.Gray,

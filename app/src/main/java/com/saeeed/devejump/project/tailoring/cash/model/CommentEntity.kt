@@ -12,6 +12,6 @@ data class CommentEntity (
     var userName: String,
     @SerializedName("user_id")
     var userId:Int,
-    var date:String,
+    var date:Long,
     var postId:Int
 )

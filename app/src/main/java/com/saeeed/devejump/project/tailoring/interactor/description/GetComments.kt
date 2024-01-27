@@ -102,7 +102,7 @@ class GetComments(
     private suspend fun getCommentsFromNetwork(token: String, postId: Int): List<CommentDto> {
 
         try {
-            return retrofitService.onePostComments()
+            return retrofitService.onePostComments(postId)
 
         }catch (e:Exception){
             return emptyList()

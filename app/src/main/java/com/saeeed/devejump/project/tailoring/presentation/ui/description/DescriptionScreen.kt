@@ -51,6 +51,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -87,6 +88,7 @@ import com.saeeed.devejump.project.tailoring.presentation.components.ReportAlert
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
+import com.saeeed.devejump.project.tailoring.utils.TimeConvertor
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
 import com.saeeed.devejump.project.tailoring.utils.USER_NAME
@@ -165,15 +167,15 @@ fun DescriptionScreen(
 
 
                                 var onEditComment  = remember {
-                                    mutableStateOf( Comment(0,"","","",0,"",sewMethod!!.id))
+                                    mutableStateOf( Comment(0,"","","",0,System.currentTimeMillis(),sewMethod!!.id))
                                 }
 
                                 var onReportComment= remember {
-                                    mutableStateOf( Comment(0,"","","",0,"",sewMethod!!.id))
+                                    mutableStateOf( Comment(0,"","","",0,System.currentTimeMillis(),sewMethod!!.id))
                                 }
 
                                 var onRemoveComment= remember {
-                                    mutableStateOf( Comment(0,"","","",0,"",sewMethod!!.id))
+                                    mutableStateOf( Comment(0,"","","",0,System.currentTimeMillis(),sewMethod!!.id))
                                 }
 
                                 if (removeState.value){
@@ -488,6 +490,7 @@ fun detail(
 ) {
     val likes = mutableStateOf( likesCount)
     val likeIconState= mutableStateOf(likeState)
+    val timeConverter=TimeConvertor
 
     val expanded= remember {
         mutableStateOf(false)
@@ -609,7 +612,7 @@ fun detail(
 
     }
     val date = post.longDataAdded
-    val dateText= timeAndTimeUnitCalculator(date)
+    val dateText=timeConverter.timeAndTimeUnitCalculator(date)
     Text(
         text = dateText,//"Updated $diffrence by ${post.publisher}",
         color = Color.Gray,
@@ -668,41 +671,6 @@ fun detail(
 
 }
 
- fun timeAndTimeUnitCalculator(date:Long):String{
-     val currentTime=System.currentTimeMillis()
-     var timeUnit="ثانیه"
-     val diffrence=(currentTime-date)/1000
-     var dif=diffrence
-
-     when(diffrence){
-         in 61..3599-> {
-             timeUnit="دقیقه"
-             dif=diffrence/60
-         }
-         in 3600..215999->{
-             timeUnit="ساعت"
-             dif=diffrence/3600
-
-         }
-         in 216000..5183999->{
-             timeUnit="روز"
-             dif=diffrence/216000
-         }
-         in 5184000..155519999->{
-             timeUnit="ماه"
-             dif=diffrence/5184000
-
-         }
-         in 155520000..Long.MAX_VALUE->{
-             timeUnit="سال"
-             dif=diffrence/155520000
-
-         }
-         else-> timeUnit="-"
-     }
-    return "$dif $timeUnit پیش "
-
- }
 
 
 
@@ -871,7 +839,7 @@ fun commentTextField(
                                         USER_AVATAR,
                                         USER_NAME,
                                         USERID,
-                                        "یکم آبان",
+                                        System.currentTimeMillis(),
                                         postId = post.id
                                     )
                                 )
