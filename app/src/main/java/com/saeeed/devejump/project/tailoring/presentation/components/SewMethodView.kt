@@ -107,11 +107,11 @@ fun SewMethodView(
 
 
         var onEditComment  = remember {
-            mutableStateOf( Comment(0,"","","",0,"",post.id))
+            mutableStateOf( Comment(0,"","","",0,System.currentTimeMillis(),post.id))
         }
 
     var onReportComment= remember {
-        mutableStateOf( Comment(0,"","","",0,"",post.id))
+        mutableStateOf( Comment(0,"","","",0,System.currentTimeMillis(),post.id))
     }
 
 
@@ -394,7 +394,7 @@ fun SewMethodView(
                                         USER_AVATAR,
                                         USER_NAME,
                                         USERID,
-                                        "یکم آبان",
+                                        System.currentTimeMillis(),
                                         postId = post.id
                                     )
                                 )

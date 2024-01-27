@@ -110,10 +110,10 @@ interface RetrofitService {
         return RetrofitInstance.api.addPassport(profile_picture, userid,fistname,surname,nationality,dof,gender,age,sig,salt)
     }*/
 
-    @GET("comments")
+    @GET("comments/postComments")
     suspend fun onePostComments(
         //  @Header("Authorization") token: String,
-        //  @Query("query") query: Int
+          @Query("postId") query: Int
     ): List<CommentDto>
 
     @POST("userData")
