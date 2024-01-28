@@ -10,6 +10,7 @@ import com.saeeed.devejump.project.tailoring.network.model.CommentDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.Response
 
 class GetComments(
     private val sewMethodDao: SewMethodDao,
@@ -28,19 +29,27 @@ class GetComments(
 
     ): Flow<DataState<List<Comment>>> = flow {
 
-         //    emit(DataState.loading())
+             emit(DataState.loading())
+        try {
+            val response= getCommentsFromNetwork(token,postId)?.let {
+                commentMapper.toDomainList(it)
+            }
+            emit(DataState.success(response!!))
+        }catch (e:Exception){
+            emit(DataState.error(e.message?:"خطای ناشناخته"))
+        }
 
 
-              val comments= commentMapper.toDomainList(getCommentsFromNetwork(token,postId))
+        //for caching comments
       //  try {
-            comments.forEach{
+      /*      comments.forEach{
                 sewMethodDao.insertComment(commentEntityMapper.mapFromDomainModel(it))
             }
         val cashResult=sewMethodDao.getPostWithComment(postId)
 
         cashResult.forEach {
             emit(DataState.success( commentEntityMapper.fromEntityList(it.comments)))
-        }
+        }*/
      /*   }catch (e:Exception){
             e.printStackTrace()
             emit(DataState.error(e.message.toString()))
@@ -99,10 +108,15 @@ class GetComments(
 
     }
 */
-    private suspend fun getCommentsFromNetwork(token: String, postId: Int): List<CommentDto> {
+    private suspend fun getCommentsFromNetwork(token: String, postId: Int): List<CommentDto>? {
 
         try {
-            return retrofitService.onePostComments(postId)
+          val response= retrofitService.onePostComments(postId)
+            if (response.isSuccessful){
+                return response.body()
+            }else {
+                return emptyList()
+            }
 
         }catch (e:Exception){
             return emptyList()

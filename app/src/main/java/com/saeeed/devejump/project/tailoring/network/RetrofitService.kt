@@ -1,19 +1,23 @@
 package com.saeeed.devejump.project.tailoring.network
 
-import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.network.model.ArticleDto
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
+import com.saeeed.devejump.project.tailoring.network.model.UpdatedCommentDto
 import com.saeeed.devejump.project.tailoring.network.model.NotificationDto
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesDto
 import com.saeeed.devejump.project.tailoring.network.model.PostDto
 import com.saeeed.devejump.project.tailoring.network.model.ProductDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
-import com.saeeed.devejump.project.tailoring.network.response.SewMethodSearchResponse
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface RetrofitService {
@@ -114,7 +118,7 @@ interface RetrofitService {
     suspend fun onePostComments(
         //  @Header("Authorization") token: String,
           @Query("postId") query: Int
-    ): List<CommentDto>
+    ):Response< List<CommentDto>>
 
     @POST("userData")
     suspend fun bookMark(
@@ -130,29 +134,24 @@ interface RetrofitService {
         @Field("postId") postId: Int
     ): Int
 
-    @POST("userData")
+    @POST("comments")
     suspend fun commentOnPost(
         // @Header("Authorization") token: String,
-        @Field("UserId") userId: Int,
-        @Field("postId") postId: Int,
-        @Field("comment") comment: String
-    ): Int
+        @Body comment: CommentDto
+    ): Response<String>
 
-    @POST("userData")
+    @PUT("comments/{commentId}")
     suspend fun editComment(
         // @Header("Authorization") token: String,
-        @Field("UserId") userId: Int,
-        @Field("postId") postId: Int,
-        @Field("comment") comment: String
-    ): Int
+        @Path("commentId") commentId: Int,
+        @Body updatedComment:UpdatedCommentDto
+    ): Response<String>
 
-    @POST("userData")
+    @DELETE("comments/{commentId}")
     suspend fun removeComment(
         // @Header("Authorization") token: String,
-        @Field("UserId") userId: Int,
-        @Field("postId") postId: Int,
-        @Field("comment") comment: String
-    ): Int
+        @Path("commentId") commentId: Int,
+    ): Response<Int>
 
     @GET("followers")
     suspend fun getUserFollowers(

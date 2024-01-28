@@ -335,20 +335,23 @@ constructor(
     }
 
    @SuppressLint("SuspiciousIndentation")
-   fun commentOnPost(comment: Comment, postId:Int){
-        userActivityOnPost.commentOnPost(comment=comment,postId=postId).onEach { dataState ->
+   fun commentOnPost(comment: Comment){
+        userActivityOnPost.commentOnPost(comment=comment).onEach { dataState ->
             dataState.loading.let {
                 commentSendLoading.value=it
 
             }
             dataState.data?.let {
-                if (it> 0)
                     try {
                         comments.value.add(0,comment)
 
                     }catch (e:Exception){
                         e.printStackTrace()
                     }
+            }
+            dataState.error?.let {
+                dialogQueue.appendErrorMessage("An Error Occurred", it)
+
             }
 
 
@@ -359,12 +362,16 @@ constructor(
 
     }
     @SuppressLint("SuspiciousIndentation")
-    fun editComment(comment: Comment, postId:Int){
-        userActivityOnPost.editComment(comment=comment,postId=postId).onEach { dataState ->
+    fun editComment(comment: Comment){
+        userActivityOnPost.editComment(comment=comment).onEach { dataState ->
             dataState.data?.let {
               comments.value.firstOrNull(){
                 comments.value.indexOf(it)== comments.value.indexOf(comment)
                 }?.comment=comment.comment
+
+            }
+            dataState.error?.let{
+                dialogQueue.appendErrorMessage("An Error Occurred", it)
 
             }
 
@@ -377,7 +384,7 @@ constructor(
     }
 
     fun reportCommenet(comment: Comment, postId:Int){
-        userActivityOnPost.reportComment(comment, postId =postId ).onEach {dataState ->
+        userActivityOnPost.reportComment(comment, commentId =postId ).onEach {dataState ->
 
             dataState.data?.let {
 
@@ -391,7 +398,7 @@ constructor(
 
     @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("SuspiciousIndentation")
-     fun removeComment(comment: Comment, postId:Int, scaffoldState: ScaffoldState, scope:CoroutineScope) {
+     fun removeComment(comment: Comment, scaffoldState: ScaffoldState, scope:CoroutineScope) {
         val snackbarController = SnackbarController(scope)
         snackbarController.getScope().launch {
             comments.value.remove(comment)
@@ -402,7 +409,7 @@ constructor(
             )
             when (snackbarResult) {
                 SnackbarResult.Dismissed ->
-                    userActivityOnPost.removeComment(comment = comment, postId = postId)
+                    userActivityOnPost.removeComment(commentId = comment.id)
                         .onEach { dataState ->
                             dataState.data?.let {
                                 snackbarController.getScope().launch {
