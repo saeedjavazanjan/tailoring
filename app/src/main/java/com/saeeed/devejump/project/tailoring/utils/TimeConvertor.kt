@@ -1,5 +1,7 @@
 package com.saeeed.devejump.project.tailoring.utils
 
+import android.util.Log
+
 object TimeConvertor  {
 
     fun timeAndTimeUnitCalculator(date:Long):String{
@@ -7,8 +9,15 @@ object TimeConvertor  {
         var timeUnit="ثانیه"
         val diffrence=(currentTime-date)/1000
         var dif=diffrence
+        Log.d("timeTestdate" ,date.toString())
+        Log.d("timeTestcurrentTime" ,currentTime.toString())
 
+        Log.d("timeTestdiffrence" ,diffrence.toString())
         when(diffrence){
+            in 1 ..60->{
+                timeUnit="ثانیه"
+                dif=diffrence/1
+            }
             in 61..3599-> {
                 timeUnit="دقیقه"
                 dif=diffrence/60

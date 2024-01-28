@@ -179,12 +179,12 @@ fun DescriptionScreen(
                                 }
 
                                 if (removeState.value){
-                                      viewModel.removeComment(onRemoveComment.value ,sewId,scaffoldState,composableScope)
+                                      viewModel.removeComment(onRemoveComment.value ,scaffoldState,composableScope)
                                     removeState.value=false
                                 }
 
                                 if(editState.value){
-                                    viewModel.editComment(comment = onEditComment.value, postId = sewId)
+                                    viewModel.editComment(comment = onEditComment.value)
 
                                     editState.value=false
                                 }
@@ -311,7 +311,7 @@ fun DescriptionScreen(
                                         editState.value=true
                                     } ,
                                     insertComment ={ comment->
-                                        viewModel.commentOnPost(comment = comment, postId = sewId)
+                                        viewModel.commentOnPost(comment = comment)
 
                                     } ,
 
@@ -612,7 +612,7 @@ fun detail(
 
     }
     val date = post.longDataAdded
-    val dateText=timeConverter.timeAndTimeUnitCalculator(date)
+    val dateText=""//timeConverter.timeAndTimeUnitCalculator(date)
     Text(
         text = dateText,//"Updated $diffrence by ${post.publisher}",
         color = Color.Gray,
@@ -811,7 +811,7 @@ fun commentTextField(
                 .fillMaxWidth()
                 .height(15.dp)
         )
-        if (scrollState.canScrollBackward) {
+      //  if (scrollState.canScrollBackward) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -928,7 +928,7 @@ fun commentTextField(
 
             }
 
-        }
+     //   }
     }
 }
 

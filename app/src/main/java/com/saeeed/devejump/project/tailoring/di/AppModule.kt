@@ -340,6 +340,8 @@ object AppModule {
         return ArticleDtoMapper()
     }
 
+
+
     @Singleton
     @Provides
     fun  provideNotificationDtoMapper():NotificationMapper{
@@ -411,13 +413,15 @@ fun provideUserData(
         sewMethodDao: SewMethodDao,
         userDataEntityMapper: UserDataEntityMapper,
         retrofitService: RetrofitService,
-        postEntityMapper: PostEntityMapper
+        postEntityMapper: PostEntityMapper,
+        commentMapper: CommentMapper
     ):UserActivityOnPost {
         return UserActivityOnPost(
             sewMethodDao = sewMethodDao,
             entityMapper = userDataEntityMapper,
             retrofitService = retrofitService,
-            postEntityMapper = postEntityMapper
+            postEntityMapper = postEntityMapper,
+            commentDtoMapper = commentMapper
         )
     }
 

@@ -7,8 +7,9 @@ import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
+import com.saeeed.devejump.project.tailoring.network.model.CommentMapper
+import com.saeeed.devejump.project.tailoring.network.model.UpdatedCommentDto
 import com.saeeed.devejump.project.tailoring.utils.USERID
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -16,7 +17,8 @@ class UserActivityOnPost (
     private val sewMethodDao: SewMethodDao,
     private val retrofitService: RetrofitService,
     private val entityMapper: UserDataEntityMapper,
-    private val postEntityMapper: PostEntityMapper
+    private val postEntityMapper: PostEntityMapper,
+    private val commentDtoMapper:CommentMapper
 
 ) {
 
@@ -166,12 +168,18 @@ class UserActivityOnPost (
 
     }
 
-     fun commentOnPost(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
+     fun commentOnPost(comment: Comment):Flow<DataState<String?>> = flow{
         try {
             emit (DataState.loading())
-          //  retrofitService.commentOnPost(USERID,postId,comment.comment)
-             delay(2000)
-            emit(DataState.success(1))
+           val response= retrofitService.commentOnPost(commentDtoMapper.mapFromDomainModel(comment))
+
+          if(response.isSuccessful){
+              emit(DataState.success(response.body()))
+
+          }else{
+              emit(DataState.error(response.message().toString()))
+
+          }
 
 
         }catch (e:Exception){
@@ -181,17 +189,31 @@ class UserActivityOnPost (
 
     }
 
-    fun editComment(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
+    @SuppressLint("SuspiciousIndentation")
+    fun editComment(comment: Comment):Flow<DataState<String?>> = flow{
 
-           //   retrofitService.editComment(USERID,postId,comment.comment)
+        val updatedComment=UpdatedCommentDto(
+            commentText=comment.comment,
+            date = System.currentTimeMillis()
+        )
+        try {
+            emit (DataState.loading())
+         val response= retrofitService.editComment(comment.id, updatedComment)
+            if(response.isSuccessful){
+                emit(DataState.success(response.body()))
 
+            }else{
+                emit(DataState.error(response.message().toString()))
 
-            emit(DataState.success(1))
-
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+            emit(DataState.error(e.message.toString()))
+        }
 
     }
 
-    fun reportComment(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
+    fun reportComment(comment: Comment,commentId:Int):Flow<DataState<Int>> = flow{
 
         //   retrofitService.editComment(USERID,postId,comment.comment)
 
@@ -201,13 +223,19 @@ class UserActivityOnPost (
 
     }
 
-    fun removeComment(comment: Comment,postId:Int):Flow<DataState<Int>> = flow{
+    fun removeComment(commentId:Int):Flow<DataState<Int?>> = flow{
 
 
              // retrofitService.removeComment(USERID,postId,comment.comment)
 try {
-    emit(DataState.success(1))
+    emit (DataState.loading())
+    val response=  retrofitService.removeComment(commentId = commentId)
+    if(response.code()==204){
+        emit(DataState.success(response.body()))
 
+    }else{
+        emit(DataState.error(response.message().toString()))
+    }
 }catch (e:Exception){
     e.printStackTrace()
     emit(DataState.error(e.message.toString()))
