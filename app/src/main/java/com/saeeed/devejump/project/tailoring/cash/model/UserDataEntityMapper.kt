@@ -19,7 +19,6 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData?> {
             following = model.following,
             likes = convertStringToList(model.liKes),
             bookMarks = convertStringToList (model.bookMarks),
-            comments = convertStringToCommentList(model.comments)
 
             )
     }
@@ -35,7 +34,6 @@ class UserDataEntityMapper :DomainMapper<UserDataEntity,UserData?> {
             following = domainModel.following,
             liKes = convertListToString(domainModel.likes),
             bookMarks =convertListToString (domainModel.bookMarks),
-            comments = convertCommentListToString( domainModel.comments)
 
         )
     }

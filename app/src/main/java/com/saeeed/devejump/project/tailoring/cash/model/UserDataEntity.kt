@@ -39,8 +39,7 @@ data class UserDataEntity(
     var bookMarks: String,
 
 
-    @ColumnInfo(name="comments")
-    var comments: String,
+
 )
 
 

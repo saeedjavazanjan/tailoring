@@ -33,8 +33,7 @@ data class UserDataDto (
     @SerializedName("bookMarks")
     var bookMarks: List<String> = emptyList(),
 
-    @SerializedName("comments")
-    var comments: List<CommentOnSpecificPost> = emptyList()
+
 
     )
 

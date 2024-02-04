@@ -16,7 +16,6 @@ class UserDataMapper: DomainMapper<UserDataDto, UserData> {
             following = model.following,
             likes = model.likes,
             bookMarks = model.bookMarks,
-            comments = model.comments
         )
     }
 
@@ -31,7 +30,6 @@ class UserDataMapper: DomainMapper<UserDataDto, UserData> {
             following = domainModel.following,
             likes = domainModel.likes,
             bookMarks = domainModel.bookMarks,
-            comments = domainModel.comments
 
         )
     }
