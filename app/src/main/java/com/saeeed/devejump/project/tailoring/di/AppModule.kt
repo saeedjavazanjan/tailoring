@@ -1,6 +1,15 @@
 package com.saeeed.devejump.project.tailoring.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.google.gson.GsonBuilder
 import com.saeeed.devejump.project.tailoring.BaseApplication
@@ -41,16 +50,22 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.Flow
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    private const val USER_Data = "user_data"
 
     @Singleton
     @Provides
@@ -118,6 +133,29 @@ object AppModule {
             .connectTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(interceptor).build()
     }
+
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            migrations = listOf(SharedPreferencesMigration(context,USER_Data)),
+            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+            produceFile = { context.preferencesDataStoreFile(USER_Data) }
+        )
+    }
+
+   /* @Singleton
+    @Provides
+    @Named("author_id")
+    suspend fun getUserFromPreferencesStore(userPreferencesDataStore:DataStore<Preferences>): Int? {
+        val dataStoreKey= intPreferencesKey("user_id")
+        val preferences=userPreferencesDataStore.data.first()
+       return preferences[dataStoreKey]
+    }*/
+
     @Singleton
     @Provides
     fun provideRetrofitService(
@@ -175,6 +213,7 @@ object AppModule {
     fun provideCacheRecipeMapper(): PostEntityMapper {
         return PostEntityMapper()
     }
+
 
     @Singleton
     @Provides

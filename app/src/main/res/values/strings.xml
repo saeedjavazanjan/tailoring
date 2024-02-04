@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">خیاط باشی</string>
+    <string name="gust_user">کاربر مهمان</string>
+
+    <!--registerDialog-->
+    <string name="signUp">ثبت نام</string>
+    <string name="signIn">ورود</string>
+    <string name="enter_phone_number">شماره تلفن*</string>
+    <string name="enter_user_name">نام کاربری*</string>
+
+
 
     <string name="ok">OK</string>
 

@@ -65,11 +65,14 @@ import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 import com.google.accompanist.pager.*
 import com.saeeed.devejump.project.tailoring.presentation.components.ProfileEditDialog
+import com.saeeed.devejump.project.tailoring.presentation.components.RegisterDialog
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter",
+    "SuspiciousIndentation"
+)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalGlideComposeApi::class,
     ExperimentalPagerApi::class,)
 @Composable
@@ -84,8 +87,10 @@ fun UserProfileScreen(
     ) {
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
+    val authorId=viewModel.authorId
     val scaffoldState= rememberScaffoldState()
     val showDialog =  remember { mutableStateOf(false) }
+    val registerDialogShow= remember { mutableStateOf(false) }
     val composableScope = rememberCoroutineScope()
 
 LaunchedEffect(Unit ){
@@ -94,7 +99,19 @@ LaunchedEffect(Unit ){
 }
     val user=viewModel.user.value
 
-    if( user !=null) {
+    if(registerDialogShow.value){
+        RegisterDialog(
+            registerShowDialog = {
+                                 registerDialogShow.value=it
+            },
+            loginPasswordRequest ={
+                ""
+            } ,
+
+        )
+    }
+
+
         if (showDialog.value) {
             ProfileEditDialog(
                 showDialog = {
@@ -207,7 +224,11 @@ LaunchedEffect(Unit ){
                                     colors = ButtonDefaults.buttonColors(Color.LightGray),
                                     shape = RoundedCornerShape(5.dp),
                                     onClick = {
-                                        showDialog.value = true
+                                        if(authorId.value==null){
+                                            registerDialogShow.value=true
+                                        }else{
+                                            showDialog.value = true
+                                        }
 
                                     }
                                 ) {
@@ -286,7 +307,7 @@ LaunchedEffect(Unit ){
                     }
                 }
             }
-        }
+
 
     
 }

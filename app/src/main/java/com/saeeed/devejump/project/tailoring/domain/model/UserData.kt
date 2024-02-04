@@ -11,5 +11,4 @@ data class UserData (
     var bookMarks:   List<String> = listOf(),
     var followers:Int,
     var following:Int,
-    var comments:List<CommentOnSpecificPost> = listOf()
 )

@@ -50,8 +50,8 @@ interface SewMethodDao {
     @Query("UPDATE userData SET likes = :likedPostsId WHERE userid LIKE :userId ")
     suspend fun updateLikes(likedPostsId:String,userId:Int):Int
 
-    @Query("UPDATE userData SET comments = :comments WHERE userid LIKE :userId ")
-    suspend fun updateUserComments(comments:String,userId:Int):Int
+   /* @Query("UPDATE userData SET comments = :comments WHERE userid LIKE :userId ")
+    suspend fun updateUserComments(comments:String,userId:Int):Int*/
 
  /*   @Query("UPDATE sewMethods SET comments = :comments WHERE id LIKE :postId ")
     suspend fun updateCommentsOnPost(comments:String,postId:Int):Int*/

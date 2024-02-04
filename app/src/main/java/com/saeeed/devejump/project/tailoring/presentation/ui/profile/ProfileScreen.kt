@@ -181,7 +181,7 @@ fun ProfileScreen(
                                     onNavigateToFollowingsScreen()
                                 }
                             ) {
-                                Text(text = "دنبال شونده گان ${user.following}")
+                                Text(text = stringResource(id = R.string.followings) +user.followers)
 
                             }
 
