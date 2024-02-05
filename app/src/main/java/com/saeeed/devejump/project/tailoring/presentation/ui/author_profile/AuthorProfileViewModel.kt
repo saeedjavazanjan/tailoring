@@ -63,13 +63,10 @@ constructor(
     val userPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
     val bookMarkedPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
 
-
-
-
-
     /*init {
     getUserData()
     }*/
+
     suspend fun getUserFromPreferencesStore() {
         val dataStoreKey= intPreferencesKey("user_id")
         val preferences=userPreferencesDataStore.data.first()

@@ -33,7 +33,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,11 +44,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -65,8 +62,7 @@ import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 import com.google.accompanist.pager.*
 import com.saeeed.devejump.project.tailoring.presentation.components.ProfileEditDialog
-import com.saeeed.devejump.project.tailoring.presentation.components.RegisterDialog
-import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
+import com.saeeed.devejump.project.tailoring.presentation.ui.register.RegisterDialog
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
 
@@ -103,11 +99,7 @@ LaunchedEffect(Unit ){
         RegisterDialog(
             registerShowDialog = {
                                  registerDialogShow.value=it
-            },
-            loginPasswordRequest ={
-                ""
-            } ,
-
+            }
         )
     }
 

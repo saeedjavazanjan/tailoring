@@ -108,6 +108,7 @@ class GetComments(
 
     }
 */
+    @SuppressLint("SuspiciousIndentation")
     private suspend fun getCommentsFromNetwork(token: String, postId: Int): List<CommentDto>? {
 
         try {
