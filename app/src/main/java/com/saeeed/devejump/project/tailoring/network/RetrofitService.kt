@@ -8,6 +8,7 @@ import com.saeeed.devejump.project.tailoring.network.model.NotificationDto
 import com.saeeed.devejump.project.tailoring.network.model.PeoplesDto
 import com.saeeed.devejump.project.tailoring.network.model.PostDto
 import com.saeeed.devejump.project.tailoring.network.model.ProductDto
+import com.saeeed.devejump.project.tailoring.network.model.RegisterUserDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -139,6 +140,17 @@ interface RetrofitService {
         // @Header("Authorization") token: String,
         @Body comment: CommentDto
     ): Response<String>
+
+    @POST("users/register")
+    suspend fun registerPasswordRequest(
+        @Body registerUser: RegisterUserDto
+    ):Response<String>
+
+    @POST("users/loginPasswordRequest")
+    suspend fun loginPasswordRequest(
+        @Body registerUser: RegisterUserDto
+    ):Response<String>
+
 
     @PUT("comments/{commentId}")
     suspend fun editComment(

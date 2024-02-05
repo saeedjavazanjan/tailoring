@@ -7,8 +7,6 @@ import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.google.gson.GsonBuilder
@@ -20,6 +18,7 @@ import com.saeeed.devejump.project.tailoring.cash.model.FollowersEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.FollowingsEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
+import com.saeeed.devejump.project.tailoring.interactor.register.RegisterUser
 import com.saeeed.devejump.project.tailoring.interactor.Splash.GetUserStuffsFromServer
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
 import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
@@ -53,12 +52,10 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.first
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.Flow
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -252,6 +249,17 @@ object AppModule {
             sewMethodDao = sewMethodDao,
             entityMapper = postEntityMapper,
             dtoMapper = postDtoMapper,
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideRegisterUser(
+        retrofitService: RetrofitService
+
+        ): RegisterUser {
+        return RegisterUser(
+            retrofitService=retrofitService
         )
     }
 
