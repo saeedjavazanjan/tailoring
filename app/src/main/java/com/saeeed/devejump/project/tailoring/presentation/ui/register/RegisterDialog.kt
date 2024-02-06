@@ -2,6 +2,8 @@ package com.saeeed.devejump.project.tailoring.presentation.ui.register
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +30,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,6 +58,9 @@ import com.saeeed.devejump.project.tailoring.components.progress_bar.DotsFlashin
 import com.saeeed.devejump.project.tailoring.presentation.ui.splash.SplashViewModel
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
+import java.time.Duration
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
@@ -76,12 +82,25 @@ fun RegisterDialog(
         mutableStateOf("")
     }
 
+    val password= remember {
+        mutableStateOf("")
+    }
+
+
     val loading = registerViewModel.loading.value
+
+    var stateOfLoginPasswordRequest=  registerViewModel.stateOfLoginPasswordRequest.value
+    var stateOfRegisterPasswordRequest=registerViewModel.stateOfRegisterPasswordRequest.value
+
+
+    if(stateOfLoginPasswordRequest || stateOfRegisterPasswordRequest){
+        showType.value="EnterPassword"
+    }
+
+
 
     val composableScope = rememberCoroutineScope()
     val scaffoldState= rememberScaffoldState()
-
-
 
         Dialog(
             onDismissRequest = {
@@ -89,7 +108,7 @@ fun RegisterDialog(
             },
             properties = DialogProperties(
                 usePlatformDefaultWidth = false,
-                dismissOnClickOutside = true,
+                dismissOnClickOutside = false,
                 dismissOnBackPress = false,
             )
 
@@ -100,7 +119,7 @@ fun RegisterDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp)
-                    .padding(16.dp),
+                        .padding(16.dp),
                     scaffoldState = scaffoldState
                 ) {
 
@@ -324,6 +343,68 @@ fun RegisterDialog(
                                 }
 
                             }
+                            "EnterPassword"->{
+                                Column{
+                                    TextField(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
+                                            .fillMaxWidth(0.9f),
+                                        shape = MaterialTheme.shapes.medium,
+                                        value = password.value,
+                                        singleLine = true,
+                                        maxLines = 1,
+                                        label = {
+                                            Text(
+                                                text = stringResource(id = R.string.received_password),
+                                                color = Color.Gray
+                                            )
+                                        },
+                                        onValueChange = {
+                                            password.value = it
+                                        },
+                                        keyboardOptions = KeyboardOptions(
+                                            keyboardType = KeyboardType.Phone,
+                                            imeAction = ImeAction.Default,
+                                        ),
+
+                                        colors = TextFieldDefaults.textFieldColors(
+
+                                            textColor = Color.DarkGray,
+                                            placeholderColor = Color.White,
+                                            focusedIndicatorColor = Color.Transparent,
+                                            unfocusedIndicatorColor = Color.Transparent,
+                                            disabledIndicatorColor = Color.Transparent
+                                        )
+                                    )
+                                    if (loading) {
+                                        Box(
+                                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        ) {
+                                            DotsFlashing()
+
+                                        }
+                                    } else {
+                                        Button(
+                                            colors = ButtonDefaults.buttonColors(Color.Green),
+                                            shape = RoundedCornerShape(5.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(10.dp),
+                                            onClick = {
+                                                registerViewModel.loginPasswordRequest(
+                                                    phoneNumber.value,
+                                                    scaffoldState,
+                                                    composableScope
+                                                )
+                                            }) {
+                                            Text(text = stringResource(id = R.string.signIn))
+                                        }
+                                    }
+                                }
+
+
+                            }
                         }
 
                     }
@@ -340,6 +421,11 @@ fun RegisterDialog(
 
                         "register" -> {
                             registerShowDialog(false)
+                        }
+                        "EnterPassword"->{
+                            registerShowDialog(false)
+                            registerViewModel.stateOfLoginPasswordRequest.value=false
+                            registerViewModel.stateOfRegisterPasswordRequest.value=false
                         }
                     }
                 }
