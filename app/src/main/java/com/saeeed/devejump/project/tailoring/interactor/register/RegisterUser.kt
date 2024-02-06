@@ -28,6 +28,7 @@ class RegisterUser (
                 emit(DataState.success(response.body()))
             else
                 emit(DataState.error(response.body()!!))
+
         }catch (e:Exception){
 
                 emit(DataState.error(e.message?:"خطای ناشناخته"))
@@ -48,9 +49,9 @@ class RegisterUser (
             )
             val response=retrofitService.loginPasswordRequest(registerUser)
             if(response.isSuccessful)
-                emit(DataState.success(response.body()))
+               emit(DataState.success(response.body()))
             else
-                emit(DataState.error("خطای ارسال"))
+            emit(DataState.error(response.body()!!))
         }catch (e:Exception){
 
             emit(DataState.error(e.message?:"خطای ناشناخته"))

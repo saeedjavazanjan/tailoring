@@ -18,71 +18,39 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel
-    @Inject constructor(
-       private val registerUser: RegisterUser
-    ) :ViewModel() {
+@Inject constructor(
+    private val registerUser: RegisterUser
+) : ViewModel() {
     val loading = mutableStateOf(false)
-    val dialogQueue= DialogQueue()
+    val dialogQueue = DialogQueue()
+    val stateOfLoginPasswordRequest = mutableStateOf(false)
+    val stateOfRegisterPasswordRequest = mutableStateOf(false)
 
-
-@OptIn(ExperimentalMaterialApi::class)
-fun registerPasswordRequest(userName:String, phoneNumber:String, scaffoldState: ScaffoldState, scope: CoroutineScope){
-    val snackbarController= SnackbarController(scope)
-
-    registerUser.registerPasswordRequest(
-        userName=userName,
-        phoneNumber
-    ).onEach { dataState ->
-
-    dataState.loading.let {
-        loading.value=it
-    }
-    dataState.data?.let {
-        snackbarController.getScope().launch {
-            snackbarController.showSnackbar(
-                scaffoldState = scaffoldState,
-                message = it,
-                actionLabel = "Ok"
-            )
-        }
-    }
-    dataState.error?.let {
-        snackbarController.getScope().launch {
-            snackbarController.showSnackbar(
-                scaffoldState = scaffoldState,
-                message = it,
-                actionLabel = "Ok"
-            )
-        }
-
-    }
-
-
-
-    }.catch {
-        dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
-
-    }.launchIn(viewModelScope)
-
-}
 
     @OptIn(ExperimentalMaterialApi::class)
-    fun loginPasswordRequest(phoneNumber: String, scaffoldState: ScaffoldState, scope:CoroutineScope){
-        val snackbarController= SnackbarController(scope)
+    fun registerPasswordRequest(
+        userName: String,
+        phoneNumber: String,
+        scaffoldState: ScaffoldState,
+        scope: CoroutineScope
+    ) {
 
-        registerUser.loginPasswordRequest(
-            userName="userName",
-            phoneNumber=phoneNumber
+        val snackbarController = SnackbarController(scope)
+
+        registerUser.registerPasswordRequest(
+            userName = userName,
+            phoneNumber
         ).onEach { dataState ->
 
             dataState.loading.let {
-                loading.value=it
+                loading.value = it
             }
             dataState.data?.let {
+                stateOfRegisterPasswordRequest.value = true
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
-                        message = it?:"ارسال موفق",
+                        message = it,
                         actionLabel = "Ok"
                     )
                 }
@@ -91,13 +59,57 @@ fun registerPasswordRequest(userName:String, phoneNumber:String, scaffoldState: 
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
-                        message = it?:"خطای ارسال",
+                        message = it,
                         actionLabel = "Ok"
                     )
                 }
 
             }
 
+
+        }.catch {
+            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+
+        }.launchIn(viewModelScope)
+
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    fun loginPasswordRequest(
+        phoneNumber: String,
+        scaffoldState: ScaffoldState,
+        scope: CoroutineScope
+    ) {
+        val snackbarController = SnackbarController(scope)
+
+        registerUser.loginPasswordRequest(
+            userName = "userName",
+            phoneNumber = phoneNumber
+        ).onEach { dataState ->
+
+            dataState.loading.let {
+                loading.value = it
+            }
+            dataState.data?.let {
+                stateOfLoginPasswordRequest.value = true
+                snackbarController.getScope().launch {
+                    snackbarController.showSnackbar(
+                        scaffoldState = scaffoldState,
+                        message = it ?: "ارسال موفق",
+                        actionLabel = "Ok"
+                    )
+                }
+            }
+            dataState.error?.let {
+                snackbarController.getScope().launch {
+                    snackbarController.showSnackbar(
+                        scaffoldState = scaffoldState,
+                        message = it ?: "خطای ارسال",
+                        actionLabel = "Ok"
+                    )
+                }
+
+            }
 
 
         }.catch {
@@ -106,9 +118,7 @@ fun registerPasswordRequest(userName:String, phoneNumber:String, scaffoldState: 
         }.launchIn(viewModelScope)
 
 
-
     }
-
 
 
 }
