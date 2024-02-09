@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.register
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -85,6 +87,13 @@ fun RegisterDialog(
     val password= remember {
         mutableStateOf("")
     }
+    val context= LocalContext.current
+    
+
+
+
+
+
 
 
     val loading = registerViewModel.loading.value
@@ -267,6 +276,7 @@ fun RegisterDialog(
                                         DotsFlashing()
                                     } else {
                                         Button(
+                                            enabled= registerViewModel.retry.value,
                                             colors = ButtonDefaults.buttonColors(Color.Blue),
                                             shape = RoundedCornerShape(5.dp),
                                             modifier = Modifier
@@ -280,7 +290,7 @@ fun RegisterDialog(
                                                     composableScope
                                                 )
                                             }) {
-                                            Text(text = stringResource(id = R.string.signUp))
+                                            Text(text = registerViewModel.sendSmsButtonText())
                                         }
                                     }
 
@@ -325,6 +335,7 @@ fun RegisterDialog(
                                         DotsFlashing()
                                     } else {
                                         Button(
+                                            enabled= registerViewModel.retry.value,
                                             colors = ButtonDefaults.buttonColors(Color.Green),
                                             shape = RoundedCornerShape(5.dp),
                                             modifier = Modifier
@@ -337,13 +348,14 @@ fun RegisterDialog(
                                                     composableScope
                                                 )
                                             }) {
-                                            Text(text = stringResource(id = R.string.signIn))
+                                            Text(text = registerViewModel.sendSmsButtonText())
                                         }
                                     }
                                 }
 
                             }
                             "EnterPassword"->{
+
                                 Column{
                                     TextField(
                                         modifier = Modifier
@@ -392,8 +404,9 @@ fun RegisterDialog(
                                                 .fillMaxWidth()
                                                 .padding(10.dp),
                                             onClick = {
-                                                registerViewModel.loginPasswordRequest(
-                                                    phoneNumber.value,
+                                                registerViewModel.loginPasswordCheck(
+                                                   phoneNumber= phoneNumber.value,
+                                                    password = password.value,
                                                     scaffoldState,
                                                     composableScope
                                                 )
@@ -417,15 +430,16 @@ fun RegisterDialog(
 
                         "signUp" -> {
                             showType.value = "register"
+
                         }
 
                         "register" -> {
                             registerShowDialog(false)
                         }
                         "EnterPassword"->{
-                            registerShowDialog(false)
-                            registerViewModel.stateOfLoginPasswordRequest.value=false
                             registerViewModel.stateOfRegisterPasswordRequest.value=false
+                            registerViewModel.stateOfLoginPasswordRequest.value=false
+                            showType.value = "register"
                         }
                     }
                 }

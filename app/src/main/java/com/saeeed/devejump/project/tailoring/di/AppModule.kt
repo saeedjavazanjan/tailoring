@@ -255,11 +255,14 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRegisterUser(
-        retrofitService: RetrofitService
+        retrofitService: RetrofitService,
+        userDataMapper: UserDataMapper
 
         ): RegisterUser {
         return RegisterUser(
-            retrofitService=retrofitService
+            retrofitService=retrofitService,
+            userDataMapper=userDataMapper
+
         )
     }
 
