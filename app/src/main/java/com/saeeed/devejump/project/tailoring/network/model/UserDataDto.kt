@@ -6,13 +6,16 @@ import com.saeeed.devejump.project.tailoring.domain.model.UserPublicData
 
 data class UserDataDto (
 
-    @SerializedName("userid")
+    @SerializedName("userId")
     var userId: Int,
 
-    @SerializedName("user_name")
+    @SerializedName("userName")
     var userName:String="",
 
-    @SerializedName("phone_number")
+    @SerializedName("pssWord")
+    var password:String="",
+
+    @SerializedName("phoneNumber")
     var phoneNumber:String="",
 
     @SerializedName("avatar")
@@ -34,7 +37,5 @@ data class UserDataDto (
     var bookMarks: List<String> = emptyList(),
 
 
-
     )
-
 

@@ -9,6 +9,7 @@ import com.saeeed.devejump.project.tailoring.network.model.PeoplesDto
 import com.saeeed.devejump.project.tailoring.network.model.PostDto
 import com.saeeed.devejump.project.tailoring.network.model.ProductDto
 import com.saeeed.devejump.project.tailoring.network.model.RegisterUserDto
+import com.saeeed.devejump.project.tailoring.network.model.RegisterUserPasswordDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -150,6 +151,11 @@ interface RetrofitService {
     suspend fun loginPasswordRequest(
         @Body registerUser: RegisterUserDto
     ):Response<String>
+
+    @POST("users/loginPasswordCheck")
+    suspend fun loginPasswordCheck(
+        @Body registerUserPasswordDto: RegisterUserPasswordDto
+    ):Response<UserDataDto>
 
     @PUT("comments/{commentId}")
     suspend fun editComment(

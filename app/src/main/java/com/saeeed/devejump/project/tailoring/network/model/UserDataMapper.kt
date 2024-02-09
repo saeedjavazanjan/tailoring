@@ -30,7 +30,6 @@ class UserDataMapper: DomainMapper<UserDataDto, UserData> {
             following = domainModel.following,
             likes = domainModel.likes,
             bookMarks = domainModel.bookMarks,
-
         )
     }
 
