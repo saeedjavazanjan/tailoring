@@ -8,7 +8,7 @@ data class UserData (
     var avatar:String="",
     var bio:String="",
     var likes:  List<String> = listOf(),
-    var bookMarks:   List<String> = listOf(),
+    var bookMarks:  List<String> = listOf(),
     var followers:Int,
     var following:Int,
 )

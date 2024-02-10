@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.register
 
 import android.os.Build
+import android.os.CountDownTimer
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.material.ExperimentalMaterialApi
@@ -32,8 +33,8 @@ class RegisterViewModel
     val dialogQueue = DialogQueue()
     val stateOfLoginPasswordRequest = mutableStateOf(false)
     val stateOfRegisterPasswordRequest = mutableStateOf(false)
-    val smsSendTime= mutableStateOf(0L)
     val retry= mutableStateOf(true)
+    val sendSmsText= mutableStateOf("ارسال رمز")
 
     val successSmsSenState= mutableStateOf(false)
     @OptIn(ExperimentalMaterialApi::class)
@@ -56,8 +57,8 @@ class RegisterViewModel
             }
             dataState.data?.let {
                 successSmsSenState.value=true
-                smsSendTime.value=System.currentTimeMillis()
-                stateOfRegisterPasswordRequest.value = true
+                countDown()
+                stateOfLoginPasswordRequest.value = true
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
@@ -67,11 +68,10 @@ class RegisterViewModel
                 }
             }
             dataState.error?.let {
-              // val leftTime=60- ((System.currentTimeMillis()-smsSendTime.value)/1000)
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
-                        message = /*if (it.equals("Too many Request")) "بعد از $leftTime ثانیه تلاش کنید. " else*/ it,
+                        message =  it,
                         actionLabel = "Ok"
                     )
                 }
@@ -104,13 +104,8 @@ class RegisterViewModel
             }
             dataState.data?.let {
                 successSmsSenState.value=true
-                //smsSendTime.value=System.currentTimeMillis()
-                countDownFlow(
-                    System.currentTimeMillis()
-                ).onEach {
-                    smsSendTime.value=it
-                }.launchIn(viewModelScope)
-                 stateOfLoginPasswordRequest.value = true
+                countDown()
+                stateOfLoginPasswordRequest.value = true
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
@@ -121,11 +116,10 @@ class RegisterViewModel
             }
             dataState.error?.let {
 
-              //  val leftTime=30- ((System.currentTimeMillis()-smsSendTime.value)/1000)
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
-                        message = /*if (it.equals("Too many Request")) "بعد از $leftTime ثانیه تلاش کنید. " else*/ it ,
+                        message =  it ,
                         actionLabel = "Ok"
                     )
                 }
@@ -182,30 +176,64 @@ class RegisterViewModel
 
     }
 
-    private fun countDownFlow(
-        start: Long,
-        delayInSeconds: Long = 1_000L,
-    ): Flow<Long> = flow {
-        var count = start
-        while  (count >= 0L) {
-            emit(count--)
-            delay(delayInSeconds)
-        }
-
-    }
-
-    fun sendSmsButtonText():String{
-        var result="ارسال رمز"
-        if(successSmsSenState.value){
-            val leftTime=10- ((System.currentTimeMillis()-smsSendTime.value)/1000)
-            if (leftTime>=0){
-                retry.value=false
-              result=  "بعد از $leftTime ثانیه تلاش کنید"
-            }else{
-                retry.value=true
+    @OptIn(ExperimentalMaterialApi::class)
+    fun registerPasswordCheck(
+        phoneNumber: String,
+        password:String,
+        userName: String,
+        scaffoldState: ScaffoldState,
+        scope: CoroutineScope
+    ){
+        val snackbarController = SnackbarController(scope)
+        registerUser.registerPasswordCheck(
+            password=password, phoneNumber = phoneNumber, userName =userName
+        ).onEach { dataState ->
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+                snackbarController.getScope().launch {
+                    snackbarController.showSnackbar(
+                        scaffoldState = scaffoldState,
+                        message = "ورود موفق" ,
+                        actionLabel = "Ok"
+                    )
+                }
 
             }
-        }
-        return result
+            dataState.error?.let {
+                snackbarController.getScope().launch {
+                    snackbarController.showSnackbar(
+                        scaffoldState = scaffoldState,
+                        message =  it ,
+                        actionLabel = "Ok"
+                    )
+                }
+            }
+
+        }.catch {
+            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+
+        }.launchIn(viewModelScope)
+
     }
+
+
+
+    fun countDown(){
+        retry.value=false
+        val timer=object :CountDownTimer(10000,1000){
+            override fun onTick(millisUntilFinished: Long) {
+                val leftTime=millisUntilFinished/1000
+                sendSmsText.value= "بعد از $leftTime ثانیه تلاش کنید"
+            }
+            override fun onFinish(){
+                sendSmsText.value="ارسال رمز"
+                retry.value=true
+            }
+
+        }
+        timer.start()
+    }
+
 }

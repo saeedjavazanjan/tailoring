@@ -33,7 +33,7 @@ data class UserDataDto (
     @SerializedName("likes")
     var likes: List<String> = emptyList(),
 
-    @SerializedName("bookMarks")
+    @SerializedName("bookmarks")
     var bookMarks: List<String> = emptyList(),
 
 
