@@ -157,6 +157,11 @@ interface RetrofitService {
         @Body registerUserPasswordDto: RegisterUserPasswordDto
     ):Response<UserDataDto>
 
+    @POST("users/registerPasswordCheck")
+    suspend fun registerPasswordCheck(
+        @Body registerUserPasswordDto: RegisterUserPasswordDto
+    ):Response<UserDataDto>
+
     @PUT("comments/{commentId}")
     suspend fun editComment(
         // @Header("Authorization") token: String,

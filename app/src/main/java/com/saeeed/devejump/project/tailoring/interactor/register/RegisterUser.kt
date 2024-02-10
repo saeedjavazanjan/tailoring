@@ -151,4 +151,46 @@ class RegisterUser (
 
 
     }
+
+    fun registerPasswordCheck(
+        phoneNumber: String,
+        password:String,
+        userName: String
+    ):Flow<DataState<UserData>> = flow {
+        emit(DataState.loading())
+        try {
+            val registerUserPasswordDto=RegisterUserPasswordDto(
+                userName=userName,
+                phoneNumber=phoneNumber,
+                passWord=password
+
+            )
+            val result= retrofitService.registerPasswordCheck(registerUserPasswordDto)
+            if(result.isSuccessful) {
+                emit(DataState.success(userDataMapper.mapToDomainModel(result.body()!!)))
+            } else {
+                try {
+                    val errMsg = result.errorBody()?.string()?.let {
+                        JSONObject(it).getString("error") // or whatever your message is
+                    } ?: run {
+                        emit(DataState.error( result.code().toString()))
+                    }
+                    emit(DataState.error(errMsg.toString()))
+                }catch (e:Exception){
+                    emit(DataState.error(e.message?:"خطای سرور"))
+
+
+                }
+
+            }
+
+        }catch (e:Exception){
+            emit(DataState.error(e.message?:"خطای ناشناخته"))
+        }
+
+
+
+
+    }
+
 }

@@ -32,6 +32,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -63,6 +65,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import java.time.Duration
+import kotlin.concurrent.timer
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
@@ -88,8 +91,20 @@ fun RegisterDialog(
         mutableStateOf("")
     }
     val context= LocalContext.current
-    
 
+    val emptyUserNameError= remember {
+        mutableStateOf(false)
+    }
+    val emptyPasswordError= remember {
+        mutableStateOf(false)
+    }
+    val emptyPhoneNumberError= remember {
+        mutableStateOf(false)
+    }
+
+    val registerType= remember {
+        mutableStateOf("")
+    }
 
 
 
@@ -209,6 +224,7 @@ fun RegisterDialog(
                             "signUp" -> {
                                 Column {
                                     TextField(
+                                        isError = emptyPhoneNumberError.value,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(8.dp)
@@ -225,6 +241,8 @@ fun RegisterDialog(
                                         },
                                         onValueChange = {
                                             phoneNumber.value = it
+                                            if (!it.isEmpty()) emptyPhoneNumberError.value=false
+
                                         },
                                         keyboardOptions = KeyboardOptions(
                                             keyboardType = KeyboardType.Phone,
@@ -241,6 +259,7 @@ fun RegisterDialog(
                                         )
                                     )
                                     TextField(
+                                        isError =emptyUserNameError.value ,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(8.dp)
@@ -257,6 +276,8 @@ fun RegisterDialog(
                                         },
                                         onValueChange = {
                                             userName.value = it
+                                            if (!it.isEmpty()) emptyUserNameError.value=false
+
                                         },
                                         keyboardOptions = KeyboardOptions(
                                             keyboardType = KeyboardType.Text,
@@ -283,14 +304,27 @@ fun RegisterDialog(
                                                 .fillMaxWidth()
                                                 .padding(10.dp),
                                             onClick = {
-                                                registerViewModel.registerPasswordRequest(
+                                                registerType.value="signUp"
+
+                                                if(userName.value.isEmpty()) {
+
+                                                    emptyUserNameError.value = true
+
+                                                }
+                                                if (phoneNumber.value.isEmpty())
+                                                    emptyPhoneNumberError.value=true
+
+                                                 if(!userName.value.isEmpty()&& !phoneNumber.value.isEmpty()){
+                                                    registerViewModel.registerPasswordRequest(
                                                     userName = userName.value,
                                                     phoneNumber = phoneNumber.value,
                                                     scaffoldState,
                                                     composableScope
-                                                )
+                                                )}
+
+
                                             }) {
-                                            Text(text = registerViewModel.sendSmsButtonText())
+                                            Text(text = registerViewModel.sendSmsText.value)
                                         }
                                     }
 
@@ -300,6 +334,7 @@ fun RegisterDialog(
                             "signIn" -> {
                                 Column {
                                     TextField(
+                                        isError = emptyPhoneNumberError.value,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(8.dp)
@@ -316,6 +351,8 @@ fun RegisterDialog(
                                         },
                                         onValueChange = {
                                             phoneNumber.value = it
+                                            if (!it.isEmpty()) emptyPhoneNumberError.value=false
+
                                         },
                                         keyboardOptions = KeyboardOptions(
                                             keyboardType = KeyboardType.Phone,
@@ -334,22 +371,28 @@ fun RegisterDialog(
                                     if (loading) {
                                         DotsFlashing()
                                     } else {
-                                        Button(
-                                            enabled= registerViewModel.retry.value,
-                                            colors = ButtonDefaults.buttonColors(Color.Green),
-                                            shape = RoundedCornerShape(5.dp),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(10.dp),
-                                            onClick = {
-                                                registerViewModel.loginPasswordRequest(
-                                                    phoneNumber.value,
-                                                    scaffoldState,
-                                                    composableScope
-                                                )
-                                            }) {
-                                            Text(text = registerViewModel.sendSmsButtonText())
-                                        }
+
+                                             Button(
+                                                 enabled = registerViewModel.retry.value,
+                                                 colors = ButtonDefaults.buttonColors(Color.Green),
+                                                 shape = RoundedCornerShape(5.dp),
+                                                 modifier = Modifier
+                                                     .fillMaxWidth()
+                                                     .padding(10.dp),
+                                                 onClick = {
+                                                     registerType.value="signIn"
+                                                     if (phoneNumber.value.isEmpty())
+                                                         emptyPhoneNumberError.value=true
+                                                     else
+                                                     registerViewModel.loginPasswordRequest(
+                                                         phoneNumber.value,
+                                                         scaffoldState,
+                                                         composableScope
+                                                     )
+                                                 }) {
+                                                 Text(text = registerViewModel.sendSmsText.value)
+                                             }
+
                                     }
                                 }
 
@@ -358,6 +401,7 @@ fun RegisterDialog(
 
                                 Column{
                                     TextField(
+                                        isError = emptyPasswordError.value,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(8.dp)
@@ -374,6 +418,7 @@ fun RegisterDialog(
                                         },
                                         onValueChange = {
                                             password.value = it
+                                           if (!it.isEmpty()) emptyPasswordError.value=false
                                         },
                                         keyboardOptions = KeyboardOptions(
                                             keyboardType = KeyboardType.Phone,
@@ -404,12 +449,28 @@ fun RegisterDialog(
                                                 .fillMaxWidth()
                                                 .padding(10.dp),
                                             onClick = {
-                                                registerViewModel.loginPasswordCheck(
-                                                   phoneNumber= phoneNumber.value,
-                                                    password = password.value,
-                                                    scaffoldState,
-                                                    composableScope
-                                                )
+                                                if (password.value.isEmpty())
+                                                    emptyPasswordError.value=true
+                                                else{
+
+                                                    if(registerType.value=="signIn")
+                                                    registerViewModel.loginPasswordCheck(
+                                                        phoneNumber= phoneNumber.value,
+                                                        password = password.value,
+                                                        scaffoldState,
+                                                        composableScope
+                                                    )
+                                                    else if(registerType.value=="signUp"){
+                                                        registerViewModel.registerPasswordCheck(
+                                                            phoneNumber= phoneNumber.value,
+                                                            password = password.value,
+                                                            userName = userName.value,
+                                                            scaffoldState,
+                                                            composableScope
+                                                        )
+                                                    }
+                                                }
+
                                             }) {
                                             Text(text = stringResource(id = R.string.signIn))
                                         }
