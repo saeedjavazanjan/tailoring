@@ -1,5 +1,6 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.author_profile
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.MutableState
@@ -9,6 +10,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +23,9 @@ import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -37,13 +41,12 @@ constructor(
     private val restoreSewMethods: RestoreSewMethods,
     private val connectivityManager: ConnectivityManager,
     @Named("auth_token") private val token: String,
-  //  @Named("author_id")  val authorId:Int?,
     private val savedStateHandle: SavedStateHandle,
     private val userPreferencesDataStore: DataStore<Preferences>
 
     ) : ViewModel() {
-    private val USER_ID = intPreferencesKey("user_id")
-    val authorId= mutableStateOf<Int?>(null)
+
+    val authorToken= mutableStateOf<String?>("")
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
     val user:MutableState<UserData?> = mutableStateOf(
@@ -63,21 +66,12 @@ constructor(
     val userPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
     val bookMarkedPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
 
-    /*init {
-    getUserData()
-    }*/
+    init {
+    //getUserData()
 
-    suspend fun getUserFromPreferencesStore() {
-        val dataStoreKey= intPreferencesKey("user_id")
-        val preferences=userPreferencesDataStore.data.first()
-        authorId.value= preferences[dataStoreKey]
     }
 
-   suspend fun saveUserToPreferencesStore(user: UserData) {
-       userPreferencesDataStore.edit { preferences ->
-           preferences[USER_ID] = user.userId
-       }
-   }
+
     fun getUserData(){
         getUserProfileData.getAuthorData(
             token = token,
@@ -191,6 +185,11 @@ constructor(
 
     }
 
+     suspend fun getUserFromPreferencesStore():String? {
+       val dataStoreKey= stringPreferencesKey("user_token")
+       val preferences=userPreferencesDataStore.data.first()
+       return preferences[dataStoreKey]
+   }
 
 
 }
