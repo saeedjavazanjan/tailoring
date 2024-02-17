@@ -11,6 +11,7 @@ import com.saeeed.devejump.project.tailoring.network.model.ProductDto
 import com.saeeed.devejump.project.tailoring.network.model.RegisterUserDto
 import com.saeeed.devejump.project.tailoring.network.model.RegisterUserPasswordDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
+import com.saeeed.devejump.project.tailoring.network.response.LoginResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -155,12 +156,12 @@ interface RetrofitService {
     @POST("users/loginPasswordCheck")
     suspend fun loginPasswordCheck(
         @Body registerUserPasswordDto: RegisterUserPasswordDto
-    ):Response<UserDataDto>
+    ):Response<LoginResponse>
 
     @POST("users/registerPasswordCheck")
     suspend fun registerPasswordCheck(
         @Body registerUserPasswordDto: RegisterUserPasswordDto
-    ):Response<UserDataDto>
+    ):Response<LoginResponse>
 
     @PUT("comments/{commentId}")
     suspend fun editComment(

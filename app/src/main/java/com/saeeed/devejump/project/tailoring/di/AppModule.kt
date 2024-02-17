@@ -256,12 +256,16 @@ object AppModule {
     @Provides
     fun provideRegisterUser(
         retrofitService: RetrofitService,
-        userDataMapper: UserDataMapper
+        userDataMapper: UserDataMapper,
+        sewMethodDao: SewMethodDao,
+        userDataEntityMapper: UserDataEntityMapper,
 
         ): RegisterUser {
         return RegisterUser(
             retrofitService=retrofitService,
-            userDataMapper=userDataMapper
+            userDataMapper=userDataMapper,
+            sewMethodDao =sewMethodDao ,
+            entityMapper = userDataEntityMapper
 
         )
     }

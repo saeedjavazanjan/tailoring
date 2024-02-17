@@ -1,12 +1,13 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.register
 
-import android.os.Build
 import android.os.CountDownTimer
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.interactor.register.RegisterUser
@@ -14,27 +15,29 @@ import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarCon
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.time.Duration
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel
 @Inject constructor(
-    private val registerUser: RegisterUser
+    private val registerUser: RegisterUser,
+    private val userPreferencesDataStore: DataStore<Preferences>
+
 ) : ViewModel() {
+    private val USER_TOKEN = stringPreferencesKey("user_token")
+
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
     val stateOfLoginPasswordRequest = mutableStateOf(false)
     val stateOfRegisterPasswordRequest = mutableStateOf(false)
     val retry= mutableStateOf(true)
     val sendSmsText= mutableStateOf("ارسال رمز")
+
+    val loginState= mutableStateOf(false)
 
     val successSmsSenState= mutableStateOf(false)
     @OptIn(ExperimentalMaterialApi::class)
@@ -149,7 +152,9 @@ class RegisterViewModel
             dataState.loading.let {
                 loading.value=it
             }
-            dataState.data?.let {
+            dataState.data?.let {token->
+                saveUserToPreferencesStore(token)
+                loginState.value=true
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
@@ -191,7 +196,9 @@ class RegisterViewModel
             dataState.loading.let {
                 loading.value=it
             }
-            dataState.data?.let {
+            dataState.data?.let {token->
+                saveUserToPreferencesStore(token)
+                loginState.value=true
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
@@ -218,7 +225,17 @@ class RegisterViewModel
 
     }
 
+   /* suspend fun getUserFromPreferencesStore() {
+        val dataStoreKey= intPreferencesKey("user_id")
+        val preferences=userPreferencesDataStore.data.first()
+        authorId.value= preferences[dataStoreKey]
+    }*/
 
+    suspend fun saveUserToPreferencesStore(usertoken:String) {
+        userPreferencesDataStore.edit { preferences ->
+            preferences[USER_TOKEN] = usertoken
+        }
+    }
 
     fun countDown(){
         retry.value=false

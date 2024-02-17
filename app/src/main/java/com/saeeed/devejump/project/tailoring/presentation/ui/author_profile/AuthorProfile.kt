@@ -34,6 +34,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,6 +65,8 @@ import com.google.accompanist.pager.*
 import com.saeeed.devejump.project.tailoring.presentation.components.ProfileEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.ui.register.RegisterDialog
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter",
@@ -83,15 +86,17 @@ fun UserProfileScreen(
     ) {
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
-    val authorId=viewModel.authorId
+    val authorToken=viewModel.authorToken
     val scaffoldState= rememberScaffoldState()
     val showDialog =  remember { mutableStateOf(false) }
     val registerDialogShow= remember { mutableStateOf(false) }
     val composableScope = rememberCoroutineScope()
+    val loginState= remember { mutableStateOf(false) }
 
 LaunchedEffect(Unit ){
    // viewModel.getUserPosts()
     viewModel.getUserData()
+    authorToken.value=viewModel.getUserFromPreferencesStore()
 }
     val user=viewModel.user.value
 
@@ -99,6 +104,16 @@ LaunchedEffect(Unit ){
         RegisterDialog(
             registerShowDialog = {
                                  registerDialogShow.value=it
+            },
+            loginState = {
+                if(it){
+                    composableScope.launch {
+                        authorToken.value=viewModel.getUserFromPreferencesStore()
+
+                    }
+
+                }
+
             }
         )
     }
@@ -135,7 +150,12 @@ LaunchedEffect(Unit ){
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = {
-                               onNavigateToUploadPostScreen()
+                                if(authorToken.value==null){
+                                    registerDialogShow.value=true
+                                }else{
+                                    onNavigateToUploadPostScreen()
+
+                                }
 
                             },
                         ) {
@@ -216,7 +236,7 @@ LaunchedEffect(Unit ){
                                     colors = ButtonDefaults.buttonColors(Color.LightGray),
                                     shape = RoundedCornerShape(5.dp),
                                     onClick = {
-                                        if(authorId.value==null){
+                                        if(authorToken.value==null){
                                             registerDialogShow.value=true
                                         }else{
                                             showDialog.value = true
@@ -238,7 +258,11 @@ LaunchedEffect(Unit ){
                                     colors = ButtonDefaults.buttonColors(Color.LightGray),
                                     shape = RoundedCornerShape(5.dp),
                                     onClick = {
+                                        if(authorToken.value==null){
+                                            registerDialogShow.value=true
+                                        }else{
 
+                                        }
                                     }
                                 ) {
                                     Text(
