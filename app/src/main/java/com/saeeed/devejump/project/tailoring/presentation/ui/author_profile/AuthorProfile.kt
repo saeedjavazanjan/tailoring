@@ -34,7 +34,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -65,8 +65,6 @@ import com.google.accompanist.pager.*
 import com.saeeed.devejump.project.tailoring.presentation.components.ProfileEditDialog
 import com.saeeed.devejump.project.tailoring.presentation.ui.register.RegisterDialog
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter",
@@ -87,16 +85,17 @@ fun UserProfileScreen(
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val authorToken=viewModel.authorToken
+    val dataUpdateProfileState= viewModel.dataUpdateState.value
     val scaffoldState= rememberScaffoldState()
     val showDialog =  remember { mutableStateOf(false) }
     val registerDialogShow= remember { mutableStateOf(false) }
     val composableScope = rememberCoroutineScope()
     val loginState= remember { mutableStateOf(false) }
-
+    val context= LocalContext.current
 LaunchedEffect(Unit ){
    // viewModel.getUserPosts()
     viewModel.getUserData()
-    authorToken.value=viewModel.getUserFromPreferencesStore()
+    authorToken.value=viewModel.getTokenFromPreferencesStore()
 }
     val user=viewModel.user.value
 
@@ -108,7 +107,7 @@ LaunchedEffect(Unit ){
             loginState = {
                 if(it){
                     composableScope.launch {
-                        authorToken.value=viewModel.getUserFromPreferencesStore()
+                        authorToken.value=viewModel.getTokenFromPreferencesStore()
 
                     }
 
@@ -129,7 +128,10 @@ LaunchedEffect(Unit ){
                     user!!.userName = name
                     user!!.avatar = imgUri.toString()
                     user!!.bio = bio
-                    viewModel.updateUserData(user, scaffoldState, composableScope)
+                    viewModel.updateUserData(context,user, scaffoldState, composableScope,imgUri)
+                    if(dataUpdateProfileState){
+                        showDialog.value=false
+                    }
                 }
             )
         }
