@@ -1,15 +1,13 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.author_profile
 
-import android.util.Log
+import android.content.Context
+import android.net.Uri
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -23,14 +21,18 @@ import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Named
 @HiltViewModel
@@ -65,7 +67,7 @@ constructor(
     )
     val userPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
     val bookMarkedPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
-
+    val dataUpdateState= mutableStateOf(false)
     init {
     //getUserData()
 
@@ -144,51 +146,58 @@ constructor(
 
     }
     @OptIn(ExperimentalMaterialApi::class)
-    fun updateUserData(userData: UserData?, scaffoldState: ScaffoldState, scope: CoroutineScope){
+    fun updateUserData(
+        context: Context,
+        userData: UserData?,
+        scaffoldState: ScaffoldState,
+        scope: CoroutineScope,
+        avatarUri: Uri
+    ){
         val snackbarController= SnackbarController(scope)
 
-        getUserProfileData.updateUserData(userData).onEach {dataState ->
+        viewModelScope.launch {
+          authorToken.value=getTokenFromPreferencesStore()
+        }
+        getUserProfileData.updateUserData(
+            userData,
+            authorToken.value,
+            context,
+            avatarUri
+        ).onEach {dataState ->
             dataState.loading.let {
                 loading.value=it
             }
 
             dataState.data?.let {
-                snackbarController.getScope().launch {
+                dataUpdateState.value=true
 
-                    if (it) {
+                snackbarController.getScope().launch {
                         snackbarController.showSnackbar(
                             scaffoldState = scaffoldState,
                             message = "با موفقیت به روز رسانی  شد.",
                             actionLabel = "Ok"
                         )
-
-                    } else {
-                        snackbarController.showSnackbar(
-                            scaffoldState = scaffoldState,
-                            message = "مشکلی در به روز رسانی رخ داده است.",
-                            actionLabel = "Ok"
-                        )
-
-                    }
                 }
             }
 
-           /* dataState.error.let {
+            dataState.error?.let {
                 dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
+                dataUpdateState.value=false
 
-            }*/
+            }
 
         }.catch {
             dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
+            dataUpdateState.value=false
 
         }.launchIn(viewModelScope)
 
     }
 
-     suspend fun getUserFromPreferencesStore():String? {
+     suspend fun getTokenFromPreferencesStore():String? {
        val dataStoreKey= stringPreferencesKey("user_token")
        val preferences=userPreferencesDataStore.data.first()
-       return preferences[dataStoreKey]
+       return "Bearer ${preferences[dataStoreKey]}"
    }
 
 

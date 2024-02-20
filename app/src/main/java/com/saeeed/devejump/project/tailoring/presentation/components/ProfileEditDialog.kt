@@ -311,14 +311,16 @@ fun ProfileEditDialog(
                             .padding(15.dp)
                             .fillMaxWidth(),
                         onClick = {
-                          //  shouldDismiss.value=true
-                            showDialog(false)
                             applyChanges(
                                 imageUri.value!!,
                                 userName.value!!,
                                 userBio.value!!
-
                             )
+
+                          //     showDialog(false)
+
+
+
 
                         }
                     ) {

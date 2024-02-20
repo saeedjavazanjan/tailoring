@@ -1,5 +1,9 @@
 package com.saeeed.devejump.project.tailoring.interactor.user_profile
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.Uri
+import android.util.Log
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
@@ -11,6 +15,13 @@ import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 
 class GetUserProfileData(
     private val sewMethodDao: SewMethodDao,
@@ -129,26 +140,55 @@ class GetUserProfileData(
         )
     }
 
+      @SuppressLint("SuspiciousIndentation")
       fun updateUserData(
-        userData: UserData?
-    ):Flow<DataState<Boolean>> = flow {
+        userData: UserData?,
+        token: String?,
+        context: Context,
+        avatar: Uri
+    ):Flow<DataState<String>> = flow {
+
+        val part=  getFileFromUri(
+              context,
+              avatar
+          )
+
         emit(DataState.loading())
-       val databaseUpdate= sewMethodDao.updateUserData(listOf(userDataEntityMapper.mapFromDomainModel(userData)))
+     //  val databaseUpdate= sewMethodDao.updateUserData(listOf(userDataEntityMapper.mapFromDomainModel(userData)))
 
-        if (databaseUpdate>0){
+       // if (databaseUpdate>0){
             try {
-             //   retrofitService.updateUseData(USERID,userDtoMapper.mapFromDomainModel(userData))
-                emit(DataState.success(true))
+              val result=  retrofitService.updateUseData(
+                    token,
+                    userData!!.userName.toRequestBody(),
+                    userData.bio.toRequestBody(),
+                    part
+                )
+                if (result.isSuccessful)
+                emit(DataState.success("به روز رسانی با موفقیت انجام شد"))
+                else{
+                    try {
+                        val errMsg = result.errorBody()?.string()?.let {
+                            JSONObject(it).getString("error") // or whatever your message is
+                        } ?: run {
+                            emit(DataState.error( result.code().toString()))
+                        }
+                        emit(DataState.error(errMsg.toString()))
+                    }catch (e:Exception){
+                        emit(DataState.error("خطای سرور"))
 
-            }catch (e:Exception){
-                emit(DataState.success(false))
 
-                emit(DataState.error(e.message?:"خطای ارسال اطلاعات"))
+                    }
+
+                }
+
+           }catch (e:Exception){
+                emit(DataState.error("خطای ارسال اطلاعات"))
 
             }
-        }else{
+      /* }else{
             emit(DataState.error("خطای به روز رسانی دیتا بیس"))
-        }
+        }*/
 
     }
     fun checkIfUserFollowed(
@@ -170,4 +210,18 @@ class GetUserProfileData(
 
     }
 
+
+    fun getFileFromUri(
+        context: Context,
+        avatarUri: Uri
+    ): MultipartBody.Part {
+        val fileDire = context.filesDir
+        val file = File(fileDire, "image.png")
+        val inputStream = context.contentResolver.openInputStream(avatarUri)
+        val outputStream = FileOutputStream(file)
+        inputStream!!.copyTo(outputStream)
+        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+
+        return MultipartBody.Part.createFormData("AvatarFile", file.name, requestBody)
+    }
 }
