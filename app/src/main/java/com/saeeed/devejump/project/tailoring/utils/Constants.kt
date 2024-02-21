@@ -1,5 +1,11 @@
 package com.saeeed.devejump.project.tailoring.utils
 
+import android.content.res.Resources
+import android.net.Uri
+
+
+
+
     const val TAG = "AppDebug"
 
     const val POSTS_PAGINATION_PAGE_SIZE = 30

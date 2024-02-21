@@ -154,7 +154,7 @@ class UserActivityOnPost (
     }
     suspend fun getUserLocalBookMarks():MutableList<String>{
 
-        val bookMarks=sewMethodDao.getUserData(USERID).bookMarks
+        val bookMarks=sewMethodDao.getUserData().bookMarks
 
        return entityMapper.convertStringToList(bookMarks)
 
@@ -162,7 +162,7 @@ class UserActivityOnPost (
 
     suspend fun getUserLocalLikes():MutableList<String>{
 
-        val likes=sewMethodDao.getUserData(USERID).liKes
+        val likes=sewMethodDao.getUserData().liKes
 
         return entityMapper.convertStringToList(likes)
 

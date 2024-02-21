@@ -12,7 +12,7 @@ data class UserDataDto (
     @SerializedName("userName")
     var userName:String="",
 
-    @SerializedName("pssWord")
+    @SerializedName("password")
     var password:String="",
 
     @SerializedName("phoneNumber")

@@ -60,7 +60,7 @@ fun Navigation(
     val uploadPostViewModel: UploadPostViewModel = viewModel()
     val schoolViewModel:SchoolViewModel= viewModel()
     val notificationViewModel:NotificationsViewModel= viewModel()
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.Splash.route) {
 
         composable(Screen.Splash.route) {
             SplashScreen(

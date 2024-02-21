@@ -85,7 +85,6 @@ fun UserProfileScreen(
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val authorToken=viewModel.authorToken
-    val dataUpdateProfileState= viewModel.dataUpdateState.value
     val scaffoldState= rememberScaffoldState()
     val showDialog =  remember { mutableStateOf(false) }
     val registerDialogShow= remember { mutableStateOf(false) }
@@ -129,9 +128,7 @@ LaunchedEffect(Unit ){
                     user!!.avatar = imgUri.toString()
                     user!!.bio = bio
                     viewModel.updateUserData(context,user, scaffoldState, composableScope,imgUri)
-                    if(dataUpdateProfileState){
-                        showDialog.value=false
-                    }
+
                 }
             )
         }
@@ -152,7 +149,7 @@ LaunchedEffect(Unit ){
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = {
-                                if(authorToken.value==null){
+                                if(authorToken.value==""){
                                     registerDialogShow.value=true
                                 }else{
                                     onNavigateToUploadPostScreen()
@@ -238,7 +235,7 @@ LaunchedEffect(Unit ){
                                     colors = ButtonDefaults.buttonColors(Color.LightGray),
                                     shape = RoundedCornerShape(5.dp),
                                     onClick = {
-                                        if(authorToken.value==null){
+                                        if(authorToken.value==""){
                                             registerDialogShow.value=true
                                         }else{
                                             showDialog.value = true
@@ -260,7 +257,7 @@ LaunchedEffect(Unit ){
                                     colors = ButtonDefaults.buttonColors(Color.LightGray),
                                     shape = RoundedCornerShape(5.dp),
                                     onClick = {
-                                        if(authorToken.value==null){
+                                        if(authorToken.value==""){
                                             registerDialogShow.value=true
                                         }else{
 

@@ -1,10 +1,12 @@
 package com.saeeed.devejump.project.tailoring.presentation.components
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -64,6 +66,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
+import com.saeeed.devejump.project.tailoring.utils.TAG
 import androidx.compose.material3.Card as Card1
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
@@ -78,6 +81,8 @@ fun ProfileEditDialog(
             )-> Unit
 
 ) {
+
+    val context= LocalContext.current
 
     val imageUri = remember {
         mutableStateOf<Uri?>(userData!!.avatar.toUri())
@@ -311,13 +316,16 @@ fun ProfileEditDialog(
                             .padding(15.dp)
                             .fillMaxWidth(),
                         onClick = {
+
+
+
                             applyChanges(
-                                imageUri.value!!,
+                                if(userData!!.avatar=="") getResourceUri(context.resources,R.drawable.empty_plate) else imageUri.value!! ,
                                 userName.value!!,
                                 userBio.value!!
                             )
 
-                          //     showDialog(false)
+                               showDialog(false)
 
 
 
@@ -339,4 +347,12 @@ fun ProfileEditDialog(
         }
     }
 
+}
+
+ fun getResourceUri(resources: Resources, resourceID: Int): Uri {
+    return Uri.parse(
+        "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
+                resources.getResourceTypeName(resourceID) + '/'
+                + resources.getResourceEntryName(resourceID)
+    )
 }
