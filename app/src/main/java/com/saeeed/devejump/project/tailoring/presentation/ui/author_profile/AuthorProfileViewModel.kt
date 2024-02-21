@@ -1,7 +1,9 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.author_profile
 
 import android.content.Context
+import android.content.res.Resources
 import android.net.Uri
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.MutableState
@@ -67,7 +69,6 @@ constructor(
     )
     val userPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
     val bookMarkedPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
-    val dataUpdateState= mutableStateOf(false)
     init {
     //getUserData()
 
@@ -76,13 +77,10 @@ constructor(
 
     fun getUserData(){
         getUserProfileData.getAuthorData(
-            token = token,
-            userId = USERID,
-            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
         ).onEach { dataState->
             dataState.data?.let{
                 user.value=it
-
+                Log.i("AVATAR",it.avatar)
             }
 
         }.catch {
@@ -169,7 +167,6 @@ constructor(
             }
 
             dataState.data?.let {
-                dataUpdateState.value=true
 
                 snackbarController.getScope().launch {
                         snackbarController.showSnackbar(
@@ -182,23 +179,36 @@ constructor(
 
             dataState.error?.let {
                 dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
-                dataUpdateState.value=false
 
             }
 
         }.catch {
             dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
-            dataUpdateState.value=false
 
         }.launchIn(viewModelScope)
 
     }
 
-     suspend fun getTokenFromPreferencesStore():String? {
-       val dataStoreKey= stringPreferencesKey("user_token")
-       val preferences=userPreferencesDataStore.data.first()
-       return "Bearer ${preferences[dataStoreKey]}"
-   }
+    suspend fun getTokenFromPreferencesStore():String {
+        val dataStoreKey= stringPreferencesKey("user_token")
+        return try{
+            val preferences=userPreferencesDataStore.data.first()
+            if(preferences[dataStoreKey]==null){
+                ""
+            }else
+                "Bearer ${preferences[dataStoreKey]}"
+        }catch (e:NoSuchElementException){
+            ""
+        }
 
+    }
+
+    fun getResourceUri(resources: Resources, resourceID: Int): Uri? {
+        return Uri.parse(
+            "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
+                    resources.getResourceTypeName(resourceID) + '/'
+                    + resources.getResourceEntryName(resourceID)
+        )
+    }
 
 }

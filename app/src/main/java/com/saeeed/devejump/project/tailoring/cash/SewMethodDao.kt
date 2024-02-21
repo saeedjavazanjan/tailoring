@@ -36,8 +36,8 @@ interface SewMethodDao {
     @Transaction
     @Query("SELECT * FROM userData WHERE userid = :userID")
     suspend fun getUserFollowings(userID: Int): List<FollowingsByConsideredUserId>*/
-    @Query("SELECT * FROM userData WHERE userid = :id")
-    suspend fun getUserData(id: Int):UserDataEntity
+    @Query("SELECT * FROM userData")
+    suspend fun getUserData():UserDataEntity
 
 
     @Update

@@ -47,7 +47,7 @@ class GetUserProfileData(
                 if(isNetworkAvailable) {
 
                     emit(DataState.loading())
-                    val userData = getUserDataFromNetwork(userId)
+                    val userData = getUserDataFromNetwork(token)
                     emit(DataState.success(userData))
                 }
             }catch (e:Exception){
@@ -63,14 +63,10 @@ class GetUserProfileData(
     }
 
     fun getAuthorData(
-        token: String,
-        userId: Int,
-        isNetworkAvailable: Boolean
-
     ):
             Flow<DataState<UserData>> = flow {
         try {
-            val userData =sewMethodDao.getUserData(userId)
+            val userData =sewMethodDao.getUserData()
             emit(DataState.success(userDataEntityMapper.mapToDomainModel(userData)))
         }catch (e:Exception){
             emit(DataState.error(e.message.toString()))
@@ -86,20 +82,11 @@ class GetUserProfileData(
 
             emit(DataState.loading())
 
-        try {
             val sewMethods = getSewMethodsFromNetwork(
                 token = token,
                 userId = userId,
             )
             emit(DataState.success(sewMethods))
-        }catch (e:Exception){
-            e.printStackTrace()
-            emit(DataState.error(e.message.toString()))
-        }
-
-
-
-
     }
 
     fun getUserBookMarkedPosts(
@@ -203,9 +190,9 @@ class GetUserProfileData(
 
     }
 
-    private suspend fun getUserDataFromNetwork(UserId:Int): UserData {
+    private suspend fun getUserDataFromNetwork(token:String): UserData {
 
-        return userDtoMapper.mapToDomainModel(retrofitService.userData(UserId))
+        return userDtoMapper.mapToDomainModel(retrofitService.userData(token).body()!!)
 
 
     }

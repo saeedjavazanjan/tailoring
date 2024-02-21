@@ -93,11 +93,10 @@ interface RetrofitService {
     ): List<PostDto>
 
 
-    @GET("userData")
+    @GET("users/currentUser")
     suspend fun userData(
-        //  @Header("Authorization") token: String,
-        @Query("query") query: Int
-    ): UserDataDto
+          @Header("Authorization") token: String,
+    ):Response<UserDataDto>
 
     @Multipart
     @PUT("/users/updateUser")
