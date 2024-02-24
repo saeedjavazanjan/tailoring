@@ -127,7 +127,7 @@ LaunchedEffect(Unit ){
                     user!!.userName = name
                     user!!.avatar = imgUri.toString()
                     user!!.bio = bio
-                    viewModel.updateUserData(context,user, scaffoldState, composableScope,imgUri)
+                    viewModel.updateUserData(user, scaffoldState, composableScope,imgUri)
 
                 }
             )

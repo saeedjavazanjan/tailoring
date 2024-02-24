@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.net.Uri
 import android.provider.Settings
 import android.widget.Toast
@@ -118,6 +119,8 @@ fun UploadPostScreen(
     navController:NavController,
     onNavigateTpProductDetailScreen: (String) -> Unit
 ){
+    val context = LocalContext.current
+
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
@@ -126,8 +129,17 @@ fun UploadPostScreen(
     val typeOfPost= remember {
         mutableStateOf("")
     }
-    var selectedImages=remember { mutableStateListOf<Uri?>(Uri.EMPTY) }
-    val selectedVideoUri = remember { mutableStateOf<Uri?>(Uri.EMPTY) }
+    var selectedImages=remember { mutableStateListOf<Uri?>(
+       getResourceUri(
+            context.resources,
+            R.drawable.empty_plate
+        )
+    ) }
+    val selectedVideoUri = remember { mutableStateOf<Uri?>(
+        getResourceUri(
+        context.resources,
+        R.drawable.empty_plate
+    )) }
 
     val pagerState = rememberPagerState(pageCount = {
         selectedImages.size
@@ -146,7 +158,6 @@ fun UploadPostScreen(
         mutableStateOf(false)
     }
 
-    val context = LocalContext.current
     val activity =context as Activity
 
     val file = context.createImageFile()
@@ -551,7 +562,6 @@ fun UploadPostScreen(
                                     }else{
                                         viewModel.uploadPostAndProduct(
                                             post = CreatedPost(
-                                                id=0,
                                                 title = title.value,
                                                 postType =
                                                     if(selectedVideoUri.value==Uri.EMPTY){
@@ -560,12 +570,12 @@ fun UploadPostScreen(
                                                         "video"
                                                     }
                                                 ,
-                                                publisher = USERID.toString(),
-                                                authorId = USERID,
+                                                category="",
                                                 featuredImage = selectedImages.toList(),
                                                 videoUri = selectedVideoUri.value!!,
                                                 description = description.value,
                                                 dateAdded =Date() ,
+                                                longDataAdded = System.currentTimeMillis(),
                                                 haveProduct =
                                                 if (viewModel.product.value==null){
                                                     0
@@ -803,4 +813,12 @@ fun Activity.openAppSettings() {
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null)
     ).also(::startActivity)
+}
+
+fun getResourceUri(resources: Resources, resourceID: Int): Uri {
+    return Uri.parse(
+        "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
+                resources.getResourceTypeName(resourceID) + '/'
+                + resources.getResourceEntryName(resourceID)
+    )
 }

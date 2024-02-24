@@ -107,20 +107,20 @@ interface RetrofitService {
         @Part image: MultipartBody.Part,
     ): Response<Unit>
 
-   /* suspend fun addPassport(profile_picture: MultipartBody.Part?,
-                            userid: String,
-                            fistname:String,
-                            surname:String,
-                            nationality:String,
-                            dof:String,
-                            gender:String,
-                            age:String,
-                            sig:String,
-                            salt:String,
-                            image:Image):
-            Response<PassportInsertApiClass>{
-        return RetrofitInstance.api.addPassport(profile_picture, userid,fistname,surname,nationality,dof,gender,age,sig,salt)
-    }*/
+    @Multipart
+    @POST("posts/uploadPost")
+    suspend fun uploadPost(
+        @Header("Authorization") token: String?,
+        @Part("Title") title: RequestBody,
+        @Part("Category") category: RequestBody,
+        @Part("PostType") postType: RequestBody,
+        @Part("Description") description: RequestBody,
+        @Part("DataAdded") dataAdded: RequestBody,
+        @Part("LongDataAdded") longDataAdded: RequestBody,
+        @Part("HaveProduct") haveProduct: RequestBody,
+        @Part Video: MultipartBody.Part,
+        @Part FeaturedImages: List<MultipartBody.Part>,
+        ): Response<PostDto>
 
     @GET("comments/postComments")
     suspend fun onePostComments(

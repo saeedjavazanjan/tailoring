@@ -13,6 +13,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
+import com.saeeed.devejump.project.tailoring.utils.GetFileOfUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -29,7 +30,8 @@ class GetUserProfileData(
     private val retrofitService: RetrofitService,
     private val dtoMapper: PostMapper,
     private val userDataEntityMapper: UserDataEntityMapper,
-    private val userDtoMapper:UserDataMapper
+    private val userDtoMapper:UserDataMapper,
+    private val getFileOfUri: GetFileOfUri
 
     ) {
 
@@ -131,14 +133,10 @@ class GetUserProfileData(
       fun updateUserData(
         userData: UserData?,
         token: String?,
-        context: Context,
         avatar: Uri
     ):Flow<DataState<String>> = flow {
 
-        val part=  getFileFromUri(
-              context,
-              avatar
-          )
+        val part=  getFileOfUri.getFileFromUri(avatar)
 
         emit(DataState.loading())
      //  val databaseUpdate= sewMethodDao.updateUserData(listOf(userDataEntityMapper.mapFromDomainModel(userData)))
@@ -153,6 +151,10 @@ class GetUserProfileData(
                 )
                 if (result.isSuccessful)
                 emit(DataState.success("به روز رسانی با موفقیت انجام شد"))
+                else if (result.code()==401){
+
+                    emit(DataState.error("شما دسترسی لازم را ندارید"))
+                }
                 else{
                     try {
                         val errMsg = result.errorBody()?.string()?.let {
@@ -197,18 +199,4 @@ class GetUserProfileData(
 
     }
 
-
-    fun getFileFromUri(
-        context: Context,
-        avatarUri: Uri
-    ): MultipartBody.Part {
-        val fileDire = context.filesDir
-        val file = File(fileDire, "image.png")
-        val inputStream = context.contentResolver.openInputStream(avatarUri)
-        val outputStream = FileOutputStream(file)
-        inputStream!!.copyTo(outputStream)
-        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-
-        return MultipartBody.Part.createFormData("AvatarFile", file.name, requestBody)
-    }
 }
