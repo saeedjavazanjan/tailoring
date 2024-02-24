@@ -3,19 +3,35 @@ package com.saeeed.devejump.project.tailoring.interactor.upload_post
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import androidx.core.net.toUri
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
+import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
+import com.saeeed.devejump.project.tailoring.domain.model.Post
+import com.saeeed.devejump.project.tailoring.network.RetrofitService
+import com.saeeed.devejump.project.tailoring.network.model.PostDto
+import com.saeeed.devejump.project.tailoring.network.model.PostMapper
+import com.saeeed.devejump.project.tailoring.utils.GetFileOfUri
 import com.saeeed.devejump.project.tailoring.utils.GetPathFromUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import retrofit2.http.Multipart
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-class UploadPostFunctions() {
+class UploadPostFunctions(
+   val  retrofitService: RetrofitService,
+    val getFileOfUri: GetFileOfUri,
+    val dtoMapper:PostMapper
+
+) {
 
     @SuppressLint("SuspiciousIndentation")
     fun zipSelectedFiles(
@@ -61,13 +77,59 @@ class UploadPostFunctions() {
 
 
 
-    fun uploadPost():Flow<DataState<Int>> = flow{
+    fun uploadPost(
+        token:String,
+        post:CreatedPost
+    ):Flow<DataState<Post>> = flow{
         emit(DataState.loading())
 
+        val videoPart=getFileOfUri.getFileFromUri(post.videoUri)
+        val ImagesPart =convertListOfUriToListOfFiles(post.featuredImage)
+       val result= retrofitService.uploadPost(
+            token=token,
+            title = post.title!!.toRequestBody(),
+            category = post.category!!.toRequestBody(),
+            postType = post.postType!!.toRequestBody(),
+            description = post.description!!.toRequestBody(),
+            dataAdded = post.dateAdded!!.toString().toRequestBody(),
+            longDataAdded = post.longDataAdded.toString().toRequestBody(),
+            haveProduct = post.haveProduct.toString().toRequestBody(),
+            Video = videoPart,
+            FeaturedImages = ImagesPart
+        )
 
+        if (result.isSuccessful){
+            emit(DataState.success(dtoMapper.mapToDomainModel(result.body()!!)))
+        }else if (result.code()==401){
+
+            emit(DataState.error("شما دسترسی لازم را ندارید"))
+        }else{
+            try {
+                val errMsg = result.errorBody()?.string()?.let {
+                    JSONObject(it).getString("error") // or whatever your message is
+                } ?: run {
+                    emit(DataState.error( result.code().toString()))
+                }
+                emit(DataState.error(errMsg.toString()))
+            }catch (e:Exception){
+                emit(DataState.error("خطای سرور"))
+
+
+            }
+        }
 
 
     }
+
+    private fun convertListOfUriToListOfFiles(uris:List<Uri?>):List<MultipartBody.Part>{
+        val result= mutableListOf<MultipartBody.Part>()
+        uris.forEach {uri->
+            result.add(getFileOfUri.getFileFromUri(uri!!))
+
+        }
+        return result
+    }
+
 }
 
 

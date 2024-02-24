@@ -44,6 +44,7 @@ import com.saeeed.devejump.project.tailoring.network.model.ProductDtoMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.repository.SewRepository
 import com.saeeed.devejump.project.tailoring.repository.SewRepositoryImpl
+import com.saeeed.devejump.project.tailoring.utils.GetFileOfUri
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -70,6 +71,14 @@ object AppModule {
         return app as BaseApplication
     }
 
+
+    @Singleton
+    @Provides
+    fun uriFileProvider(@ApplicationContext context: Context):GetFileOfUri{
+        return GetFileOfUri(context)
+    }
+
+
     @Singleton
     @Provides
     fun provideMapper():PostMapper {
@@ -84,8 +93,14 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideUploadPostFunctions(): UploadPostFunctions {
-        return UploadPostFunctions()
+    fun provideUploadPostFunctions(
+        retrofitService: RetrofitService,
+        getFileOfUri: GetFileOfUri
+    ): UploadPostFunctions {
+        return UploadPostFunctions(
+            retrofitService = retrofitService,
+            getFileOfUri=getFileOfUri
+        )
     }
 
     @Singleton
@@ -329,7 +344,8 @@ object AppModule {
         entityMapper: PostEntityMapper,
         userDataEntityMapper: UserDataEntityMapper,
         sewMethodDao: SewMethodDao,
-        userDataMapper: UserDataMapper
+        userDataMapper: UserDataMapper,
+        getFileOfUri: GetFileOfUri
 
     ): GetUserProfileData {
         return GetUserProfileData(
@@ -338,7 +354,8 @@ object AppModule {
             entityMapper = entityMapper,
             userDataEntityMapper = userDataEntityMapper,
             sewMethodDao = sewMethodDao,
-            userDtoMapper =userDataMapper
+            userDtoMapper =userDataMapper,
+            getFileOfUri = getFileOfUri
 
 
         )

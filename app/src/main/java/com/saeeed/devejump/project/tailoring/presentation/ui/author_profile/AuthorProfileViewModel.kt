@@ -145,7 +145,6 @@ constructor(
     }
     @OptIn(ExperimentalMaterialApi::class)
     fun updateUserData(
-        context: Context,
         userData: UserData?,
         scaffoldState: ScaffoldState,
         scope: CoroutineScope,
@@ -159,7 +158,6 @@ constructor(
         getUserProfileData.updateUserData(
             userData,
             authorToken.value,
-            context,
             avatarUri
         ).onEach {dataState ->
             dataState.loading.let {
