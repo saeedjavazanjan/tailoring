@@ -7,6 +7,9 @@ import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -16,8 +19,10 @@ import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFu
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -25,14 +30,16 @@ import javax.inject.Inject
 @HiltViewModel
 class UploadPostViewModel
     @Inject constructor(
-       private val uploadPostFunctions: UploadPostFunctions
+       private val uploadPostFunctions: UploadPostFunctions,
+       private val userPreferencesDataStore: DataStore<Preferences>
 
-):ViewModel() {
+    ):ViewModel() {
 
-
+    val authorToken= mutableStateOf<String?>("")
     val loading = mutableStateOf(false)
     val fileZippingLoading= mutableStateOf(false)
     val dialogQueue = DialogQueue()
+    val successFulUpload= mutableStateOf(false)
 
     val product: MutableState<Product?> =
         mutableStateOf(
@@ -95,7 +102,28 @@ class UploadPostViewModel
     }
 
     fun uploadPostAndProduct(post:CreatedPost){
+        viewModelScope.launch {
+            authorToken.value=getTokenFromPreferencesStore()
+        }
+        uploadPostFunctions.uploadPost(
+            token =authorToken.value,
+            post=post
+        ).onEach {dataState->
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+                successFulUpload.value=true
 
+            }
+            dataState.error?.let {
+                dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it)
+            }
+
+        }.catch {
+            dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
+
+        }.launchIn(viewModelScope)
 
 
     }
@@ -112,5 +140,18 @@ class UploadPostViewModel
     fun jsonStringOfProduct(product: Product): String {
         var gson = Gson()
         return gson.toJson(product)
+    }
+    suspend fun getTokenFromPreferencesStore():String {
+        val dataStoreKey= stringPreferencesKey("user_token")
+        return try{
+            val preferences=userPreferencesDataStore.data.first()
+            if(preferences[dataStoreKey]==null){
+                ""
+            }else
+                "Bearer ${preferences[dataStoreKey]}"
+        }catch (e:NoSuchElementException){
+            ""
+        }
+
     }
 }

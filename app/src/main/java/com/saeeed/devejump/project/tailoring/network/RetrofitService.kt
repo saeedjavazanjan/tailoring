@@ -115,7 +115,6 @@ interface RetrofitService {
         @Part("Category") category: RequestBody,
         @Part("PostType") postType: RequestBody,
         @Part("Description") description: RequestBody,
-        @Part("DataAdded") dataAdded: RequestBody,
         @Part("LongDataAdded") longDataAdded: RequestBody,
         @Part("HaveProduct") haveProduct: RequestBody,
         @Part Video: MultipartBody.Part,

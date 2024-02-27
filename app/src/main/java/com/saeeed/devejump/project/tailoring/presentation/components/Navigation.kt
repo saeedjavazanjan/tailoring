@@ -221,7 +221,11 @@ fun Navigation(
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                 viewModel = uploadPostViewModel,
                 navController = navController,
-                onNavigateTpProductDetailScreen = navController::navigate
+                onNavigateTpProductDetailScreen = navController::navigate,
+                        onNavigateToAuthorProfile={
+                            navController.navigate(Screen.AuthorProfile.route)
+
+                        }
             )
 
         }

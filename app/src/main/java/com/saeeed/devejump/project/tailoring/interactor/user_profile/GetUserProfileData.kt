@@ -1,9 +1,7 @@
 package com.saeeed.devejump.project.tailoring.interactor.user_profile
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.Uri
-import android.util.Log
 import com.saeeed.devejump.project.tailoring.cash.SewMethodDao
 import com.saeeed.devejump.project.tailoring.cash.model.PostEntityMapper
 import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
@@ -16,13 +14,8 @@ import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.utils.GetFileOfUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
 
 class GetUserProfileData(
     private val sewMethodDao: SewMethodDao,
@@ -136,7 +129,7 @@ class GetUserProfileData(
         avatar: Uri
     ):Flow<DataState<String>> = flow {
 
-        val part=  getFileOfUri.getFileFromUri(avatar)
+        val part=  getFileOfUri.getImageFileFromUri(avatar)
 
         emit(DataState.loading())
      //  val databaseUpdate= sewMethodDao.updateUserData(listOf(userDataEntityMapper.mapFromDomainModel(userData)))
