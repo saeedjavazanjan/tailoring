@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,21 +41,24 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -96,13 +100,16 @@ import com.saeeed.devejump.project.tailoring.components.StoragePermissionTextPro
 import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
+import com.saeeed.devejump.project.tailoring.presentation.components.ProductType
 import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
+import com.saeeed.devejump.project.tailoring.presentation.ui.search.Category
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import com.saeeed.devejump.project.tailoring.utils.USERID
 import java.io.File
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Date
 import java.util.Objects
 
@@ -117,18 +124,40 @@ fun UploadPostScreen(
     isNetworkAvailable: Boolean,
     viewModel: UploadPostViewModel,
     navController:NavController,
-    onNavigateTpProductDetailScreen: (String) -> Unit
+    onNavigateTpProductDetailScreen: (String) -> Unit,
+    onNavigateToAuthorProfile:()->Unit
 ){
     val context = LocalContext.current
 
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
     val scaffoldState= rememberScaffoldState()
+    val successFulUpload=viewModel.successFulUpload
+    val radioOptions = listOf(
+        Category.TAILORING.value,
+        Category.DOLL_MAKING.value,
+        Category.EMBROIDERY.value,
+        Category.KNITTING.value,
+        Category.TERMEHDOOZY.value,
+        Category.OTHER.value,
+        Category.LEATHERING.value,
+
+    )
+    LaunchedEffect(key1 = successFulUpload.value ){
+        if(successFulUpload.value) {
+            onNavigateToAuthorProfile()
+            successFulUpload.value=false
+        }
+    }
     val permissionDialogQueue = viewModel.visiblePermissionDialogQueue
 
     val typeOfPost= remember {
         mutableStateOf("")
     }
+    val category= remember {
+        mutableStateOf(radioOptions[0])
+    }
+
     var selectedImages=remember { mutableStateListOf<Uri?>(
        getResourceUri(
             context.resources,
@@ -172,7 +201,10 @@ fun UploadPostScreen(
     }*/
     val imageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)) {
-        selectedVideoUri.value= Uri.EMPTY
+        selectedVideoUri.value=  getResourceUri(
+            context.resources,
+            R.drawable.empty_plate
+        )
         selectedImages.apply {
             clear()
             addAll(it)
@@ -188,7 +220,10 @@ fun UploadPostScreen(
                 clear()
                 selectedImages.add(result.uriContent)
             }
-            selectedVideoUri.value= Uri.EMPTY
+            selectedVideoUri.value=  getResourceUri(
+                context.resources,
+                R.drawable.empty_plate
+            )
             typeOfPost.value="cameraPhoto"
             // Got image data. Use it according to your need
         }
@@ -394,10 +429,14 @@ fun UploadPostScreen(
                         when(typeOfPost.value){
                             "video"->{
                                 if(selectedVideoUri.value!=null){
-                                VideoPlayer(
-                                    videoUrl = selectedVideoUri.value.toString(),
-                                    context = context
-                                )}
+                                    val videoUrl= remember {
+                                      mutableStateOf(  selectedVideoUri.value.toString())
+                                    }
+                                    VideoPlayer(
+                                        videoUrl = videoUrl.value,
+                                        context = context
+                                    )}
+
                             }
                             "photo"->{
                                  SelectedImagesPager(
@@ -504,7 +543,11 @@ fun UploadPostScreen(
                     }
                     TitleAndDescription(
                         title=title,
-                        description=description
+                        description=description,
+                        radioOptions = radioOptions,
+                        selectCategory= {
+                            category.value=it
+                        }
                     )
 
                     if(viewModel.product.value!!.name!=""){
@@ -546,6 +589,7 @@ fun UploadPostScreen(
 
 
                             Button(
+                                enabled=!loading,
                                 modifier= Modifier
                                     .align(Alignment.CenterHorizontally)
                                     .padding(top = 100.dp),
@@ -564,20 +608,22 @@ fun UploadPostScreen(
                                             post = CreatedPost(
                                                 title = title.value,
                                                 postType =
-                                                    if(selectedVideoUri.value==Uri.EMPTY){
+                                                    if(selectedVideoUri.value== getResourceUri(
+                                                            context.resources,
+                                                            R.drawable.empty_plate
+                                                        )){
                                                         "image"
                                                     }else{
                                                         "video"
                                                     }
                                                 ,
-                                                category="",
+                                                category =category.value,
                                                 featuredImage = selectedImages.toList(),
                                                 videoUri = selectedVideoUri.value!!,
                                                 description = description.value,
-                                                dateAdded =Date() ,
                                                 longDataAdded = System.currentTimeMillis(),
                                                 haveProduct =
-                                                if (viewModel.product.value==null){
+                                                if (viewModel.product.value!!.name==""){
                                                     0
                                                 }else{
                                                     1
@@ -741,9 +787,16 @@ fun SelectedImagesPager(
 @Composable
 fun TitleAndDescription(
     title:MutableState<String>,
-    description:MutableState<String>
+    description:MutableState<String>,
+    radioOptions:List<String>,
+    selectCategory:(String)->Unit
 ){
 
+    val expandedCategory = remember { mutableStateOf(false)}
+    val selectedCat = remember { mutableStateOf(radioOptions[0])}
+    val selectCategoryText= remember {
+       mutableStateOf("دسته بندی")
+    }
 
     TextField(
         modifier = Modifier
@@ -795,30 +848,95 @@ fun TitleAndDescription(
             disabledIndicatorColor = Color.Transparent
         )
     )
-}
-fun Context.createImageFile(): File {
-    // Create an image file name
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-    val imageFileName = "JPEG_" + timeStamp + "_"
-    val image = File.createTempFile(
-        imageFileName, /* prefix */
-        ".jpg", /* suffix */
-        externalCacheDir      /* directory */
-    )
-    return image
-}
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        elevation =CardDefaults.cardElevation(10.dp),
+        colors=CardDefaults.cardColors(Color.White),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable(onClick = {
+                expandedCategory.value = !expandedCategory.value
+            })
+    ) {
+        Column {
 
-fun Activity.openAppSettings() {
-    Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    ).also(::startActivity)
-}
 
-fun getResourceUri(resources: Resources, resourceID: Int): Uri {
-    return Uri.parse(
-        "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
-                resources.getResourceTypeName(resourceID) + '/'
-                + resources.getResourceEntryName(resourceID)
-    )
-}
+            Row(
+                modifier = Modifier.padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = selectCategoryText.value,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    if (expandedCategory.value)
+                        Icons.Default.KeyboardArrowUp
+                    else
+                        Icons.Default.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+
+            if (expandedCategory.value) {
+
+                radioOptions.forEach { productType ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                onClick = {
+                                    selectCategory(productType)
+                                    selectedCat.value = productType
+                                    expandedCategory.value = false
+                                    selectCategoryText.value=productType
+                                }
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(
+                            selected = (productType==selectedCat.value),
+                            onClick = { selectCategory(productType) }
+
+                        )
+                        Text(
+                            text = productType,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+
+            }
+        }
+    }
+    }
+        fun Context.createImageFile(): File {
+            // Create an image file name
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            val imageFileName = "JPEG_" + timeStamp + "_"
+            val image = File.createTempFile(
+                imageFileName, /* prefix */
+                ".jpg", /* suffix */
+                externalCacheDir      /* directory */
+            )
+            return image
+        }
+
+        fun Activity.openAppSettings() {
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", packageName, null)
+            ).also(::startActivity)
+        }
+
+        fun getResourceUri(resources: Resources, resourceID: Int): Uri {
+            return Uri.parse(
+                "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
+                        resources.getResourceTypeName(resourceID) + '/'
+                        + resources.getResourceEntryName(resourceID)
+            )
+        }

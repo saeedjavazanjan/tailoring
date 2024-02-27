@@ -6,6 +6,7 @@ import android.widget.FrameLayout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -21,12 +22,17 @@ fun VideoPlayer(
     videoUrl:String,
     context:Context
     ){
-
+    var videoPath= remember {
+        mutableStateOf(videoUrl)
+    }
+    LaunchedEffect(key1 =videoUrl){
+        videoPath.value=videoUrl
+    }
     val context = LocalContext.current
     var playWhenReady = remember { mutableStateOf(true) }
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(videoUrl))
+            setMediaItem(MediaItem.fromUri(videoPath.value))
             repeatMode = ExoPlayer.REPEAT_MODE_ALL
             playWhenReady = playWhenReady
             prepare()
