@@ -57,7 +57,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
@@ -72,12 +71,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
@@ -100,16 +97,12 @@ import com.saeeed.devejump.project.tailoring.components.StoragePermissionTextPro
 import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
-import com.saeeed.devejump.project.tailoring.presentation.components.ProductType
-import com.saeeed.devejump.project.tailoring.presentation.components.TopBar
 import com.saeeed.devejump.project.tailoring.presentation.components.VideoPlayer
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 import com.saeeed.devejump.project.tailoring.presentation.ui.search.Category
 import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
-import com.saeeed.devejump.project.tailoring.utils.USERID
 import java.io.File
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.Date
 import java.util.Objects
 
@@ -604,7 +597,7 @@ fun UploadPostScreen(
                                             ).show()
 
                                     }else{
-                                        viewModel.uploadPostAndProduct(
+                                        viewModel.uploadPost(
                                             post = CreatedPost(
                                                 title = title.value,
                                                 postType =

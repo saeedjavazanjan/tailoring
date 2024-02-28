@@ -121,6 +121,25 @@ interface RetrofitService {
         @Part FeaturedImages: List<MultipartBody.Part>,
         ): Response<PostDto>
 
+    @Multipart
+    @POST("products/uploadProduct")
+    suspend fun uploadProduct(
+        @Header("Authorization") token: String?,
+        @Part("Name") name: RequestBody,
+        @Part("Description") description: RequestBody,
+        @Part("TypeOfProduct") typeOfProduct: RequestBody,
+        @Part("Mas") mas: RequestBody,
+        @Part("Supply") supply: RequestBody,
+        @Part("Unit") unit: RequestBody,
+        @Part("Price") price: RequestBody,
+        @Part("PostId") postId: RequestBody,
+        @Part("AttachedFile") attachedFile: RequestBody,
+        @Part Images: List<MultipartBody.Part>,
+    ): Response<ProductDto>
+
+
+
+
     @GET("comments/postComments")
     suspend fun onePostComments(
         //  @Header("Authorization") token: String,

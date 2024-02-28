@@ -6,8 +6,10 @@ import android.net.Uri
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
 import com.saeeed.devejump.project.tailoring.domain.model.Post
+import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
 import com.saeeed.devejump.project.tailoring.network.model.PostMapper
+import com.saeeed.devejump.project.tailoring.network.model.ProductDtoMapper
 import com.saeeed.devejump.project.tailoring.utils.GetFileOfUri
 import com.saeeed.devejump.project.tailoring.utils.GetPathFromUri
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +28,8 @@ import java.util.zip.ZipOutputStream
 class UploadPostFunctions(
    val  retrofitService: RetrofitService,
     val getFileOfUri: GetFileOfUri,
-    val dtoMapper:PostMapper
+    val postDtoMapper:PostMapper,
+    val productDtoMapper: ProductDtoMapper
 
 ) {
 
@@ -95,7 +98,7 @@ class UploadPostFunctions(
         )
 
         if (result.isSuccessful){
-            emit(DataState.success(dtoMapper.mapToDomainModel(result.body()!!)))
+            emit(DataState.success(postDtoMapper.mapToDomainModel(result.body()!!)))
         }else if (result.code()==401){
             emit(DataState.error("شما دسترسی لازم را ندارید"))
         }else{
@@ -112,6 +115,52 @@ class UploadPostFunctions(
 
             }
         }
+
+
+    }
+
+    fun uploadProduct(
+        token: String?,
+        product: Product,
+        postId:Int
+        ):Flow<DataState<Product>> = flow {
+        emit(DataState.loading())
+        val ImagesPart =convertListOfUriToListOfFiles(product.images)
+        val result= retrofitService.uploadProduct(
+            token=token,
+            name = product.name.toRequestBody(),
+            description = product.description.toRequestBody(),
+            typeOfProduct = product.typeOfProduct.toRequestBody(),
+            mas=product.mas.toRequestBody(),
+            supply = product.supply.toRequestBody(),
+            unit = product.unit.toRequestBody(),
+            price = product.price.toRequestBody(),
+            postId =postId.toString().toRequestBody(),
+            attachedFile = product.attachedFile.toRequestBody(),
+            Images = ImagesPart
+        )
+        if (result.isSuccessful){
+            emit(DataState.success(productDtoMapper.mapToDomainModel(result.body()!!)))
+        }else if (result.code()==401){
+            emit(DataState.error("شما دسترسی لازم را ندارید"))
+        }else{
+            try {
+                val errMsg = result.errorBody()?.string()?.let {
+                    JSONObject(it).getString("error") // or whatever your message is
+                } ?: run {
+                    emit(DataState.error( result.code().toString()))
+                }
+                emit(DataState.error(errMsg.toString()))
+            }catch (e:Exception){
+                emit(DataState.error("خطای سرور"))
+
+
+            }
+        }
+
+
+
+
 
 
     }

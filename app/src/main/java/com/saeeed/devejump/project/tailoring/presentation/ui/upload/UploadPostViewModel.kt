@@ -101,7 +101,7 @@ class UploadPostViewModel
         }
     }
 
-    fun uploadPostAndProduct(post:CreatedPost){
+    fun uploadPost(post:CreatedPost){
         viewModelScope.launch {
             authorToken.value=getTokenFromPreferencesStore()
         }
@@ -113,7 +113,12 @@ class UploadPostViewModel
                 loading.value=it
             }
             dataState.data?.let {
-                successFulUpload.value=true
+                if (it.haveProduct==1 && product.value!!.name !=""){
+                    uploadProduct(it.id)
+                }else{
+                    successFulUpload.value=true
+                }
+
 
             }
             dataState.error?.let {
@@ -127,6 +132,39 @@ class UploadPostViewModel
 
 
     }
+
+
+    fun uploadProduct(
+        postId:Int
+    ){
+        uploadPostFunctions.uploadProduct(
+            authorToken.value,
+            product.value!!,
+            postId
+        ).onEach { dataState ->
+
+        dataState.loading.let {
+            loading.value=it
+        }
+        dataState.data?.let {
+            successFulUpload.value=true
+
+
+        }
+        dataState.error?.let {
+            dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it)
+
+        }
+
+        }.catch {
+            dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
+
+        }.launchIn(viewModelScope)
+
+
+    }
+
+
     fun createFolder():String{
         val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
             .toString()
