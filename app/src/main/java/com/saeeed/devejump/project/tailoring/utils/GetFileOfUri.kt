@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.utils
 
 import android.content.Context
+import android.content.res.Resources
 import android.net.Uri
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -39,5 +40,12 @@ class GetFileOfUri(
         return MultipartBody.Part.createFormData("video", file.name, requestBody)
     }
 
+    fun getResourceUri(resources: Resources, resourceID: Int): Uri {
+        return Uri.parse(
+            "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
+                    resources.getResourceTypeName(resourceID) + '/'
+                    + resources.getResourceEntryName(resourceID)
+        )
+    }
 
 }

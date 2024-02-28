@@ -4,36 +4,36 @@ import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class ProductDto(
-    @SerializedName("id")
+    @SerializedName("Id")
     val id:Int,
 
-    @SerializedName("name")
+    @SerializedName("Name")
     val name:String,
 
-    @SerializedName("description")
+    @SerializedName("Description")
     val description:String,
 
-    @SerializedName("images")
+    @SerializedName("Images")
     val images:List<String> = mutableListOf(),
 
-    @SerializedName("type_of_product")
+    @SerializedName("typeOfProduct")
     val typeOfProduct:String,
 
-    @SerializedName("mas")
+    @SerializedName("Mas")
     val mas:String="0",
 
-    @SerializedName("supply")
+    @SerializedName("Supply")
     val supply:String="0",
 
-    @SerializedName("unit")
+    @SerializedName("Unit")
     val unit:String,
 
-    @SerializedName("price")
+    @SerializedName("Price")
     val price:String,
 
-    @SerializedName("post_id")
+    @SerializedName("postId")
     val postId:Int,
 
-    @SerializedName("attached_file")
+    @SerializedName("AttachedFile")
     val attachedFile:String=""
 )

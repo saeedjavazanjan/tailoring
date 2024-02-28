@@ -96,12 +96,14 @@ object AppModule {
     fun provideUploadPostFunctions(
         retrofitService: RetrofitService,
         getFileOfUri: GetFileOfUri,
-        dtoMapper: PostMapper
+        dtoMapper: PostMapper,
+        productDtoMapper: ProductDtoMapper
     ): UploadPostFunctions {
         return UploadPostFunctions(
             retrofitService = retrofitService,
             getFileOfUri=getFileOfUri,
-            dtoMapper=dtoMapper
+            postDtoMapper=dtoMapper,
+            productDtoMapper=productDtoMapper
         )
     }
 

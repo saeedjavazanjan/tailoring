@@ -134,7 +134,12 @@ fun ProductEditDialog(
 
 
     val selectedImages= remember {
-        mutableStateListOf<Uri?>(Uri.EMPTY)
+        mutableStateListOf<Uri?>(
+            getResourceUri(
+                context.resources,
+                R.drawable.empty_plate
+            )
+        )
 
     }
 
@@ -273,7 +278,7 @@ fun ProductEditDialog(
                         }
                     }
 
-                    Card(
+                 /*   Card(
                         shape = RoundedCornerShape(8.dp),
                         elevation = 8.dp,
                         modifier = Modifier
@@ -319,7 +324,7 @@ fun ProductEditDialog(
                                 )
                             }
                         }
-                    }
+                    }*/
                     Card(
                         shape = RoundedCornerShape(8.dp),
                         elevation = 8.dp,

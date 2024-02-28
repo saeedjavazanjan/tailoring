@@ -8,7 +8,7 @@ data class Product(
     val name:String,
     val description:String,
     val images:List<Uri?> = mutableListOf(Uri.EMPTY),
-    val typeOfProduct:String,
+    val typeOfProduct:String="محصول فیزیکی",
     val mas:String="0",
     val supply:String="0",
     val unit:String,
