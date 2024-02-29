@@ -44,7 +44,6 @@ constructor(
     private val getUserProfileData: GetUserProfileData,
     private val restoreSewMethods: RestoreSewMethods,
     private val connectivityManager: ConnectivityManager,
-    @Named("auth_token") private val token: String,
     private val savedStateHandle: SavedStateHandle,
     private val userPreferencesDataStore: DataStore<Preferences>
 
@@ -92,9 +91,12 @@ constructor(
     }
 
     fun getUserPosts(){
+        viewModelScope.launch {
+            authorToken.value=getTokenFromPreferencesStore()
+        }
+
         getUserProfileData.getUserPosts(
-            token = token,
-            userId = USERID,
+            token = authorToken.value!!,
             isNetworkAvailable = connectivityManager.isNetworkAvailable.value
         ).onEach { dataState->
             dataState.loading.let {
@@ -103,7 +105,7 @@ constructor(
 
             dataState.data?.let{
                 userPosts.value =it
-                getUserBookMarkedPosts()
+                //getUserBookMarkedPosts()
             }
             dataState.error?.let {
                 dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
@@ -120,7 +122,7 @@ constructor(
 
     fun getUserBookMarkedPosts(){
         getUserProfileData.getUserBookMarkedPosts(
-            token = token,
+            token = "token",
             userId = USERID,
             isNetworkAvailable = connectivityManager.isNetworkAvailable.value
         ).onEach { dataState->
@@ -158,7 +160,9 @@ constructor(
         getUserProfileData.updateUserData(
             userData,
             authorToken.value,
-            avatarUri
+            avatarUri,
+            isNetworkAvailable =   connectivityManager.isNetworkAvailable.value
+
         ).onEach {dataState ->
             dataState.loading.let {
                 loading.value=it

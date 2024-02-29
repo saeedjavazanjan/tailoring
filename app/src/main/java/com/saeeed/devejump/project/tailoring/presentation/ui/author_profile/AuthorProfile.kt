@@ -92,7 +92,7 @@ fun UserProfileScreen(
     val loginState= remember { mutableStateOf(false) }
     val context= LocalContext.current
 LaunchedEffect(Unit ){
-   // viewModel.getUserPosts()
+    viewModel.getUserPosts()
     viewModel.getUserData()
     authorToken.value=viewModel.getTokenFromPreferencesStore()
 }

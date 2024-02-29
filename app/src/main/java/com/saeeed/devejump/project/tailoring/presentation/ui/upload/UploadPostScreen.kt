@@ -138,8 +138,25 @@ fun UploadPostScreen(
     )
     LaunchedEffect(key1 = successFulUpload.value ){
         if(successFulUpload.value) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.post_uploaded_successfully),
+                Toast.LENGTH_SHORT
+            ).show()
             onNavigateToAuthorProfile()
             successFulUpload.value=false
+            viewModel.product.value=Product(
+                id=0,
+                name = "",
+                description = "",
+                typeOfProduct = "محصول فیزیکی",
+                unit = "عدد",
+                mas = "",
+                supply = "",
+                price = "",
+                postId = 0
+            )
+
         }
     }
     val permissionDialogQueue = viewModel.visiblePermissionDialogQueue

@@ -66,7 +66,6 @@ constructor(
     fun getUserPosts(userId:Int){
         getUserProfileData.getUserPosts(
             token = token,
-            userId = userId,
             isNetworkAvailable = connectivityManager.isNetworkAvailable.value
         ).onEach { dataState->
             dataState.loading.let {

@@ -37,6 +37,12 @@ interface RetrofitService {
           @Query("pageSize") pagesize:Int
     ): List<PostDto>
 
+    @GET("posts/AuthorPosts")
+    suspend fun getUserPosts(
+         @Header("Authorization") token: String,
+        @Query("pageNumber") page: Int,
+        @Query("pageSize") pagesize:Int
+    ):Response< List<PostDto>>
     @GET("followings-post")
     suspend fun followingsPosts(
         // @Header("Authorization") token: String,

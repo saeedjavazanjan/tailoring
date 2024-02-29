@@ -106,6 +106,7 @@
     <string name="short_description_warning">توضیحات نباید کمتر از 50 کاراکتر باشد</string>
     <string name="not_file_attached_warning">فایل مربوط به محصول دیجیتال خود را اضافه کنید</string>
     <string name="product_saved_successfully">محصول با موفقیت ثبت شد</string>
+    <string name="post_uploaded_successfully">پست شما با موفقیت آپلود شد</string>
 
 
 

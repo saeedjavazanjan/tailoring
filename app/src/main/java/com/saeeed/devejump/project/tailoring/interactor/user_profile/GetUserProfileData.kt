@@ -9,13 +9,16 @@ import com.saeeed.devejump.project.tailoring.domain.data.DataState
 import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.UserData
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
+import com.saeeed.devejump.project.tailoring.network.model.PostDto
 import com.saeeed.devejump.project.tailoring.network.model.PostMapper
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
 import com.saeeed.devejump.project.tailoring.utils.GetFileOfUri
+import com.saeeed.devejump.project.tailoring.utils.posts
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import retrofit2.Response
 
 class GetUserProfileData(
     private val sewMethodDao: SewMethodDao,
@@ -24,7 +27,7 @@ class GetUserProfileData(
     private val dtoMapper: PostMapper,
     private val userDataEntityMapper: UserDataEntityMapper,
     private val userDtoMapper:UserDataMapper,
-    private val getFileOfUri: GetFileOfUri
+    private val getFileOfUri: GetFileOfUri,
 
     ) {
 
@@ -70,18 +73,40 @@ class GetUserProfileData(
 
     fun getUserPosts(
         token: String,
-        userId: Int,
         isNetworkAvailable: Boolean
 
     ):Flow<DataState<List<Post>>> = flow {
 
+        if(isNetworkAvailable) {
             emit(DataState.loading())
 
-            val sewMethods = getSewMethodsFromNetwork(
-                token = token,
-                userId = userId,
+            val result = getUserPostsFromNetwork(
+                token = token
             )
-            emit(DataState.success(sewMethods))
+
+            if (result.isSuccessful) {
+                emit(DataState.success(dtoMapper.toDomainList(result.body()!!)))
+
+            } else if (result.code() == 401) {
+
+                emit(DataState.error("شما دسترسی لازم را ندارید"))
+            } else {
+                try {
+                    val errMsg = result.errorBody()?.string()?.let {
+                        JSONObject(it).getString("error") // or whatever your message is
+                    } ?: run {
+                        emit(DataState.error(result.code().toString()))
+                    }
+                    emit(DataState.error(errMsg.toString()))
+                } catch (e: Exception) {
+                    emit(DataState.error("خطای سرور"))
+
+
+                }
+
+            }
+        }
+
     }
 
     fun getUserBookMarkedPosts(
@@ -93,15 +118,30 @@ class GetUserProfileData(
 
         emit(DataState.loading())
 
-        try {
-            val sewMethods = getSewMethodsFromNetwork(
-                token = token,
-                userId = userId,
-            )
-            emit(DataState.success(sewMethods))
-        }catch (e:Exception){
-            e.printStackTrace()
-            emit(DataState.error(e.message.toString()))
+        val result = getUserPostsFromNetwork(
+            token = token)
+
+        if (result.isSuccessful){
+            emit(DataState.success(dtoMapper.toDomainList(result.body()!!)))
+
+        }    else if (result.code()==401){
+
+            emit(DataState.error("شما دسترسی لازم را ندارید"))
+        }
+        else{
+            try {
+                val errMsg = result.errorBody()?.string()?.let {
+                    JSONObject(it).getString("error") // or whatever your message is
+                } ?: run {
+                    emit(DataState.error( result.code().toString()))
+                }
+                emit(DataState.error(errMsg.toString()))
+            }catch (e:Exception){
+                emit(DataState.error("خطای سرور"))
+
+
+            }
+
         }
 
 
@@ -109,69 +149,69 @@ class GetUserProfileData(
 
     }
 
-    private suspend fun getSewMethodsFromNetwork(
+    private suspend fun getUserPostsFromNetwork(
         token: String,
-        userId: Int
-    ): List<Post> {
+    ): Response<List<PostDto>> {
 
-        return dtoMapper.toDomainList(
-            retrofitService.search(1,"",30)
-            //  token = token,
-            // page = page,
-            //  userId = userId,
-        )
+        return retrofitService.getUserPosts(
+                token = token, 1,30)
+
     }
 
       @SuppressLint("SuspiciousIndentation")
       fun updateUserData(
         userData: UserData?,
         token: String?,
-        avatar: Uri
-    ):Flow<DataState<String>> = flow {
+        avatar: Uri,
+        isNetworkAvailable: Boolean
 
-        val part=  getFileOfUri.getImageFileFromUri(avatar)
+      ):Flow<DataState<String>> = flow {
+if (isNetworkAvailable) {
+    val part = getFileOfUri.getImageFileFromUri(avatar)
 
-        emit(DataState.loading())
-     //  val databaseUpdate= sewMethodDao.updateUserData(listOf(userDataEntityMapper.mapFromDomainModel(userData)))
+    emit(DataState.loading())
+    //  val databaseUpdate= sewMethodDao.updateUserData(listOf(userDataEntityMapper.mapFromDomainModel(userData)))
 
-       // if (databaseUpdate>0){
+    // if (databaseUpdate>0){
+    try {
+        val result = retrofitService.updateUseData(
+            token,
+            userData!!.userName.toRequestBody(),
+            userData.bio.toRequestBody(),
+            part
+        )
+        if (result.isSuccessful)
+            emit(DataState.success("به روز رسانی با موفقیت انجام شد"))
+        else if (result.code() == 401) {
+
+            emit(DataState.error("شما دسترسی لازم را ندارید"))
+        } else {
             try {
-              val result=  retrofitService.updateUseData(
-                    token,
-                    userData!!.userName.toRequestBody(),
-                    userData.bio.toRequestBody(),
-                    part
-                )
-                if (result.isSuccessful)
-                emit(DataState.success("به روز رسانی با موفقیت انجام شد"))
-                else if (result.code()==401){
-
-                    emit(DataState.error("شما دسترسی لازم را ندارید"))
+                val errMsg = result.errorBody()?.string()?.let {
+                    JSONObject(it).getString("error") // or whatever your message is
+                } ?: run {
+                    emit(DataState.error(result.code().toString()))
                 }
-                else{
-                    try {
-                        val errMsg = result.errorBody()?.string()?.let {
-                            JSONObject(it).getString("error") // or whatever your message is
-                        } ?: run {
-                            emit(DataState.error( result.code().toString()))
-                        }
-                        emit(DataState.error(errMsg.toString()))
-                    }catch (e:Exception){
-                        emit(DataState.error("خطای سرور"))
+                emit(DataState.error(errMsg.toString()))
+            } catch (e: Exception) {
+                emit(DataState.error("خطای سرور"))
 
-
-                    }
-
-                }
-
-           }catch (e:Exception){
-                emit(DataState.error("خطای ارسال اطلاعات"))
 
             }
-      /* }else{
+
+        }
+
+    } catch (e: Exception) {
+        emit(DataState.error("خطای ارسال اطلاعات"))
+
+    }
+    /* }else{
             emit(DataState.error("خطای به روز رسانی دیتا بیس"))
         }*/
+}else{
+    emit(DataState.error("شما به اینترنت دسترسی ندارید"))
 
+}
     }
     fun checkIfUserFollowed(
         userId:Int,

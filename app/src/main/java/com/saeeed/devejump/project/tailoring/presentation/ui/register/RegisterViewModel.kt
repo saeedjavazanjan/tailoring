@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeeed.devejump.project.tailoring.interactor.register.RegisterUser
 import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarController
+import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -25,9 +26,11 @@ import javax.inject.Inject
 class RegisterViewModel
 @Inject constructor(
     private val registerUser: RegisterUser,
-    private val userPreferencesDataStore: DataStore<Preferences>
+    private val userPreferencesDataStore: DataStore<Preferences>,
+    private val connectivityManager: ConnectivityManager,
 
-) : ViewModel() {
+
+    ) : ViewModel() {
     private val USER_TOKEN = stringPreferencesKey("user_token")
 
     val loading = mutableStateOf(false)
@@ -52,7 +55,8 @@ class RegisterViewModel
 
         registerUser.registerPasswordRequest(
             userName = userName,
-            phoneNumber
+            phoneNumber,
+            isNetworkAvailable =   connectivityManager.isNetworkAvailable.value
         ).onEach { dataState ->
 
             dataState.loading.let {
@@ -99,7 +103,9 @@ class RegisterViewModel
 
         registerUser.loginPasswordRequest(
             userName = "userName",
-            phoneNumber = phoneNumber
+            phoneNumber = phoneNumber,
+            isNetworkAvailable =   connectivityManager.isNetworkAvailable.value
+
         ).onEach { dataState ->
 
             dataState.loading.let {
@@ -147,7 +153,10 @@ class RegisterViewModel
     ){
         val snackbarController = SnackbarController(scope)
         registerUser.loginPasswordCheck(
-           password=password, phoneNumber = phoneNumber
+           password=password,
+            phoneNumber = phoneNumber,
+          isNetworkAvailable =   connectivityManager.isNetworkAvailable.value
+
         ).onEach { dataState ->
             dataState.loading.let {
                 loading.value=it
@@ -191,7 +200,10 @@ class RegisterViewModel
     ){
         val snackbarController = SnackbarController(scope)
         registerUser.registerPasswordCheck(
-            password=password, phoneNumber = phoneNumber, userName =userName
+            password=password,
+            phoneNumber = phoneNumber,
+            userName =userName,
+            isNetworkAvailable =   connectivityManager.isNetworkAvailable.value
         ).onEach { dataState ->
             dataState.loading.let {
                 loading.value=it
