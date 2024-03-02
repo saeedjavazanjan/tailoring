@@ -24,14 +24,13 @@ class GetComments(
     @SuppressLint("SuspiciousIndentation")
     fun getPostComments(
         postId:Int,
-        token: String,
         isNetworkAvailable: Boolean
 
     ): Flow<DataState<List<Comment>>> = flow {
 
              emit(DataState.loading())
         try {
-            val response= getCommentsFromNetwork(token,postId)?.let {
+            val response= getCommentsFromNetwork(postId)?.let {
                 commentMapper.toDomainList(it)
             }
             emit(DataState.success(response!!))
@@ -109,7 +108,7 @@ class GetComments(
     }
 */
     @SuppressLint("SuspiciousIndentation")
-    private suspend fun getCommentsFromNetwork(token: String, postId: Int): List<CommentDto>? {
+    private suspend fun getCommentsFromNetwork( postId: Int): List<CommentDto>? {
 
         try {
           val response= retrofitService.onePostComments(postId)

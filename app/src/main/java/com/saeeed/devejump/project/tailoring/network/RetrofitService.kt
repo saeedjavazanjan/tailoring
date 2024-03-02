@@ -63,11 +63,18 @@ interface RetrofitService {
           @Query("userId") userId: Int
     ):Int
 
-    @GET("get")
-    suspend fun get(
-        @Header("Authorization") token: String,
+    @GET("posts/onePost")
+    suspend fun getPost(
         @Query("id") id: Int
-    ): PostDto
+    ): Response<PostDto>
+
+    @DELETE("posts/{id}")
+    suspend fun removePost(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Response<Unit>
+
+
 
     @GET("get_product")
     suspend fun getProduct(

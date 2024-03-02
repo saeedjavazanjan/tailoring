@@ -1,6 +1,7 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.description
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -37,7 +38,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -79,6 +82,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.saeeed.devejump.project.tailoring.R
+import com.saeeed.devejump.project.tailoring.components.GenericDialog
+import com.saeeed.devejump.project.tailoring.components.NegativeAction
+import com.saeeed.devejump.project.tailoring.components.PositiveAction
 import com.saeeed.devejump.project.tailoring.components.progress_bar.DotsFlashing
 import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.Post
@@ -114,9 +120,7 @@ fun DescriptionScreen(
     }else
     {
 
-        LaunchedEffect(Unit){
-            viewModel.onTriggerEvent(SewEvent.GetSewEvent(sewId))
-        }
+
         val comments=viewModel.comments.value
         val product=viewModel.product.value
         val loading = viewModel.loading.value
@@ -128,6 +132,13 @@ fun DescriptionScreen(
         val bookMarkState=viewModel.bookMarkState.value
         val likeState=viewModel.liKeState.value
         val likesCount =viewModel.likeCount.value
+        val currentUserId=viewModel.userId.value
+        LaunchedEffect(Unit){
+            viewModel.onTriggerEvent(SewEvent.GetSewEvent(sewId))
+            viewModel.userId.value=viewModel.getUserIdFromPreferencesStore()
+        }
+
+
         AppTheme(
             displayProgressBar = loading,
             darkTheme = isDarkTheme,
@@ -210,8 +221,13 @@ fun DescriptionScreen(
                                                },
                                                removeBookMark = {
                                                    viewModel.removeFromBookMarkDataBase(scaffoldState,composableScope)
+                                               },
+                                               userId = currentUserId,
+                                               editPost = {
 
-
+                                               },
+                                               removePost = {
+                                                   viewModel.removePost(scaffoldState,composableScope)
                                                }
                                            )
                                            detail(
@@ -387,10 +403,15 @@ fun imageAndVideoHolder(
     bookMarkState:Boolean,
     save:() -> Unit,
     removeBookMark:()-> Unit,
+    userId:Int,
+    editPost:()->Unit,
+    removePost:()->Unit
 
-    ){
-    val bookState= mutableStateOf(bookMarkState)
-
+    ) {
+    val bookState = mutableStateOf(bookMarkState)
+    val removeDialogShow= remember {
+        mutableStateOf(false)
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -417,12 +438,12 @@ fun imageAndVideoHolder(
                 )
 
             ) { page ->
-    AsyncImage(
-        model = post.featuredImage[page],
-        contentDescription = post.title,
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Inside,
-    )
+                AsyncImage(
+                    model = post.featuredImage[page],
+                    contentDescription = post.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Inside,
+                )
 
             }
             Row(
@@ -446,34 +467,81 @@ fun imageAndVideoHolder(
             }
         }
 
-        IconToggleButton(
-            checked = bookMarkState,
-            onCheckedChange = {
-                if (bookState.value) {
-                    bookState.value = false
-                    removeBookMark()
-                } else {
-                    bookState.value = true
+        if (userId == post.authorId) {
 
-                    save()
+            Row{
+                IconButton(onClick = {
+                      editPost()
+
+                }) {
+                    Icon(Icons.Default.Edit , contentDescription =null )
+
                 }
-            })
-        {
-            Icon(
-                painter = painterResource(
-                    if (bookState.value) R.drawable.baseline_bookmark_24
-                    else R.drawable.baseline_bookmark_border_24
-                ),
-                contentDescription = "Radio button icon",
-                tint = Color(
-                    0xFF9B51E0
+                Spacer(modifier = Modifier.size(10.dp))
+                IconButton(onClick = {
+                    removeDialogShow.value=true
+
+                }) {
+                    Icon(Icons.Default.Delete , contentDescription =null )
+
+                }
+            }
+
+
+
+
+
+        } else{
+            IconToggleButton(
+                checked = bookMarkState,
+                onCheckedChange = {
+                    if (bookState.value) {
+                        bookState.value = false
+                        removeBookMark()
+                    } else {
+                        bookState.value = true
+
+                        save()
+                    }
+                })
+            {
+                Icon(
+                    painter = painterResource(
+                        if (bookState.value) R.drawable.baseline_bookmark_24
+                        else R.drawable.baseline_bookmark_border_24
+                    ),
+                    contentDescription = "Radio button icon",
+                    tint = Color(
+                        0xFF9B51E0
+                    )
                 )
-            )
-        }
+            }
 
 
     }
+}
+    if(removeDialogShow.value){
+        GenericDialog(
+            onDismiss = { /*TODO*/ },
+            title = "",
+            description = stringResource(id = R.string.remove_post_alert) ,
+            positiveAction = PositiveAction(
+                positiveBtnTxt =   "بله",
+                onPositiveAction = {
+                    removeDialogShow.value=false
+                    removePost()
+                }
+            ),
+            negativeAction = NegativeAction(
+                negativeBtnTxt="خیر",
+                onNegativeAction = {
+                    removeDialogShow.value=false
 
+                }
+
+            )
+        )
+    }
 
 }
 @OptIn(ExperimentalGlideComposeApi::class)

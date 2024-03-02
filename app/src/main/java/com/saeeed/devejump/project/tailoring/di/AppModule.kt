@@ -21,7 +21,7 @@ import com.saeeed.devejump.project.tailoring.cash.model.UserDataEntityMapper
 import com.saeeed.devejump.project.tailoring.interactor.register.RegisterUser
 import com.saeeed.devejump.project.tailoring.interactor.Splash.GetUserStuffsFromServer
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
-import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.interactor.description.GetPost
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.interactor.followers.GetFollowersList
 import com.saeeed.devejump.project.tailoring.interactor.followings.GetFollowingsList
@@ -398,8 +398,8 @@ object AppModule {
         retrofitService: RetrofitService,
         postDtoMapper: PostMapper,
         productDtoMapper: ProductDtoMapper
-    ): GetSewMethod {
-        return GetSewMethod(
+    ): GetPost {
+        return GetPost(
             sewMethodDao= sewMethodDao,
             entityMapper = postEntityMapper,
             retrofitService= retrofitService,

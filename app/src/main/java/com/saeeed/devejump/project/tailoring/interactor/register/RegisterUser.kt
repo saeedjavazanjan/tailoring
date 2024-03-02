@@ -11,6 +11,7 @@ import com.saeeed.devejump.project.tailoring.network.model.RegisterUserDto
 import com.saeeed.devejump.project.tailoring.network.model.RegisterUserPasswordDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataDto
 import com.saeeed.devejump.project.tailoring.network.model.UserDataMapper
+import com.saeeed.devejump.project.tailoring.network.response.LoginResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.json.JSONObject
@@ -130,7 +131,7 @@ if (isNetworkAvailable) {
         phoneNumber: String,
         password:String,
         isNetworkAvailable: Boolean
-    ):Flow<DataState<String>> = flow {
+    ):Flow<DataState<LoginResponse>> = flow {
         if(isNetworkAvailable) {
             emit(DataState.loading())
             try {
@@ -143,7 +144,7 @@ if (isNetworkAvailable) {
                 val result = retrofitService.loginPasswordCheck(registerUserPasswordDto)
 
                 if (result.isSuccessful) {
-                    emit(DataState.success(result.body()!!.token!!))
+                    emit(DataState.success(result.body()!!))
                     val user = mapToDomain(result.body()!!.userData!!)
                     try {
                         sewMethodDao.insertUserData(entityMapper.mapFromDomainModel(user))
@@ -184,7 +185,7 @@ if (isNetworkAvailable) {
         password:String,
         userName: String,
         isNetworkAvailable: Boolean
-    ):Flow<DataState<String>> = flow {
+    ):Flow<DataState<LoginResponse>> = flow {
         if (isNetworkAvailable) {
             emit(DataState.loading())
             try {
@@ -196,7 +197,7 @@ if (isNetworkAvailable) {
                 )
                 val result = retrofitService.registerPasswordCheck(registerUserPasswordDto)
                 if (result.isSuccessful) {
-                    emit(DataState.success(result.body()!!.token!!))
+                    emit(DataState.success(result.body()!!))
 
                     val user = mapToDomain(result.body()!!.userData!!)
                     try {

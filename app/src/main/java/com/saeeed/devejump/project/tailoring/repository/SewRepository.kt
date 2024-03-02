@@ -6,6 +6,6 @@ interface SewRepository {
 
     suspend fun search(token: String, page: Int, query: String): List<Post>
 
-    suspend fun get(token: String, id: Int): Post
+ //   suspend fun get(token: String, id: Int): Post
 
 }

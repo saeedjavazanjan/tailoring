@@ -7,6 +7,10 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +18,7 @@ import com.saeeed.devejump.project.tailoring.domain.model.Comment
 import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.interactor.description.GetComments
-import com.saeeed.devejump.project.tailoring.interactor.description.GetSewMethod
+import com.saeeed.devejump.project.tailoring.interactor.description.GetPost
 import com.saeeed.devejump.project.tailoring.interactor.description.UserActivityOnPost
 import com.saeeed.devejump.project.tailoring.presentation.components.SnackbarController
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
@@ -25,11 +29,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 const val STATE_KEY_SEW = "sew.state.sew.key"
 
@@ -38,23 +42,24 @@ const val STATE_KEY_SEW = "sew.state.sew.key"
 class DescriptionViewModel
 @Inject
 constructor(
-    private val getSewMethod: GetSewMethod,
+    private val getPost: GetPost,
     private val getComments: GetComments,
     private val connectivityManager: ConnectivityManager,
-    @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
     private val userActivityOnPost: UserActivityOnPost,
+    private val userPreferencesDataStore: DataStore<Preferences>
+
 ): ViewModel(){
     val post: MutableState<Post?> = mutableStateOf(null)
-
+    val userId= mutableStateOf(0)
     val loading = mutableStateOf(false)
     val productLoading = mutableStateOf(false)
-
     val commentSendLoading= mutableStateOf(false)
     val bookMarkState= mutableStateOf(false)
     val liKeState= mutableStateOf(false)
     val likeCount= mutableStateOf(0)
     val product:MutableState<Product?> = mutableStateOf(null)
+    val authorToken= mutableStateOf("")
  /*   private val _comments = MutableLiveData<MutableList<Comment>>()
      val comments: LiveData<MutableList<Comment>>
         get() = _comments*/
@@ -69,6 +74,10 @@ constructor(
         state.get<Int>(STATE_KEY_SEW)?.let{ sewId ->
             onTriggerEvent(SewEvent.GetSewEvent(sewId))
         }
+
+       /* viewModelScope.launch {
+            userId.value=getUserIdFromPreferencesStore()
+        }*/
     }
 
     fun onTriggerEvent(event: SewEvent){
@@ -78,7 +87,7 @@ constructor(
                     is SewEvent.GetSewEvent -> {
                       //  if(sewMethod.value == null){
 
-                        getSewMethod(event.id)
+                        getPost(event.id)
                             Log.d(TAG, "sewId:${event.id}")
 
                         //   }
@@ -95,8 +104,11 @@ constructor(
         }
     }
 
-    private fun getSewMethod(id: Int){
-        getSewMethod.execute(id, token,connectivityManager.isNetworkAvailable.value).onEach { dataState ->
+    private fun getPost(id: Int){
+        getPost.execute(
+            id,
+            connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState ->
             loading.value = dataState.loading
             dataState.data?.let { data ->
                 post.value = data
@@ -118,13 +130,15 @@ constructor(
                 dialogQueue.appendErrorMessage("An Error Occurred", error)
 
             }
+        }.catch {
+            dialogQueue.appendErrorMessage("خطای نا شناخته", it.message.toString())
+
         }.launchIn(viewModelScope)
     }
 
     fun getProductOfCurrentPost(postId: Int) {
-        getSewMethod.getProductOfCurrentPost(
+        getPost.getProductOfCurrentPost(
             postId,
-            token,
             connectivityManager.isNetworkAvailable.value
         ).onEach { dataState->
             productLoading.value=dataState.loading
@@ -309,7 +323,6 @@ constructor(
     fun getPostComments(postId:Int){
         getComments.getPostComments(
             postId,
-            token,
             connectivityManager.isNetworkAvailable.value)
             .onEach { dataState->
            // loading.value = dataState.loading
@@ -437,5 +450,82 @@ constructor(
 
 
         }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    fun removePost(
+        scaffoldState: ScaffoldState, scope:CoroutineScope
+    ){
+        val snackbarController=SnackbarController(scope)
+
+        viewModelScope.launch {
+            authorToken.value=getTokenFromPreferencesStore()
+
+        }
+
+        getPost.removePost(
+            token=authorToken.value,
+            postId=post.value!!.id,
+            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+        ).onEach {dataState ->
+
+            dataState.loading?.let {
+                loading.value=it
+            }
+            dataState.data?.let{
+                snackbarController.getScope().launch {
+                        snackbarController.showSnackbar(
+                            scaffoldState = scaffoldState,
+                            message =  "پست با موفقیت حذف شد",
+                            actionLabel ="Ok"
+                        )
+
+                }
+
+
+
+
+
+
+            }
+            dataState.error?.let{
+                dialogQueue.appendErrorMessage("خطایی رخ داده است",it)
+
+            }
+
+        }.catch {
+            dialogQueue.appendErrorMessage("خطایی رخ داده است",it.message.toString())
+
+        }.launchIn(viewModelScope)
+
+
+    }
+
+    suspend fun getTokenFromPreferencesStore():String {
+        val dataStoreKey= stringPreferencesKey("user_token")
+        return try{
+            val preferences=userPreferencesDataStore.data.first()
+            if(preferences[dataStoreKey]==null){
+                ""
+            }else
+                "Bearer ${preferences[dataStoreKey]}"
+        }catch (e:NoSuchElementException){
+            ""
+        }
+
+    }
+
+     suspend fun getUserIdFromPreferencesStore():Int {
+        val dataStoreKey= intPreferencesKey("user_id")
+        return try{
+            val preferences=userPreferencesDataStore.data.first()
+          if ( preferences[dataStoreKey]!=null)
+              preferences[dataStoreKey]!!
+            else
+                0
+        }catch (e:NoSuchElementException){
+            0
+        }
+
+    }
 
 }

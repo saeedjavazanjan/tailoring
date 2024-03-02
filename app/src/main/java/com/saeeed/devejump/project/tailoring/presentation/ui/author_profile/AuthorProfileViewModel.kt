@@ -7,9 +7,11 @@ import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -50,6 +52,7 @@ constructor(
     ) : ViewModel() {
 
     val authorToken= mutableStateOf<String?>("")
+    val authorId= mutableIntStateOf(0)
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
     val user:MutableState<UserData?> = mutableStateOf(
@@ -69,7 +72,7 @@ constructor(
     val userPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
     val bookMarkedPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
     init {
-    //getUserData()
+   // getUserData()
 
     }
 
@@ -95,28 +98,31 @@ constructor(
             authorToken.value=getTokenFromPreferencesStore()
         }
 
-        getUserProfileData.getUserPosts(
-            token = authorToken.value!!,
-            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
-        ).onEach { dataState->
-            dataState.loading.let {
-                loading.value=it
-            }
+        if(authorToken.value !=""){
+            getUserProfileData.getUserPosts(
+                token = authorToken.value!!,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+            ).onEach { dataState->
+                dataState.loading.let {
+                    loading.value=it
+                }
 
-            dataState.data?.let{
-                userPosts.value =it
-                //getUserBookMarkedPosts()
-            }
-            dataState.error?.let {
-                dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
+                dataState.data?.let{
+                    userPosts.value =it
+                    //getUserBookMarkedPosts()
+                }
+                dataState.error?.let {
+                    dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
+
+                }
+            }.catch {
+
+                dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
 
             }
-        }.catch {
-
-            dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
+                .launchIn(viewModelScope)
 
         }
-            .launchIn(viewModelScope)
 
     }
 
@@ -205,12 +211,6 @@ constructor(
 
     }
 
-    fun getResourceUri(resources: Resources, resourceID: Int): Uri? {
-        return Uri.parse(
-            "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
-                    resources.getResourceTypeName(resourceID) + '/'
-                    + resources.getResourceEntryName(resourceID)
-        )
-    }
+
 
 }

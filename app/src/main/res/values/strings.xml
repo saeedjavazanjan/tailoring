@@ -35,6 +35,7 @@
 
     <!--description-->
         <string name="saved_successFully">با موفقیت ذخیره شد</string>
+    <string name="remove_post_alert">آیا از حذف این پست مطمئنید؟</string>
 
 
     <!--profileEdit-->

@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,6 +33,8 @@ class RegisterViewModel
 
     ) : ViewModel() {
     private val USER_TOKEN = stringPreferencesKey("user_token")
+    private val USER_NAME = stringPreferencesKey("user_name")
+    private val USER_ID= intPreferencesKey("user_id")
 
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
@@ -161,8 +164,12 @@ class RegisterViewModel
             dataState.loading.let {
                 loading.value=it
             }
-            dataState.data?.let {token->
-                saveUserToPreferencesStore(token)
+            dataState.data?.let {response->
+                saveUserToPreferencesStore(
+                    usertoken = response.token!!,
+                    userId = response.userData!!.userId,
+                    userName = response.userData.userName
+                )
                 loginState.value=true
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
@@ -208,8 +215,12 @@ class RegisterViewModel
             dataState.loading.let {
                 loading.value=it
             }
-            dataState.data?.let {token->
-                saveUserToPreferencesStore(token)
+            dataState.data?.let {response->
+                saveUserToPreferencesStore(
+                    usertoken = response.token!!,
+                    userId = response.userData!!.userId,
+                    userName=response.userData.userName
+                )
                 loginState.value=true
                 snackbarController.getScope().launch {
                     snackbarController.showSnackbar(
@@ -243,9 +254,11 @@ class RegisterViewModel
         authorId.value= preferences[dataStoreKey]
     }*/
 
-    suspend fun saveUserToPreferencesStore(usertoken:String) {
+    suspend fun saveUserToPreferencesStore(usertoken:String,userId:Int,userName:String) {
         userPreferencesDataStore.edit { preferences ->
             preferences[USER_TOKEN] = usertoken
+            preferences[USER_NAME]=userName
+            preferences[USER_ID]=userId
         }
     }
 
