@@ -79,44 +79,49 @@ class UploadPostFunctions(
 
     fun uploadPost(
         token:String?,
-        post:CreatedPost
+        post:CreatedPost,
+        isNetworkAvailable: Boolean
     ):Flow<DataState<Post>> = flow{
-        emit(DataState.loading())
+        if(isNetworkAvailable) {
+            emit(DataState.loading())
 
-        val videoPart=getFileOfUri.getVideoFileFromUri(post.videoUri)
-        val ImagesPart =convertListOfUriToListOfFiles(post.featuredImage)
-       val result= retrofitService.uploadPost(
-            token=token,
-            title = post.title!!.toRequestBody(),
-            category = post.category!!.toRequestBody(),
-            postType = post.postType!!.toRequestBody(),
-            description = post.description!!.toRequestBody(),
-            longDataAdded = post.longDataAdded.toString().toRequestBody(),
-            haveProduct = post.haveProduct.toString().toRequestBody(),
-            Video = videoPart,
-            FeaturedImages = ImagesPart
-        )
+            val videoPart = getFileOfUri.getVideoFileFromUri(post.videoUri)
+            val ImagesPart = convertListOfUriToListOfFiles(post.featuredImage)
+            val result = retrofitService.uploadPost(
+                token = token,
+                title = post.title!!.toRequestBody(),
+                category = post.category!!.toRequestBody(),
+                postType = post.postType!!.toRequestBody(),
+                description = post.description!!.toRequestBody(),
+                longDataAdded = post.longDataAdded.toString().toRequestBody(),
+                haveProduct = post.haveProduct.toString().toRequestBody(),
+                Video = videoPart,
+                FeaturedImages = ImagesPart
+            )
 
-        if (result.isSuccessful){
-            emit(DataState.success(postDtoMapper.mapToDomainModel(result.body()!!)))
-        }else if (result.code()==401){
-            emit(DataState.error("شما دسترسی لازم را ندارید"))
-        }else{
-            try {
-                val errMsg = result.errorBody()?.string()?.let {
-                    JSONObject(it).getString("error") // or whatever your message is
-                } ?: run {
-                    emit(DataState.error( result.code().toString()))
+            if (result.isSuccessful) {
+                emit(DataState.success(postDtoMapper.mapToDomainModel(result.body()!!)))
+            } else if (result.code() == 401) {
+                emit(DataState.error("شما دسترسی لازم را ندارید"))
+            } else {
+                try {
+                    val errMsg = result.errorBody()?.string()?.let {
+                        JSONObject(it).getString("error") // or whatever your message is
+                    } ?: run {
+                        emit(DataState.error(result.code().toString()))
+                    }
+                    emit(DataState.error(errMsg.toString()))
+                } catch (e: Exception) {
+                    emit(DataState.error("خطای سرور"))
+
+
                 }
-                emit(DataState.error(errMsg.toString()))
-            }catch (e:Exception){
-                emit(DataState.error("خطای سرور"))
-
-
             }
+
+        }else{
+            emit(DataState.error("شما به اینترنت دسترسی ندارید"))
+
         }
-
-
     }
 
     fun uploadProduct(

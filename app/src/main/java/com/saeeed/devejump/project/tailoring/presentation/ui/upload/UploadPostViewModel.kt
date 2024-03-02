@@ -16,6 +16,7 @@ import com.google.gson.Gson
 import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFunctions
+import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -30,10 +31,11 @@ import javax.inject.Inject
 @HiltViewModel
 class UploadPostViewModel
     @Inject constructor(
-       private val uploadPostFunctions: UploadPostFunctions,
-       private val userPreferencesDataStore: DataStore<Preferences>
+        private val uploadPostFunctions: UploadPostFunctions,
+        private val userPreferencesDataStore: DataStore<Preferences>,
+        private val connectivityManager: ConnectivityManager,
 
-    ):ViewModel() {
+        ):ViewModel() {
 
     val authorToken= mutableStateOf<String?>("")
     val loading = mutableStateOf(false)
@@ -107,7 +109,9 @@ class UploadPostViewModel
         }
         uploadPostFunctions.uploadPost(
             token =authorToken.value,
-            post=post
+            post=post,
+            isNetworkAvailable =   connectivityManager.isNetworkAvailable.value
+
         ).onEach {dataState->
             dataState.loading.let {
                 loading.value=it

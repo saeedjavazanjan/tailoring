@@ -1,39 +1,39 @@
 package com.saeeed.devejump.project.tailoring.network.model
 
-import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class ProductDto(
-    @SerializedName("Id")
-    val id:Int,
 
-    @SerializedName("Name")
-    val name:String,
+	@field:SerializedName("unit")
+	val unit: String? = null,
 
-    @SerializedName("Description")
-    val description:String,
+	@field:SerializedName("images")
+	val images: List<String?>? = null,
 
-    @SerializedName("Images")
-    val images:List<String> = mutableListOf(),
+	@field:SerializedName("typeOfProduct")
+	val typeOfProduct: String? = null,
 
-    @SerializedName("typeOfProduct")
-    val typeOfProduct:String,
+	@field:SerializedName("price")
+	val price: String? = null,
 
-    @SerializedName("Mas")
-    val mas:String="0",
+	@field:SerializedName("name")
+	val name: String? = null,
 
-    @SerializedName("Supply")
-    val supply:String="0",
+	@field:SerializedName("description")
+	val description: String? = null,
 
-    @SerializedName("Unit")
-    val unit:String,
+	@field:SerializedName("id")
+	val id: Int? = null,
 
-    @SerializedName("Price")
-    val price:String,
+	@field:SerializedName("postId")
+	val postId: Int? = null,
 
-    @SerializedName("postId")
-    val postId:Int,
+	@field:SerializedName("supply")
+	val supply: String? = null,
 
-    @SerializedName("AttachedFile")
-    val attachedFile:String=""
+	@field:SerializedName("mas")
+	val mas: String? = null,
+
+	@field:SerializedName("attachedFile")
+	val attachedFile: String? = null
 )

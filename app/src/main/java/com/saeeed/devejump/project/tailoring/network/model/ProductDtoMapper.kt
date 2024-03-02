@@ -8,17 +8,17 @@ import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
 class ProductDtoMapper:DomainMapper<ProductDto, Product> {
     override fun mapToDomainModel(model: ProductDto): Product {
         return Product(
-            id=model.id,
-            name = model.name,
-            description = model.description,
-            images = convertListOfUriToListOfUrl(model.images),
-            typeOfProduct = model.typeOfProduct,
-            mas=model.mas,
-            supply = model.supply,
-            unit =model.unit,
-            price = model.price,
-            postId = model.postId,
-            attachedFile = model.attachedFile
+            id=model.id!!,
+            name = model.name!!,
+            description = model.description!!,
+            images = convertListOfUriToListOfUrl(model.images!!),
+            typeOfProduct = model.typeOfProduct!!,
+            mas=model.mas!!,
+            supply = model.supply!!,
+            unit =model.unit!!,
+            price = model.price!!,
+            postId = model.postId!!,
+            attachedFile = model.attachedFile!!
         )
     }
 
@@ -37,10 +37,10 @@ class ProductDtoMapper:DomainMapper<ProductDto, Product> {
         )
     }
 
-    private fun convertListOfUriToListOfUrl(uris:List<String>):List<Uri>{
+    private fun convertListOfUriToListOfUrl(uris:List<String?>):List<Uri>{
         val result= mutableListOf<Uri>()
         uris.forEach {url->
-            val uri=url.toUri()
+            val uri=url!!.toUri()
             result.add(uri)
         }
         return result

@@ -7,9 +7,11 @@ import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -44,13 +46,13 @@ constructor(
     private val getUserProfileData: GetUserProfileData,
     private val restoreSewMethods: RestoreSewMethods,
     private val connectivityManager: ConnectivityManager,
-    @Named("auth_token") private val token: String,
     private val savedStateHandle: SavedStateHandle,
     private val userPreferencesDataStore: DataStore<Preferences>
 
     ) : ViewModel() {
 
     val authorToken= mutableStateOf<String?>("")
+    val authorId= mutableIntStateOf(0)
     val loading = mutableStateOf(false)
     val dialogQueue = DialogQueue()
     val user:MutableState<UserData?> = mutableStateOf(
@@ -70,7 +72,7 @@ constructor(
     val userPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
     val bookMarkedPosts:MutableState<List<Post>> = mutableStateOf(ArrayList())
     init {
-    //getUserData()
+   // getUserData()
 
     }
 
@@ -92,35 +94,41 @@ constructor(
     }
 
     fun getUserPosts(){
-        getUserProfileData.getUserPosts(
-            token = token,
-            userId = USERID,
-            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
-        ).onEach { dataState->
-            dataState.loading.let {
-                loading.value=it
-            }
+        viewModelScope.launch {
+            authorToken.value=getTokenFromPreferencesStore()
+        }
 
-            dataState.data?.let{
-                userPosts.value =it
-                getUserBookMarkedPosts()
-            }
-            dataState.error?.let {
-                dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
+        if(authorToken.value !=""){
+            getUserProfileData.getUserPosts(
+                token = authorToken.value!!,
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+            ).onEach { dataState->
+                dataState.loading.let {
+                    loading.value=it
+                }
+
+                dataState.data?.let{
+                    userPosts.value =it
+                    //getUserBookMarkedPosts()
+                }
+                dataState.error?.let {
+                    dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.toString())
+
+                }
+            }.catch {
+
+                dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
 
             }
-        }.catch {
-
-            dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
+                .launchIn(viewModelScope)
 
         }
-            .launchIn(viewModelScope)
 
     }
 
     fun getUserBookMarkedPosts(){
         getUserProfileData.getUserBookMarkedPosts(
-            token = token,
+            token = "token",
             userId = USERID,
             isNetworkAvailable = connectivityManager.isNetworkAvailable.value
         ).onEach { dataState->
@@ -158,7 +166,9 @@ constructor(
         getUserProfileData.updateUserData(
             userData,
             authorToken.value,
-            avatarUri
+            avatarUri,
+            isNetworkAvailable =   connectivityManager.isNetworkAvailable.value
+
         ).onEach {dataState ->
             dataState.loading.let {
                 loading.value=it
@@ -201,12 +211,6 @@ constructor(
 
     }
 
-    fun getResourceUri(resources: Resources, resourceID: Int): Uri? {
-        return Uri.parse(
-            "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
-                    resources.getResourceTypeName(resourceID) + '/'
-                    + resources.getResourceEntryName(resourceID)
-        )
-    }
+
 
 }

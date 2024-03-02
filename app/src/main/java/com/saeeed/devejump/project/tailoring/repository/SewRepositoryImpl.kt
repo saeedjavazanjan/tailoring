@@ -16,8 +16,8 @@ class SewRepositoryImpl (
         ))
     }
 
-    override suspend fun get(token: String, id: Int): Post {
-        return mapper.mapToDomainModel(recipeService.get(token = token, id))
-    }
+   /* override suspend fun get(token: String, id: Int): Post {
+        return mapper.mapToDomainModel(recipeService.getPost(id))
+    }*/
 
 }
