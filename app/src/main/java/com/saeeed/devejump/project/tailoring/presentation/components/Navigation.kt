@@ -116,7 +116,7 @@ fun Navigation(
                 },
                 viewModel = authorProfileViewModel,
                 onNavigateToUploadPostScreen = {
-                    navController.navigate(Screen.UploadPost.route)
+                    navController.navigate(Screen.UploadPost.route+ "/0/upload")
                 }
             )
 
@@ -143,9 +143,14 @@ fun Navigation(
                 sewId = navBackStackEntry.arguments?.getInt("sewId"),
                 viewModel = descriptionViewModel,
                 scaffoldState = scaffoldState,
+                navController=navController,
                 onNavigateToProfile = navController::navigate,
                 onNavigateToProductDetailScreen= {
                     navController.navigate(Screen.ProductDetail.route)
+                },
+
+                onNavigateToUploadPost = {
+                    navController.navigate(it)
                 }
             )
 
@@ -215,10 +220,19 @@ fun Navigation(
 
 
 
-        composable(Screen.UploadPost.route) {
+        composable(
+            route = Screen.UploadPost.route + "/{postID}/{navigateType}",
+            arguments = listOf(
+                navArgument("postID") { type = NavType.IntType },
+                navArgument("navigateType") { type = NavType.StringType },
+
+                )) {navBackStackEntry->
+
             UploadPostScreen(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                navigateType=navBackStackEntry.arguments?.getString("navigateType"),
+                postId=navBackStackEntry.arguments?.getInt("postID"),
                 viewModel = uploadPostViewModel,
                 navController = navController,
                 onNavigateTpProductDetailScreen = navController::navigate,

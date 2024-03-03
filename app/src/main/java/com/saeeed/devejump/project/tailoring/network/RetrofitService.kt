@@ -76,11 +76,10 @@ interface RetrofitService {
 
 
 
-    @GET("get_product")
+    @GET("products/oneProduct")
     suspend fun getProduct(
-        @Header("Authorization") token: String,
-        @Query("post_id") postId: Int
-    ): ProductDto
+        @Query("id") postId: Int
+    ): Response<ProductDto>
 
 
     @GET("get_banners")
