@@ -90,7 +90,7 @@ class GetPost (
             val result=retrofitService.removePost(token = token,id=postId)
 
             if (result.isSuccessful){
-                emit(DataState.success("removed successfully"))
+                emit(DataState.success("با موفقیت حذف شد"))
             }else{
 
                         emit(DataState.error(result.code().toString()))
@@ -111,12 +111,31 @@ class GetPost (
         isNetworkAvailable: Boolean,
     ):Flow<DataState<Product>> = flow {
         emit(DataState.loading())
-      /*  try {
-            val product= productDtoMapper.mapToDomainModel( retrofitService.getProduct(token, postId))
-            emit(DataState(product))
-        }catch (e:Exception){
-            emit(DataState.error(e.message?:"خطای نا شناخته"))
-        }*/
+
+        if(isNetworkAvailable){
+            val result=retrofitService.getProduct(postId)
+
+            if (result.isSuccessful){
+                emit(DataState.success(productDtoMapper.mapToDomainModel(result.body()!!)))
+            }else{
+                try {
+                    val errMsg = result.errorBody()?.string()?.let {
+                        JSONObject(it).getString("error") // or whatever your message is
+                    } ?: run {
+                        emit(DataState.error(result.code().toString()))
+                    }
+                    emit(DataState.error(errMsg.toString()))
+                } catch (e: Exception) {
+                    emit(DataState.error("خطای سرور"))
+
+
+                }
+            }
+        }else {
+            emit(DataState.error("ارتباط شما با اینترنت برقرار نیست"))
+
+        }
+
 
     }
 

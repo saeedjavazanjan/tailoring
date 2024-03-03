@@ -49,46 +49,47 @@ constructor(
     private val userActivityOnPost: UserActivityOnPost,
     private val userPreferencesDataStore: DataStore<Preferences>
 
-): ViewModel(){
+) : ViewModel() {
     val post: MutableState<Post?> = mutableStateOf(null)
-    val userId= mutableStateOf(0)
+    val userId = mutableStateOf(0)
     val loading = mutableStateOf(false)
     val productLoading = mutableStateOf(false)
-    val commentSendLoading= mutableStateOf(false)
-    val bookMarkState= mutableStateOf(false)
-    val liKeState= mutableStateOf(false)
-    val likeCount= mutableStateOf(0)
-    val product:MutableState<Product?> = mutableStateOf(null)
-    val authorToken= mutableStateOf("")
- /*   private val _comments = MutableLiveData<MutableList<Comment>>()
-     val comments: LiveData<MutableList<Comment>>
-        get() = _comments*/
-  val comments: MutableState<MutableList<Comment>> = mutableStateOf(ArrayList())
+    val commentSendLoading = mutableStateOf(false)
+    val bookMarkState = mutableStateOf(false)
+    val liKeState = mutableStateOf(false)
+    val likeCount = mutableStateOf(0)
+    val product: MutableState<Product?> = mutableStateOf(null)
+    val authorToken = mutableStateOf("")
+
+    /*   private val _comments = MutableLiveData<MutableList<Comment>>()
+        val comments: LiveData<MutableList<Comment>>
+           get() = _comments*/
+    val comments: MutableState<MutableList<Comment>> = mutableStateOf(ArrayList())
 
     //   var comments= emptyList<PostWitComment>()
-    val dialogQueue=DialogQueue()
+    val dialogQueue = DialogQueue()
 
     init {
 
         // restore if process dies
-        state.get<Int>(STATE_KEY_SEW)?.let{ sewId ->
+        state.get<Int>(STATE_KEY_SEW)?.let { sewId ->
             onTriggerEvent(SewEvent.GetSewEvent(sewId))
         }
 
-       /* viewModelScope.launch {
-            userId.value=getUserIdFromPreferencesStore()
-        }*/
+        /* viewModelScope.launch {
+             userId.value=getUserIdFromPreferencesStore()
+         }*/
     }
 
-    fun onTriggerEvent(event: SewEvent){
+    fun onTriggerEvent(event: SewEvent) {
         viewModelScope.launch {
             try {
-                when(event){
+                when (event) {
                     is SewEvent.GetSewEvent -> {
-                      //  if(sewMethod.value == null){
+                        //  if(sewMethod.value == null){
 
                         getPost(event.id)
-                            Log.d(TAG, "sewId:${event.id}")
+                        Log.d(TAG, "sewId:${event.id}")
 
                         //   }
                     }
@@ -97,14 +98,14 @@ constructor(
 
                     }
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.e(TAG, "launchJob: Exception: ${e}, ${e.cause}")
                 e.printStackTrace()
             }
         }
     }
 
-    private fun getPost(id: Int){
+    private fun getPost(id: Int) {
         getPost.execute(
             id,
             connectivityManager.isNetworkAvailable.value
@@ -113,21 +114,21 @@ constructor(
             dataState.data?.let { data ->
                 post.value = data
                 state.set(STATE_KEY_SEW, data.id)
-                if(LOGIN_STATE) {
+                if (LOGIN_STATE) {
                     checkSewBookMarkState()
                     checkLikeState()
                 }
                 getPostComments(data.id)
-                likeCount.value=data.like
-                if(data.haveProduct==1){
+                likeCount.value = data.like
+                if (data.haveProduct == 1) {
                     getProductOfCurrentPost(data.id)
                 }
-              //  _comments.value=data.comments.toMutableList()
+                //  _comments.value=data.comments.toMutableList()
             }
 
             dataState.error?.let { error ->
                 Log.e(TAG, "getSew: ${error}")
-                dialogQueue.appendErrorMessage("An Error Occurred", error)
+                dialogQueue.appendErrorMessage("خطایی رخ داده است", error)
 
             }
         }.catch {
@@ -140,80 +141,43 @@ constructor(
         getPost.getProductOfCurrentPost(
             postId,
             connectivityManager.isNetworkAvailable.value
-        ).onEach { dataState->
-            productLoading.value=dataState.loading
-        dataState.data.let {
-            product.value=it
-        }
+        ).onEach { dataState ->
+            productLoading.value = dataState.loading
+            dataState.data.let {
+                product.value = it
+            }
             dataState.error?.let {
-                dialogQueue.appendErrorMessage("خطای دریافت محصول",it)
+                dialogQueue.appendErrorMessage("خطای دریافت محصول", it)
 
             }
 
         }.catch {
-            dialogQueue.appendErrorMessage("خطای دریافت محصول",it.message.toString())
+            dialogQueue.appendErrorMessage("خطای دریافت محصول", it.message.toString())
         }.launchIn(viewModelScope)
 
     }
 
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalMaterialApi::class)
-     fun bookMark(scaffoldState: ScaffoldState, scope:CoroutineScope) {
-        val snackbarController=SnackbarController(scope)
+    fun bookMark(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+        val snackbarController = SnackbarController(scope)
 
-            userActivityOnPost.bookMark(post.value!!.id).onEach { dataState ->
-                  dataState.data?.let {
-                     snackbarController.getScope().launch {
-                         if (it> 0){
-                             bookMarkState.value=true
-                             snackbarController.showSnackbar(
-                                 scaffoldState = scaffoldState,
-                                 message =  "با موفقیت ذخیره شد.",
-                                 actionLabel ="Ok"
-                             )
-
-                         }else{
-                             snackbarController.showSnackbar(
-                                 scaffoldState = scaffoldState,
-                                 message =  "خطایی رخ داده است.",
-                                 actionLabel ="Ok"
-                             )
-                         }
-
-                     }
-
-                  }
-
-                dataState.error?.let { error ->
-                    dialogQueue.appendErrorMessage("An Error Occurred", error)
-                   // Log.e(TAG, "save in database faild ${error}")
-
-                }
-
-            }.launchIn(viewModelScope)
-
-    }
-    @SuppressLint("SuspiciousIndentation")
-    @OptIn(ExperimentalMaterialApi::class)
-    fun removeFromBookMarkDataBase(scaffoldState: ScaffoldState,scope:CoroutineScope) {
-        val snackbarController=SnackbarController(scope)
-
-        userActivityOnPost.unBookMark(post.value!!.id).onEach { dataState ->
+        userActivityOnPost.bookMark(post.value!!.id).onEach { dataState ->
             dataState.data?.let {
                 snackbarController.getScope().launch {
-                    if (it > 0){
-                        bookMarkState.value=false
+                    if (it > 0) {
+                        bookMarkState.value = true
                         snackbarController.showSnackbar(
                             scaffoldState = scaffoldState,
-                            message =  "از علاقه مندی ها حذف شد.",
-                            actionLabel ="Ok"
+                            message = "با موفقیت ذخیره شد.",
+                            actionLabel = "Ok"
                         )
 
-                    }else{
+                    } else {
                         snackbarController.showSnackbar(
                             scaffoldState = scaffoldState,
-                            message =  "خطایی رخ داده است.",
-                            actionLabel ="Ok"
+                            message = "خطایی رخ داده است.",
+                            actionLabel = "Ok"
                         )
                     }
 
@@ -222,41 +186,80 @@ constructor(
             }
 
             dataState.error?.let { error ->
-                dialogQueue.appendErrorMessage("An Error Occurred", error)
+                dialogQueue.appendErrorMessage("خطایی رخ داده است", error)
+                // Log.e(TAG, "save in database faild ${error}")
+
+            }
+
+        }.launchIn(viewModelScope)
+
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    @OptIn(ExperimentalMaterialApi::class)
+    fun removeFromBookMarkDataBase(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+        val snackbarController = SnackbarController(scope)
+
+        userActivityOnPost.unBookMark(post.value!!.id).onEach { dataState ->
+            dataState.data?.let {
+                snackbarController.getScope().launch {
+                    if (it > 0) {
+                        bookMarkState.value = false
+                        snackbarController.showSnackbar(
+                            scaffoldState = scaffoldState,
+                            message = "از علاقه مندی ها حذف شد.",
+                            actionLabel = "Ok"
+                        )
+
+                    } else {
+                        snackbarController.showSnackbar(
+                            scaffoldState = scaffoldState,
+                            message = "خطایی رخ داده است.",
+                            actionLabel = "Ok"
+                        )
+                    }
+
+                }
+
+            }
+
+            dataState.error?.let { error ->
+                dialogQueue.appendErrorMessage("خطایی رخ داده است", error)
                 // Log.e(TAG, "save in database faild ${error}")
 
             }
 
         }.launchIn(viewModelScope)
     }
-    fun checkSewBookMarkState(){
-            userActivityOnPost.checkBookMarkState(post.value!!.id).onEach { dataState ->
 
-                dataState.data.let {
-                   bookMarkState.value=it!!
-                     Log.d(TAG, "check bookmark ${post.value!!.id}")
+    fun checkSewBookMarkState() {
+        userActivityOnPost.checkBookMarkState(post.value!!.id).onEach { dataState ->
 
-                }
-                dataState.error.let {error->
-                 //   dialogQueue.appendErrorMessage("An Error Occurred", error!!)
-                     Log.e(TAG, "check bookmark ${post.value!!.id}")
+            dataState.data.let {
+                bookMarkState.value = it!!
+                Log.d(TAG, "check bookmark ${post.value!!.id}")
 
-                }
+            }
+            dataState.error.let { error ->
+                //   dialogQueue.appendErrorMessage("An Error Occurred", error!!)
+                Log.e(TAG, "check bookmark ${post.value!!.id}")
 
-            }.launchIn(viewModelScope)
+            }
+
+        }.launchIn(viewModelScope)
 
 
     }
 
-    fun checkLikeState(){
+    fun checkLikeState() {
         userActivityOnPost.checkLikeState(post.value!!.id).onEach { dataState ->
 
             dataState.data.let {
-                liKeState.value=it!!
+                liKeState.value = it!!
                 Log.d(TAG, "check like ${post.value!!.id}")
 
             }
-            dataState.error.let {error->
+            dataState.error.let { error ->
                 //   dialogQueue.appendErrorMessage("An Error Occurred", error!!)
                 Log.e(TAG, "check like ${post.value!!.id}")
 
@@ -270,12 +273,13 @@ constructor(
     @SuppressLint("SuspiciousIndentation")
     fun likePost() {
 
-        userActivityOnPost.likePost(post.value!!.id, likeCount = (likeCount.value+1).toString()).onEach { dataState ->
-            dataState.data?.let {
-                    if (it> 0){
-                        liKeState.value=true
+        userActivityOnPost.likePost(post.value!!.id, likeCount = (likeCount.value + 1).toString())
+            .onEach { dataState ->
+                dataState.data?.let {
+                    if (it > 0) {
+                        liKeState.value = true
                         likeCount.value++
-                         Log.d(TAG, "like ${it}")
+                        Log.d(TAG, "like ${it}")
 
 
                     }
@@ -284,123 +288,126 @@ constructor(
 
 
 
-            dataState.error?.let { error ->
-                dialogQueue.appendErrorMessage("An Error Occurred", error)
-                // Log.e(TAG, "save in database faild ${error}")
+                dataState.error?.let { error ->
+                    dialogQueue.appendErrorMessage("خطایی رخ داده است", error)
+                    // Log.e(TAG, "save in database faild ${error}")
 
-            }
+                }
 
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
     }
 
     @SuppressLint("SuspiciousIndentation")
     fun unLikePost() {
 
-        userActivityOnPost.unLikePost(post.value!!.id, likeCount =(likeCount.value-1).toString()).onEach { dataState ->
-            dataState.data?.let {
-                if (it> 0){
-                    liKeState.value=false
-                    likeCount.value--
+        userActivityOnPost.unLikePost(post.value!!.id, likeCount = (likeCount.value - 1).toString())
+            .onEach { dataState ->
+                dataState.data?.let {
+                    if (it > 0) {
+                        liKeState.value = false
+                        likeCount.value--
 
-                    Log.d(TAG, "unlike ${it}")
+                        Log.d(TAG, "unlike ${it}")
+
+                    }
 
                 }
 
-            }
 
 
+                dataState.error?.let { error ->
+                    dialogQueue.appendErrorMessage("خطایی رخ داده است", error)
+                    // Log.e(TAG, "save in database faild ${error}")
 
-            dataState.error?.let { error ->
-                dialogQueue.appendErrorMessage("An Error Occurred", error)
-                // Log.e(TAG, "save in database faild ${error}")
+                }
 
-            }
-
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
     }
-    fun getPostComments(postId:Int){
+
+    fun getPostComments(postId: Int) {
         getComments.getPostComments(
             postId,
-            connectivityManager.isNetworkAvailable.value)
-            .onEach { dataState->
-           // loading.value = dataState.loading
-            dataState.data?.let {
+            connectivityManager.isNetworkAvailable.value
+        )
+            .onEach { dataState ->
+                // loading.value = dataState.loading
+                dataState.data?.let {
 
 
-                    comments.value= it.toMutableList()
+                    comments.value = it.toMutableList()
 
-               // }
+                    // }
 
-            }
-         /*   dataState.error?.let {
-                dialogQueue.appendErrorMessage("An Error Occurred", it.toString())
-                Log.e(TAG, "postComment ${it}")
+                }
+                /*   dataState.error?.let {
+                       dialogQueue.appendErrorMessage("An Error Occurred", it.toString())
+                       Log.e(TAG, "postComment ${it}")
 
-            }*/
-        }.catch {
-            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+                   }*/
+            }.catch {
+                dialogQueue.appendErrorMessage("خطایی رخ داده است", it.message.toString())
 
 
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
     }
 
-   @SuppressLint("SuspiciousIndentation")
-   fun commentOnPost(comment: Comment){
-        userActivityOnPost.commentOnPost(comment=comment).onEach { dataState ->
+    @SuppressLint("SuspiciousIndentation")
+    fun commentOnPost(comment: Comment) {
+        userActivityOnPost.commentOnPost(comment = comment).onEach { dataState ->
             dataState.loading.let {
-                commentSendLoading.value=it
+                commentSendLoading.value = it
 
             }
             dataState.data?.let {
-                    try {
-                        comments.value.add(0,comment)
+                try {
+                    comments.value.add(0, comment)
 
-                    }catch (e:Exception){
-                        e.printStackTrace()
-                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
             dataState.error?.let {
-                dialogQueue.appendErrorMessage("An Error Occurred", it)
+                dialogQueue.appendErrorMessage("خطایی رخ داده است", it)
 
             }
 
 
         }.catch {
-            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+            dialogQueue.appendErrorMessage("خطایی رخ داده است", it.message.toString())
 
         }.launchIn(viewModelScope)
 
     }
+
     @SuppressLint("SuspiciousIndentation")
-    fun editComment(comment: Comment){
-        userActivityOnPost.editComment(comment=comment).onEach { dataState ->
+    fun editComment(comment: Comment) {
+        userActivityOnPost.editComment(comment = comment).onEach { dataState ->
             dataState.data?.let {
-              comments.value.firstOrNull(){
-                comments.value.indexOf(it)== comments.value.indexOf(comment)
-                }?.comment=comment.comment
+                comments.value.firstOrNull() {
+                    comments.value.indexOf(it) == comments.value.indexOf(comment)
+                }?.comment = comment.comment
 
             }
-            dataState.error?.let{
-                dialogQueue.appendErrorMessage("An Error Occurred", it)
+            dataState.error?.let {
+                dialogQueue.appendErrorMessage("خطایی رخ داده است", it)
 
             }
 
 
         }.catch {
-            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+            dialogQueue.appendErrorMessage("خطایی رخ داده است", it.message.toString())
 
         }.launchIn(viewModelScope)
 
     }
 
-    fun reportCommenet(comment: Comment, postId:Int){
-        userActivityOnPost.reportComment(comment, commentId =postId ).onEach {dataState ->
+    fun reportCommenet(comment: Comment, postId: Int) {
+        userActivityOnPost.reportComment(comment, commentId = postId).onEach { dataState ->
 
             dataState.data?.let {
-
 
 
             }
@@ -411,7 +418,7 @@ constructor(
 
     @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("SuspiciousIndentation")
-     fun removeComment(comment: Comment, scaffoldState: ScaffoldState, scope:CoroutineScope) {
+    fun removeComment(comment: Comment, scaffoldState: ScaffoldState, scope: CoroutineScope) {
         val snackbarController = SnackbarController(scope)
         snackbarController.getScope().launch {
             comments.value.remove(comment)
@@ -439,90 +446,86 @@ constructor(
                             }
 
                         }.catch {
-                            dialogQueue.appendErrorMessage("An Error Occurred", it.message.toString())
+                            dialogQueue.appendErrorMessage(
+                                "An Error Occurred",
+                                it.message.toString()
+                            )
 
                         }.launchIn(viewModelScope)
-                SnackbarResult.ActionPerformed -> comments.value.add(0,comment)
+
+                SnackbarResult.ActionPerformed -> comments.value.add(0, comment)
             }
 
 
         }
 
 
-        }
+    }
 
     @OptIn(ExperimentalMaterialApi::class)
     fun removePost(
-        scaffoldState: ScaffoldState, scope:CoroutineScope
-    ){
-        val snackbarController=SnackbarController(scope)
-
+        scaffoldState: ScaffoldState, scope: CoroutineScope
+    ) {
+        val snackbarController = SnackbarController(scope)
         viewModelScope.launch {
-            authorToken.value=getTokenFromPreferencesStore()
+            authorToken.value = getTokenFromPreferencesStore()
 
         }
 
         getPost.removePost(
-            token=authorToken.value,
-            postId=post.value!!.id,
+            token = authorToken.value,
+            postId = post.value!!.id,
             isNetworkAvailable = connectivityManager.isNetworkAvailable.value
-        ).onEach {dataState ->
+        ).onEach { dataState ->
 
             dataState.loading?.let {
-                loading.value=it
+                loading.value = it
             }
-            dataState.data?.let{
+            dataState.data?.let {
                 snackbarController.getScope().launch {
-                        snackbarController.showSnackbar(
-                            scaffoldState = scaffoldState,
-                            message =  "پست با موفقیت حذف شد",
-                            actionLabel ="Ok"
-                        )
-
+                    snackbarController.showSnackbar(
+                        scaffoldState = scaffoldState,
+                        message = it,
+                        actionLabel = "Ok"
+                    )
                 }
-
-
-
-
-
-
             }
-            dataState.error?.let{
-                dialogQueue.appendErrorMessage("خطایی رخ داده است",it)
+            dataState.error?.let {
+                dialogQueue.appendErrorMessage("خطایی رخ داده است", it)
 
             }
 
         }.catch {
-            dialogQueue.appendErrorMessage("خطایی رخ داده است",it.message.toString())
+            dialogQueue.appendErrorMessage("خطایی رخ داده است", it.message.toString())
 
         }.launchIn(viewModelScope)
 
 
     }
 
-    suspend fun getTokenFromPreferencesStore():String {
-        val dataStoreKey= stringPreferencesKey("user_token")
-        return try{
-            val preferences=userPreferencesDataStore.data.first()
-            if(preferences[dataStoreKey]==null){
+    suspend fun getTokenFromPreferencesStore(): String {
+        val dataStoreKey = stringPreferencesKey("user_token")
+        return try {
+            val preferences = userPreferencesDataStore.data.first()
+            if (preferences[dataStoreKey] == null) {
                 ""
-            }else
+            } else
                 "Bearer ${preferences[dataStoreKey]}"
-        }catch (e:NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             ""
         }
 
     }
 
-     suspend fun getUserIdFromPreferencesStore():Int {
-        val dataStoreKey= intPreferencesKey("user_id")
-        return try{
-            val preferences=userPreferencesDataStore.data.first()
-          if ( preferences[dataStoreKey]!=null)
-              preferences[dataStoreKey]!!
+    suspend fun getUserIdFromPreferencesStore(): Int {
+        val dataStoreKey = intPreferencesKey("user_id")
+        return try {
+            val preferences = userPreferencesDataStore.data.first()
+            if (preferences[dataStoreKey] != null)
+                preferences[dataStoreKey]!!
             else
                 0
-        }catch (e:NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             0
         }
 

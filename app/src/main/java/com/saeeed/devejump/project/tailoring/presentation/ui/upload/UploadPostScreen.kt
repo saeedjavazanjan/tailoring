@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -59,6 +60,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -79,6 +81,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -106,7 +109,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Objects
 
-@SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
+@SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState",
+    "StateFlowValueCalledInComposition"
+)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalPagerApi::class,
     ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class,
     ExperimentalMaterial3Api::class
@@ -115,6 +120,8 @@ import java.util.Objects
 fun UploadPostScreen(
     isDarkTheme: Boolean,
     isNetworkAvailable: Boolean,
+    postId:Int?,
+    navigateType:String?,
     viewModel: UploadPostViewModel,
     navController:NavController,
     onNavigateTpProductDetailScreen: (String) -> Unit,
@@ -137,6 +144,7 @@ fun UploadPostScreen(
 
     )
     LaunchedEffect(key1 = successFulUpload.value ){
+
         if(successFulUpload.value) {
             Toast.makeText(
                 context,
@@ -278,6 +286,35 @@ fun UploadPostScreen(
     }
 
     val showDialog =  remember { mutableStateOf(false) }
+LaunchedEffect(key1=navigateType){
+    val onEditPost=  viewModel.onEditPost
+
+
+    if (navigateType=="edit" && postId!=null ){
+        viewModel.getPostFromServerForEdit(postId)
+        title.value=onEditPost.value.title
+        description.value=onEditPost.value.description
+        if(onEditPost.value.postType=="image"){
+            selectedImages.clear()
+            onEditPost.value.featuredImage.forEach{
+                selectedImages.add(Uri.parse(it))
+                typeOfPost.value="photo"
+
+            }
+        }
+        if(onEditPost.value.postType=="video"){
+            selectedVideoUri.value= Uri.parse(onEditPost.value.videoUrl)
+            typeOfPost.value="video"
+
+        }
+        if (onEditPost.value.haveProduct==1){
+            viewModel.getProductFromServer(postId)
+        }
+
+    }
+}
+
+
 
 
     AppTheme(
@@ -424,37 +461,38 @@ fun UploadPostScreen(
 
             ) {
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                        .verticalScroll(rememberScrollState()),
-                ) {
-                    Box(
+                val scrollState=rememberScrollState()
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(250.dp)
+                            .fillMaxSize()
+                            .padding(it)
+                            .verticalScroll(scrollState),
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(250.dp)
+                        ) {
 
-                        when(typeOfPost.value){
-                            "video"->{
-                                if(selectedVideoUri.value!=null){
-                                    val videoUrl= remember {
-                                      mutableStateOf(  selectedVideoUri.value.toString())
-                                    }
-                                    VideoPlayer(
-                                        videoUrl = videoUrl.value,
-                                        context = context
-                                    )}
+                            when(typeOfPost.value){
+                                "video"->{
+                                    if(selectedVideoUri.value!=null){
+                                        val videoUrl= remember {
+                                            mutableStateOf(  selectedVideoUri.value.toString())
+                                        }
+                                        VideoPlayer(
+                                            videoUrl = videoUrl.value,
+                                            context = context
+                                        )}
 
-                            }
-                            "photo"->{
-                                 SelectedImagesPager(
-                            pagerState = pagerState ,
-                            selectedImages = selectedImages
-                        )
-                            }
-                            "cameraPhoto"->{
+                                }
+                                "photo"->{
+                                    SelectedImagesPager(
+                                        pagerState = pagerState ,
+                                        selectedImages = selectedImages
+                                    )
+                                }
+                                "cameraPhoto"->{
                                     GlideImage(
                                         model = selectedImages[0],
                                         loading = placeholder(R.drawable.empty_plate),
@@ -466,199 +504,196 @@ fun UploadPostScreen(
                                     )
                                 }
 
-                            else->{
-                                Image(
-                                    painter = painterResource(id = R.drawable.empty_plate),
-                                    contentDescription =null )
-                            }
-                        }
-
-                    }
-                    
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                    ) {
-                        Button(
-                            colors = ButtonDefaults.buttonColors(Color.LightGray),
-                            shape = RoundedCornerShape(5.dp),
-
-                            onClick = {
-                                imageLauncher.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                                    )
-                                )
-                            
-                            }
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(5.dp),
-                                text = stringResource(id = R.string.choose_photo),
-                                color = Color.DarkGray
-                            )
-                            Icon(painterResource(
-                                id = R.drawable.baseline_photo_24),
-                                contentDescription = null,
-                                tint = Color.White
-                            )
-                            
-                        }
-
-                        IconButton(modifier = Modifier
-                            .weight(1f),
-                            onClick = {
-                                val permissionCheckResult =
-                                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                                if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                                    cameraLauncher.launch(uri)
-                                } else {
-                                    // Request a permission
-                                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                                else->{
+                                    Image(
+                                        painter = painterResource(id = R.drawable.empty_plate),
+                                        contentDescription =null )
                                 }
+                            }
 
+                        }
 
-                            }) {
-                            Icon(painterResource(
-                                id = R.drawable.baseline_photo_camera_24),
-                                contentDescription = null,
-                                tint = Color.LightGray
-                            )                        }
-                        Button(
-                            colors = ButtonDefaults.buttonColors(Color.LightGray),
-                            shape = RoundedCornerShape(5.dp),
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
+                            Button(
+                                colors = ButtonDefaults.buttonColors(Color.LightGray),
+                                shape = RoundedCornerShape(5.dp),
 
-                            onClick = {
-                                videoLauncher.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.VideoOnly
+                                onClick = {
+                                    imageLauncher.launch(
+                                        PickVisualMediaRequest(
+                                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                                        )
                                     )
+
+                                }
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(5.dp),
+                                    text = stringResource(id = R.string.choose_photo),
+                                    color = Color.DarkGray
+                                )
+                                Icon(painterResource(
+                                    id = R.drawable.baseline_photo_24),
+                                    contentDescription = null,
+                                    tint = Color.White
                                 )
 
                             }
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(5.dp),
-                                text = stringResource(id = R.string.choose_video),
-                                color = Color.DarkGray
-                            )
-                            Icon(painterResource(
-                                id = R.drawable.baseline_videocam_24),
-                                contentDescription = null,
-                                tint = Color.White
-                            )
 
+                            IconButton(modifier = Modifier
+                                .weight(1f),
+                                onClick = {
+                                    val permissionCheckResult =
+                                        ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                                    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                                        cameraLauncher.launch(uri)
+                                    } else {
+                                        // Request a permission
+                                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                                    }
+
+
+                                }) {
+                                Icon(painterResource(
+                                    id = R.drawable.baseline_photo_camera_24),
+                                    contentDescription = null,
+                                    tint = Color.LightGray
+                                )                        }
+                            Button(
+                                colors = ButtonDefaults.buttonColors(Color.LightGray),
+                                shape = RoundedCornerShape(5.dp),
+
+                                onClick = {
+                                    videoLauncher.launch(
+                                        PickVisualMediaRequest(
+                                            ActivityResultContracts.PickVisualMedia.VideoOnly
+                                        )
+                                    )
+
+                                }
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(5.dp),
+                                    text = stringResource(id = R.string.choose_video),
+                                    color = Color.DarkGray
+                                )
+                                Icon(painterResource(
+                                    id = R.drawable.baseline_videocam_24),
+                                    contentDescription = null,
+                                    tint = Color.White
+                                )
+
+                            }
                         }
-                    }
-                    TitleAndDescription(
-                        title=title,
-                        description=description,
-                        radioOptions = radioOptions,
-                        selectCategory= {
-                            category.value=it
-                        }
-                    )
-
-                    if(viewModel.product.value!!.name!=""){
-                        ProductPreview(
-                            product = viewModel.product.value!!,
-                            removeProduct = {
-                                removeDialogShow.value=true
-
-                            },
-                            editProduct = {
-                                showDialog.value=true
-                            },
-                            onNavigateTpProductDetailScreen = { prod->
-                                val productJson=viewModel.jsonStringOfProduct(prod)
-                                val route = Screen.ProductDetail.route + "/" + productJson
-                                onNavigateTpProductDetailScreen(route)
+                        TitleAndDescription(
+                            title=title,
+                            description=description,
+                            radioOptions = radioOptions,
+                            selectCategory= {
+                                category.value=it
                             }
                         )
-                    }else{
-                        Button(
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            colors = ButtonDefaults.buttonColors(Color.LightGray),
-                            onClick = {
-                                showDialog.value=true
 
-                            }) {
-                            Text(
-                                text = stringResource(id = R.string.attach_product),
-                                color = Color.White
+                        if(viewModel.product.value!!.name!=""){
+                            ProductPreview(
+                                product = viewModel.product.value!!,
+                                removeProduct = {
+                                    removeDialogShow.value=true
+
+                                },
+                                editProduct = {
+                                    showDialog.value=true
+                                },
+                                onNavigateTpProductDetailScreen = { prod->
+                                    val productJson=viewModel.jsonStringOfProduct(prod)
+                                    val route = Screen.ProductDetail.route + "/" + productJson
+                                    onNavigateTpProductDetailScreen(route)
+                                }
                             )
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_attach_file_24),
-                                contentDescription =null,
-                                tint = Color.White
-                            )
-                        }
-                    }
-
-
-
+                        }else{
                             Button(
-                                enabled=!loading,
-                                modifier= Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 100.dp),
-                                colors = ButtonDefaults.buttonColors(Color.Green),
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                colors = ButtonDefaults.buttonColors(Color.LightGray),
                                 onClick = {
-
-                                    if(title.value=="" || description.value==""){
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.free_field_warning),
-                                            Toast.LENGTH_SHORT
-                                            ).show()
-
-                                    }else{
-                                        viewModel.uploadPost(
-                                            post = CreatedPost(
-                                                title = title.value,
-                                                postType =
-                                                    if(selectedVideoUri.value== getResourceUri(
-                                                            context.resources,
-                                                            R.drawable.empty_plate
-                                                        )){
-                                                        "image"
-                                                    }else{
-                                                        "video"
-                                                    }
-                                                ,
-                                                category =category.value,
-                                                featuredImage = selectedImages.toList(),
-                                                videoUri = selectedVideoUri.value!!,
-                                                description = description.value,
-                                                longDataAdded = System.currentTimeMillis(),
-                                                haveProduct =
-                                                if (viewModel.product.value!!.name==""){
-                                                    0
-                                                }else{
-                                                    1
-                                                }
-
-
-                                            )
-                                        )
-                                    }
+                                    showDialog.value=true
 
                                 }) {
                                 Text(
-                                    text = stringResource(id = R.string.product_save),
+                                    text = stringResource(id = R.string.attach_product),
                                     color = Color.White
                                 )
-
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_attach_file_24),
+                                    contentDescription =null,
+                                    tint = Color.White
+                                )
                             }
+                        }
 
 
 
+                        Button(
+                            enabled=!loading,
+                            modifier= Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 100.dp),
+                            colors = ButtonDefaults.buttonColors(Color.Green),
+                            onClick = {
+
+                                if(title.value=="" || description.value==""){
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.free_field_warning),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                }else{
+                                    viewModel.uploadPost(
+                                        post = CreatedPost(
+                                            title = title.value,
+                                            postType =
+                                            if(selectedVideoUri.value== getResourceUri(
+                                                    context.resources,
+                                                    R.drawable.empty_plate
+                                                )){
+                                                "image"
+                                            }else{
+                                                "video"
+                                            }
+                                            ,
+                                            category =category.value,
+                                            featuredImage = selectedImages.toList(),
+                                            videoUri = selectedVideoUri.value!!,
+                                            description = description.value,
+                                            longDataAdded = System.currentTimeMillis(),
+                                            haveProduct =
+                                            if (viewModel.product.value!!.name==""){
+                                                0
+                                            }else{
+                                                1
+                                            }
 
 
+                                        )
+                                    )
+                                }
+
+                            }) {
+                            Text(
+                                text = stringResource(id = R.string.product_save),
+                                color = Color.White
+                            )
+
+                        }
 
 
-                }
+                    }
+
+
             }
 
     }
@@ -902,7 +937,7 @@ fun TitleAndDescription(
                                     selectCategory(productType)
                                     selectedCat.value = productType
                                     expandedCategory.value = false
-                                    selectCategoryText.value=productType
+                                    selectCategoryText.value = productType
                                 }
                             ),
                         verticalAlignment = Alignment.CenterVertically,

@@ -1,7 +1,7 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.description
 
 import android.annotation.SuppressLint
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -54,7 +54,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -77,6 +76,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -99,6 +100,7 @@ import com.saeeed.devejump.project.tailoring.utils.USERID
 import com.saeeed.devejump.project.tailoring.utils.USER_AVATAR
 import com.saeeed.devejump.project.tailoring.utils.USER_NAME
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation",
@@ -113,7 +115,10 @@ fun DescriptionScreen(
     viewModel: DescriptionViewModel,
     scaffoldState: ScaffoldState,
     onNavigateToProfile: (String)->Unit,
-    onNavigateToProductDetailScreen: () -> Unit
+    onNavigateToProductDetailScreen: () -> Unit,
+    navController: NavHostController,
+    onNavigateToUploadPost: (String) -> Unit
+
 ){
     if (sewId == null){
        // TODO("Show Invalid Recipe")
@@ -225,9 +230,13 @@ fun DescriptionScreen(
                                                userId = currentUserId,
                                                editPost = {
 
+                                                   val route = Screen.UploadPost.route + "/${post.id}/edit"
+                                                   onNavigateToUploadPost(route)
                                                },
                                                removePost = {
-                                                   viewModel.removePost(scaffoldState,composableScope)
+                                                     viewModel.removePost(scaffoldState,composableScope)
+                                                       navController.popBackStack()
+
                                                }
                                            )
                                            detail(
@@ -529,6 +538,7 @@ fun imageAndVideoHolder(
                 positiveBtnTxt =   "بله",
                 onPositiveAction = {
                     removeDialogShow.value=false
+
                     removePost()
                 }
             ),
