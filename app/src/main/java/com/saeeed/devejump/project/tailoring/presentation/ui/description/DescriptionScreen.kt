@@ -117,7 +117,7 @@ fun DescriptionScreen(
     onNavigateToProfile: (String)->Unit,
     onNavigateToProductDetailScreen: () -> Unit,
     navController: NavHostController,
-    onNavigateToUploadPost: (String) -> Unit
+    onNavigateToUpdatePost: (String) -> Unit
 
 ){
     if (sewId == null){
@@ -230,8 +230,8 @@ fun DescriptionScreen(
                                                userId = currentUserId,
                                                editPost = {
 
-                                                   val route = Screen.UploadPost.route + "/${post.id}/edit"
-                                                   onNavigateToUploadPost(route)
+                                                   val route = Screen.UpdatePost.route + "/${post.id}"
+                                                   onNavigateToUpdatePost(route)
                                                },
                                                removePost = {
                                                      viewModel.removePost(scaffoldState,composableScope)
@@ -774,7 +774,7 @@ onNavigateTpProductDetailScreen:()->Unit
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ){
                 GlideImage(
-                    model = product.images[0],
+                    model = if(!product.images.isEmpty()) product.images[0] else "",
                     contentDescription = "",
                     loading=placeholder(R.drawable.empty_plate),
                     modifier = Modifier

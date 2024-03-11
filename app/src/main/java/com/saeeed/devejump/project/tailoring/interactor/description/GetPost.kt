@@ -39,11 +39,11 @@ class GetPost (
                     val networkPost = getSewFromNetwork(postId)
 
                     if (networkPost.isSuccessful){
-                        sewMethodDao.insertSew(
+                       /* sewMethodDao.insertSew(
                             // map domain -> entity
                             entityMapper.mapFromDomainModel(postMapper.mapToDomainModel(networkPost.body()!!))
-                        )
-                        post = getSewFromCache(postId = postId)
+                        )*/
+                        post = postMapper.mapToDomainModel(networkPost.body()!!)//getSewFromCache(postId = postId)
 
                         if(post != null){
                             emit(DataState.success(post))

@@ -3,6 +3,7 @@ package com.saeeed.devejump.project.tailoring.presentation.components
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -98,6 +99,7 @@ import java.util.Objects
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProductEditDialog(
+    state:String="upload",
     showDialog: (Boolean) -> Unit,
     requestPermission:()->Unit,
     zipSelectedFile:(List<Uri?>)->Unit,
@@ -169,8 +171,12 @@ fun ProductEditDialog(
 
     ) {
         LaunchedEffect(Unit){
-            selectedImages.clear()
-            selectedImages.addAll(product.images)
+
+            if(product.images[0]!= Uri.EMPTY){
+                selectedImages.clear()
+                selectedImages.addAll(product.images)
+           }
+
         }
 
 
@@ -272,6 +278,7 @@ fun ProductEditDialog(
                             if (expanded[1].value) {
 
                                 ProductImages(
+                                    state=state,
                                     selectedImages=selectedImages
                                 )
                             }
@@ -416,12 +423,15 @@ fun ProductEditDialog(
                                     }
 
                                         "Ok"->{
+                                            if(state=="upload"){
                                                 Toast.makeText(
                                                     context,
                                                     context.getString(R.string.product_saved_successfully),
                                                     Toast.LENGTH_SHORT
                                                 )
                                                     .show()
+                                            }
+
                                             setProduct(
                                                 Product(
                                                     id=0,
@@ -769,6 +779,7 @@ fun ProductType(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun ProductImages(
+    state:String,
     selectedImages:SnapshotStateList<Uri?>
 ){
     val imageLauncher = rememberLauncherForActivityResult(
@@ -784,45 +795,55 @@ fun ProductImages(
             .wrapContentHeight()
             .padding(10.dp)
     ){
-        Card(
-            modifier = Modifier
-                .height(100.dp)
-                .width(100.dp),
-            border = BorderStroke(2.dp, color = Color.DarkGray),
-            onClick = {
-                imageLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly
+        if(state=="upload"){
+            Card(
+                modifier = Modifier
+                    .height(100.dp)
+                    .width(100.dp),
+                border = BorderStroke(2.dp, color = Color.DarkGray),
+                onClick = {
+                    imageLauncher.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
                     )
-                )
-            }
-        ) {
-
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                }
             ) {
-                Icon(painterResource(id = R.drawable.baseline_photo_24), contentDescription = null)
-                Text(text = stringResource(id = R.string.choose_photo))
-            }
-            
-        }
-        LazyRow{
-            itemsIndexed(
-                items = selectedImages
-            ){index, selectedImage ->
-                GlideImage(
-                    model = selectedImage,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(100.dp)
-                        .padding(5.dp)
-                        .clip(RectangleShape),
-                    contentScale = ContentScale.Crop,
-                )
+
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(painterResource(id = R.drawable.baseline_photo_24), contentDescription = null)
+                    Text(text = stringResource(id = R.string.choose_photo))
+                }
+
             }
         }
+
+
+            LazyRow{
+                itemsIndexed(
+                    items = selectedImages
+                ){index, selectedImage ->
+                    if(!selectedImage.toString().contains("empty_plate")){
+                        GlideImage(
+                            model = selectedImage,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .width(100.dp)
+                                .height(100.dp)
+                                .padding(5.dp)
+                                .clip(RectangleShape),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+
+
+                }
+            }
+
+
     }
    
     

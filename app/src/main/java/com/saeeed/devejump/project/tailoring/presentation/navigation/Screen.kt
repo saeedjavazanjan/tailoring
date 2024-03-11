@@ -21,6 +21,7 @@ sealed class Screen(
     object Article:Screen("article")
     object AuthorProfile : Screen("authorProfile")
     object UploadPost:Screen("uploadPost")
+    object UpdatePost:Screen("updatePost")
     object ProductDetail:Screen("productDetail")
 
 }

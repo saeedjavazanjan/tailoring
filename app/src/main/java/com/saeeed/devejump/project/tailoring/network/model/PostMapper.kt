@@ -1,5 +1,6 @@
 package com.saeeed.devejump.project.tailoring.network.model
 
+import com.saeeed.devejump.project.tailoring.domain.model.OnUploadPost
 import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.util.DomainMapper
 import com.saeeed.devejump.project.tailoring.utils.DateUtils
@@ -25,6 +26,8 @@ class PostMapper : DomainMapper<PostDto, Post> {
 
         )
     }
+
+
 
     override fun mapFromDomainModel(domainModel: Post): PostDto {
         return PostDto(

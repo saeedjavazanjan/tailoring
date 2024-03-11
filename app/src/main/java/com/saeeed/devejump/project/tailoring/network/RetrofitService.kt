@@ -1,5 +1,7 @@
 package com.saeeed.devejump.project.tailoring.network
 
+import com.saeeed.devejump.project.tailoring.domain.model.OnUpdatePost
+import com.saeeed.devejump.project.tailoring.domain.model.OnUpdateProduct
 import com.saeeed.devejump.project.tailoring.network.model.ArticleDto
 import com.saeeed.devejump.project.tailoring.network.model.BannerDto
 import com.saeeed.devejump.project.tailoring.network.model.CommentDto
@@ -132,6 +134,21 @@ interface RetrofitService {
         @Part Video: MultipartBody.Part,
         @Part FeaturedImages: List<MultipartBody.Part>,
         ): Response<PostDto>
+
+    @PUT("posts/update/{id}")
+    suspend fun updatePost(
+        @Header("Authorization") token: String?,
+        @Body onUpdatePost:OnUpdatePost,
+        @Path("id") postId: Int,
+        ):Response<String>
+
+    @PUT("products/update/{id}")
+    suspend fun updateProduct(
+        @Header("Authorization") token: String?,
+        @Body onUpdateProduct: OnUpdateProduct,
+        @Path("id") productId: Int,
+    ):Response<String>
+
 
     @Multipart
     @POST("products/uploadProduct")

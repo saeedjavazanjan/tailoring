@@ -1,5 +1,4 @@
-package com.saeeed.devejump.project.tailoring.presentation.ui.upload
-
+package com.saeeed.devejump.project.tailoring.presentation.ui.UpdatePost
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -9,6 +8,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -94,6 +93,8 @@ import com.saeeed.devejump.project.tailoring.components.NegativeAction
 import com.saeeed.devejump.project.tailoring.components.PermissionDialog
 import com.saeeed.devejump.project.tailoring.components.PositiveAction
 import com.saeeed.devejump.project.tailoring.components.StoragePermissionTextProvider
+import com.saeeed.devejump.project.tailoring.domain.model.OnUpdatePost
+import com.saeeed.devejump.project.tailoring.domain.model.OnUpdateProduct
 import com.saeeed.devejump.project.tailoring.domain.model.OnUploadPost
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.presentation.components.ProductEditDialog
@@ -114,20 +115,23 @@ import java.util.Objects
     ExperimentalMaterial3Api::class
 )
 @Composable
-fun UploadPostScreen(
+fun UpdatePostScreen(
     isDarkTheme: Boolean,
     isNetworkAvailable: Boolean,
-    viewModel: UploadPostViewModel,
+    viewModel: UpdatePostViewModel,
+    postId:Int?,
     navController:NavController,
     onNavigateTpProductDetailScreen: (String) -> Unit,
     onNavigateToAuthorProfile:()->Unit
-){
+) {
     val context = LocalContext.current
 
     val loading = viewModel.loading.value
     val dialogQueue = viewModel.dialogQueue
-    val scaffoldState= rememberScaffoldState()
-    val successFulUpload=viewModel.successFulUpload
+    val scaffoldState = rememberScaffoldState()
+    val successFulUpdate = viewModel.successFulUpdate
+    val successFulProductUpdate = viewModel.successFulProductUpdate
+    var post = viewModel.post.value
     val radioOptions = listOf(
         Category.TAILORING.value,
         Category.DOLL_MAKING.value,
@@ -137,300 +141,249 @@ fun UploadPostScreen(
         Category.OTHER.value,
         Category.LEATHERING.value,
 
-    )
-    LaunchedEffect(key1 = successFulUpload.value ){
+        )
+    LaunchedEffect(Unit) {
+        viewModel.getPostFromServerForEdit(postId!!)
 
-        if(successFulUpload.value) {
+    }
+    LaunchedEffect(key1 = successFulUpdate.value ,key2=successFulProductUpdate.value) {
+
+        if (successFulProductUpdate.value) {
             Toast.makeText(
                 context,
-                context.getString(R.string.post_uploaded_successfully),
+                context.getString(R.string.product_saved_successfully),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        if (successFulUpdate.value) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.post_updated_successfully),
                 Toast.LENGTH_SHORT
             ).show()
             onNavigateToAuthorProfile()
-            successFulUpload.value=false
-            viewModel.product.value=Product(
-                id=0,
-                name = "",
-                description = "",
-                typeOfProduct = "محصول فیزیکی",
-                unit = "عدد",
-                mas = "",
-                supply = "",
-                price = "",
-                postId = 0
-            )
+            successFulUpdate.value = false
+            viewModel.product.value = null
+            viewModel.post.value=null
+
 
         }
     }
     val permissionDialogQueue = viewModel.visiblePermissionDialogQueue
-
-    val typeOfPost= remember {
-        mutableStateOf("")
-    }
-    val category= remember {
-        mutableStateOf(radioOptions[0])
-    }
-
-    var selectedImages=remember { mutableStateListOf<Uri?>(
-       getResourceUri(
-            context.resources,
-            R.drawable.empty_plate
-        )
-    ) }
-    val selectedVideoUri = remember { mutableStateOf<Uri?>(
-        getResourceUri(
-        context.resources,
-        R.drawable.empty_plate
-    )) }
-
-    val pagerState = rememberPagerState(pageCount = {
-        selectedImages.size
-    })
-    val title= remember {
-        mutableStateOf<String>("")
-    }
-    val description= remember {
-        mutableStateOf<String>("")
-    }
-    val exitDialogShow= remember {
-        mutableStateOf(false)
-    }
-
-    val removeDialogShow= remember {
-        mutableStateOf(false)
-    }
-
-    val activity =context as Activity
-
-    val file = context.createImageFile()
-
-    val uri = FileProvider.getUriForFile(
-        Objects.requireNonNull(context),
-        context.packageName + ".provider", file
-    )
-
-   /* var capturedImageUri = remember {
-        mutableStateOf<Uri?>(Uri.EMPTY)
-    }*/
-    val imageLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)) {
-        selectedVideoUri.value=  getResourceUri(
-            context.resources,
-            R.drawable.empty_plate
-        )
-        selectedImages.apply {
-            clear()
-            addAll(it)
-        }
-        typeOfPost.value="photo"
-    }
-    val imageCropLauncher = rememberLauncherForActivityResult(
-        contract = CropImageContract()
-    ) { result ->
-        if (result.isSuccessful) {
-
-            selectedImages.apply {
-                clear()
-                selectedImages.add(result.uriContent)
+    if (loading && post == null) {
+        // LoadingRecipeShimmer(imageHeight = IMAGE_HEIGHT.dp)
+    } else if (!loading && post == null ) {
+        // TODO("Show Invalid Recipe")
+    } else {
+        post?.let {
+            val typeOfPost = remember {
+                mutableStateOf(post!!.postType)
             }
-            selectedVideoUri.value=  getResourceUri(
-                context.resources,
-                R.drawable.empty_plate
-            )
-            typeOfPost.value="cameraPhoto"
-            // Got image data. Use it according to your need
-        }
-    }
+            val category = remember {
+                mutableStateOf(post!!.category)
+            }
 
-    val cameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-            val cropOptions = CropImageContractOptions(uri, CropImageOptions())
-            imageCropLauncher.launch(cropOptions)
-
-
-        }
-
-    val cameraPermissionLauncher = rememberLauncherForActivityResult(
-       contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            viewModel.onPermissionResult(
-                permission =Manifest.permission.CAMERA,
-                isGranted = isGranted
-            )
-        }
-    )
-
-    val storagePermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            viewModel.onPermissionResult(
-                permission =Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                isGranted = isGranted
-            )
-        }
-    )
-
-
-    val videoLauncher = rememberLauncherForActivityResult(contract =
-    ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-        uri.let {
-            selectedVideoUri.value=uri
-            typeOfPost.value="video"
-
-        }
-    }
-
-    val showDialog =  remember { mutableStateOf(false) }
-
-
-
-
-
-    AppTheme(
-        displayProgressBar = loading,
-        darkTheme = isDarkTheme,
-        isNetworkAvailable = isNetworkAvailable,
-        dialogQueue = dialogQueue.queue.value,
-        scaffoldState = scaffoldState
-
-    ) {
-        
-        if (exitDialogShow.value){
-            GenericDialog(
-                onDismiss = { /*TODO*/ },
-                title = "",
-                description = stringResource(id = R.string.not_saved_warning) ,
-                positiveAction = PositiveAction(
-                  positiveBtnTxt =   "بله",
-                    onPositiveAction = {
-                        exitDialogShow.value=false
-                        navController.popBackStack()
-                    }
-                ),
-                negativeAction = NegativeAction(
-                    negativeBtnTxt="خیر",
-                    onNegativeAction = {
-                        exitDialogShow.value=false
-
-                    }
-
+            val postImages= post.featuredImage.map{
+                Uri.parse(it)
+            }
+            val loadedImages= remember {
+                mutableStateOf<List<Uri?>>(
+                   postImages
                 )
-            )
-        }
-        if (removeDialogShow.value){
-            GenericDialog(
-                onDismiss = { /*TODO*/ },
-                title = "",
-                description = stringResource(id = R.string.remove_product_warning) ,
-                positiveAction = PositiveAction(
-                    positiveBtnTxt =   "بله",
-                    onPositiveAction = {
-                        removeDialogShow.value=false
-                    viewModel.product.value=Product(
-                        id=0,
-                        name = "",
-                        description = "",
-                        typeOfProduct = "محصول فیزیکی",
-                        unit = "عدد",
-                        mas = "",
-                        supply = "",
-                        price = "",
-                        postId = 0
-                    )
-                    }
-                ),
-                negativeAction = NegativeAction(
-                    negativeBtnTxt="خیر",
-                    onNegativeAction = {
-                        removeDialogShow.value=false
+            }
 
-                    }
+            val haveProduct= remember {
+                mutableStateOf(post.haveProduct)
+            }
 
-                )
-            )
-        }
-        
-        
-        
+            val loadedVideoUri = remember {
+                mutableStateOf<String>(post!!.videoUrl)
 
-        if (showDialog.value){
-            val fileZippingLoading=viewModel.fileZippingLoading.value
-            val productAttachedFile=viewModel.productAttachedFile.value
+            }
 
-            ProductEditDialog(
-                product=viewModel.product.value!!,
-                showDialog = {
-                    showDialog.value=it
-                             },
-                requestPermission = {
-                    storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                },
-                zipSelectedFile = {
-                    viewModel.zipSelectedFile(it,context)
-                },
-                setProduct = {
-                             viewModel.product.value=it
+            val title = remember {
+                mutableStateOf<String>(post!!.title)
+            }
+            val description = remember {
+                mutableStateOf<String>(post!!.description)
+            }
 
-                },
-                productAttachedFile = productAttachedFile,
-                fileZippingLoading=fileZippingLoading
-            )
-        }
 
-        permissionDialogQueue
-            .reversed()
-            .forEach { permission ->
-                PermissionDialog(
-                    permissionTextProvider = when (permission) {
-                        Manifest.permission.CAMERA -> {
-                            CameraPermissionTextProvider()
-                        }
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
-                            StoragePermissionTextProvider()
-                        }
+            val exitDialogShow = remember {
+                mutableStateOf(false)
+            }
 
-                        else -> return@forEach
-                    },
-                    isPermanentlyDeclined = !shouldShowRequestPermissionRationale(activity,
-                        permission
-                    ),
-                    onDismiss = viewModel::dismissDialog,
-                    onOkClick = {
-                        viewModel.dismissDialog()
+            val removeDialogShow = remember {
+                mutableStateOf(false)
+            }
 
-                        when(permission){
-                            Manifest.permission.CAMERA -> {
-                                cameraPermissionLauncher.launch(
-                                    Manifest.permission.CAMERA
-                                )
-                            }
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
-                                storagePermissionLauncher.launch(
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                )
-                            }
-                        }
-
-                    },
-                    onGoToAppSettingsClick = {
-                        activity.openAppSettings()
-                    }
-                )
-
-    }
+            val showDialog = remember { mutableStateOf(false) }
 
 
 
 
 
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                scaffoldState = scaffoldState,
+            AppTheme(
+                displayProgressBar = loading,
+                darkTheme = isDarkTheme,
+                isNetworkAvailable = isNetworkAvailable,
+                dialogQueue = dialogQueue.queue.value,
+                scaffoldState = scaffoldState
 
             ) {
 
-                val scrollState=rememberScrollState()
+                if (exitDialogShow.value) {
+                    GenericDialog(
+                        onDismiss = { /*TODO*/ },
+                        title = "",
+                        description = stringResource(id = R.string.not_saved_warning),
+                        positiveAction = PositiveAction(
+                            positiveBtnTxt = "بله",
+                            onPositiveAction = {
+                                exitDialogShow.value = false
+                                viewModel.post.value=null
+                                navController.popBackStack()
+                            }
+                        ),
+                        negativeAction = NegativeAction(
+                            negativeBtnTxt = "خیر",
+                            onNegativeAction = {
+                                exitDialogShow.value = false
+
+                            }
+
+                        )
+                    )
+                }
+                if (removeDialogShow.value) {
+                    GenericDialog(
+                        onDismiss = { /*TODO*/ },
+                        title = "",
+                        description = stringResource(id = R.string.remove_product_warning),
+                        positiveAction = PositiveAction(
+                            positiveBtnTxt = "بله",
+                            onPositiveAction = {
+                                removeDialogShow.value = false
+                                viewModel.product.value = null /*Product(
+                                    id = 0,
+                                    name = "",
+                                    description = "",
+                                    typeOfProduct = "محصول فیزیکی",
+                                    unit = "عدد",
+                                    mas = "",
+                                    supply = "",
+                                    price = "",
+                                    postId = 0
+                                )*/
+                            }
+                        ),
+                        negativeAction = NegativeAction(
+                            negativeBtnTxt = "خیر",
+                            onNegativeAction = {
+                                removeDialogShow.value = false
+
+                            }
+
+                        )
+                    )
+                }
+
+
+
+
+                if (showDialog.value) {
+                    val fileZippingLoading = viewModel.fileZippingLoading.value
+                    val productAttachedFile = viewModel.productAttachedFile.value
+
+                    ProductEditDialog(
+                        state="update",
+                        product = viewModel.product.value!!,
+                        showDialog = {
+                            showDialog.value = it
+                        },
+                        requestPermission = {
+                           // storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        },
+                        zipSelectedFile = {
+                            viewModel.zipSelectedFile(it, context)
+                        },
+                        setProduct = {product->
+                            viewModel.product.value = product
+                            viewModel.updateProduct(
+                                product.id,
+                                product = OnUpdateProduct(
+                                    name = product.name,
+                                    description=product.description,
+                                    price = product.price,
+                                    mas=product.mas,
+                                    supply = product.supply,
+                                    unit = product.unit
+                                )
+                            )
+
+                        },
+                        productAttachedFile = productAttachedFile,
+                        fileZippingLoading = fileZippingLoading
+                    )
+                }
+
+              /*  permissionDialogQueue
+                    .reversed()
+                    .forEach { permission ->
+                        PermissionDialog(
+                            permissionTextProvider = when (permission) {
+                                Manifest.permission.CAMERA -> {
+                                    CameraPermissionTextProvider()
+                                }
+
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+                                    StoragePermissionTextProvider()
+                                }
+
+                                else -> return@forEach
+                            },
+                            isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+                                activity,
+                                permission
+                            ),
+                            onDismiss = viewModel::dismissDialog,
+                            onOkClick = {
+                                viewModel.dismissDialog()
+
+                                when (permission) {
+                                    Manifest.permission.CAMERA -> {
+                                        cameraPermissionLauncher.launch(
+                                            Manifest.permission.CAMERA
+                                        )
+                                    }
+
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+                                        storagePermissionLauncher.launch(
+                                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                        )
+                                    }
+                                }
+
+                            },
+                            onGoToAppSettingsClick = {
+                                activity.openAppSettings()
+                            }
+                        )
+
+                    }*/
+
+
+
+
+
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    scaffoldState = scaffoldState,
+
+                    ) {
+
+                    val scrollState = rememberScrollState()
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -443,46 +396,34 @@ fun UploadPostScreen(
                                 .height(250.dp)
                         ) {
 
-                            when(typeOfPost.value){
-                                "video"->{
-                                    if(selectedVideoUri.value!=null){
-                                        val videoUrl= remember {
-                                            mutableStateOf(  selectedVideoUri.value.toString())
-                                        }
-                                        VideoPlayer(
-                                            videoUrl = videoUrl.value,
-                                            context = context
-                                        )}
+                                when (typeOfPost.value) {
+                                    "video" -> {
+                                            VideoPlayer(
+                                                videoUrl = loadedVideoUri.value,
+                                                context = context
+                                            )
 
-                                }
-                                "photo"->{
-                                    SelectedImagesPager(
-                                        pagerState = pagerState ,
-                                        selectedImages = selectedImages
-                                    )
-                                }
-                                "cameraPhoto"->{
-                                    GlideImage(
-                                        model = selectedImages[0],
-                                        loading = placeholder(R.drawable.empty_plate),
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .clip(RectangleShape),
-                                        contentScale = ContentScale.Crop,
-                                    )
-                                }
+                                    }
 
-                                else->{
-                                    Image(
-                                        painter = painterResource(id = R.drawable.empty_plate),
-                                        contentDescription =null )
+                                    "image" -> {
+
+                                        LoadedImagesPager(
+                                            selectedImages = loadedImages.value
+                                        )
+                                    }
+
+
+                                    else -> {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.empty_plate),
+                                            contentDescription = null
+                                        )
+                                    }
                                 }
-                            }
 
                         }
 
-                        Row(
+                      /*  Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp)
@@ -505,8 +446,10 @@ fun UploadPostScreen(
                                     text = stringResource(id = R.string.choose_photo),
                                     color = Color.DarkGray
                                 )
-                                Icon(painterResource(
-                                    id = R.drawable.baseline_photo_24),
+                                Icon(
+                                    painterResource(
+                                        id = R.drawable.baseline_photo_24
+                                    ),
                                     contentDescription = null,
                                     tint = Color.White
                                 )
@@ -517,7 +460,10 @@ fun UploadPostScreen(
                                 .weight(1f),
                                 onClick = {
                                     val permissionCheckResult =
-                                        ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                                        ContextCompat.checkSelfPermission(
+                                            context,
+                                            Manifest.permission.CAMERA
+                                        )
                                     if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
                                         cameraLauncher.launch(uri)
                                     } else {
@@ -527,11 +473,14 @@ fun UploadPostScreen(
 
 
                                 }) {
-                                Icon(painterResource(
-                                    id = R.drawable.baseline_photo_camera_24),
+                                Icon(
+                                    painterResource(
+                                        id = R.drawable.baseline_photo_camera_24
+                                    ),
                                     contentDescription = null,
                                     tint = Color.LightGray
-                                )                        }
+                                )
+                            }
                             Button(
                                 colors = ButtonDefaults.buttonColors(Color.LightGray),
                                 shape = RoundedCornerShape(5.dp),
@@ -550,45 +499,48 @@ fun UploadPostScreen(
                                     text = stringResource(id = R.string.choose_video),
                                     color = Color.DarkGray
                                 )
-                                Icon(painterResource(
-                                    id = R.drawable.baseline_videocam_24),
+                                Icon(
+                                    painterResource(
+                                        id = R.drawable.baseline_videocam_24
+                                    ),
                                     contentDescription = null,
                                     tint = Color.White
                                 )
 
                             }
-                        }
+                        }*/
                         TitleAndDescription(
-                            title=title,
-                            description=description,
+                            postCategory=category.value,
+                            title = title,
+                            description = description,
                             radioOptions = radioOptions,
-                            selectCategory= {
-                                category.value=it
+                            selectCategory = {
+                                category.value = it
                             }
                         )
 
-                        if(viewModel.product.value!!.name!=""){
+                        if (haveProduct.value==1 && viewModel.product.value!=null) {
                             ProductPreview(
                                 product = viewModel.product.value!!,
                                 removeProduct = {
-                                    removeDialogShow.value=true
+                                    removeDialogShow.value = true
 
                                 },
                                 editProduct = {
-                                    showDialog.value=true
+                                    showDialog.value = true
                                 },
-                                onNavigateTpProductDetailScreen = { prod->
-                                    val productJson=viewModel.jsonStringOfProduct(prod)
+                                onNavigateTpProductDetailScreen = { prod ->
+                                    val productJson = viewModel.jsonStringOfProduct(prod)
                                     val route = Screen.ProductDetail.route + "/" + productJson
                                     onNavigateTpProductDetailScreen(route)
                                 }
                             )
-                        }else{
+                        } else {
                             Button(
                                 modifier = Modifier.align(Alignment.CenterHorizontally),
                                 colors = ButtonDefaults.buttonColors(Color.LightGray),
                                 onClick = {
-                                    showDialog.value=true
+                                    showDialog.value = true
 
                                 }) {
                                 Text(
@@ -597,7 +549,7 @@ fun UploadPostScreen(
                                 )
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_attach_file_24),
-                                    contentDescription =null,
+                                    contentDescription = null,
                                     tint = Color.White
                                 )
                             }
@@ -606,55 +558,39 @@ fun UploadPostScreen(
 
 
                         Button(
-                            enabled=!loading,
-                            modifier= Modifier
+                            enabled = !loading,
+                            modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(top = 100.dp),
                             colors = ButtonDefaults.buttonColors(Color.Green),
                             onClick = {
 
-                                if(title.value=="" || description.value==""){
+                                if (title.value == "" || description.value == "") {
                                     Toast.makeText(
                                         context,
                                         context.getString(R.string.free_field_warning),
                                         Toast.LENGTH_SHORT
                                     ).show()
 
-                                }else{
-                                    val finalPost=OnUploadPost(
+                                } else {
+                                    val finalPost = OnUpdatePost(
                                         title = title.value,
-                                        postType =
-                                        if (selectedVideoUri.value == getResourceUri(
-                                                context.resources,
-                                                R.drawable.empty_plate
-                                            )
-                                        ) {
-                                            "image"
-                                        } else {
-                                            "video"
-                                        },
                                         category = category.value,
-                                        featuredImage =
-                                        selectedImages.toList()
-
-
-                                        ,
-                                        videoUri = selectedVideoUri.value!!,
                                         description = description.value,
                                         longDataAdded = System.currentTimeMillis(),
                                         haveProduct =
-                                        if (viewModel.product.value!!.name == "") {
-                                            0
-                                        } else {
+                                        if (viewModel.product.value != null) {
                                             1
+                                        } else {
+                                            0
                                         }
-
 
                                     )
 
-                                        viewModel.uploadPost(
-                                            post = finalPost
-                                        )
+                                    viewModel.updatePost(
+                                        postId = postId!!,
+                                        post = finalPost
+                                    )
 
                                 }
 
@@ -670,22 +606,21 @@ fun UploadPostScreen(
                     }
 
 
+                }
+
             }
 
+            BackHandler {
+
+                exitDialogShow.value = true
+
+            }
+
+
+        }
     }
 
- BackHandler {
-     
-     exitDialogShow.value=true
-
- }
-
-
 }
-
-
-
-
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProductPreview(
@@ -700,7 +635,7 @@ fun ProductPreview(
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         ),
-                border = BorderStroke(1.dp, color = Color.LightGray)
+        border = BorderStroke(1.dp, color = Color.LightGray)
     ) {
         Column(
             modifier = Modifier.padding(10.dp)
@@ -750,19 +685,19 @@ fun ProductPreview(
 
                 text ="قیمت:  ${product.price} تومان "
             )
-         /*   TextButton(
-                modifier=Modifier
-                    .align(Alignment.End),
-                onClick = {
-                    onNavigateTpProductDetailScreen(product)
+            /*   TextButton(
+                   modifier=Modifier
+                       .align(Alignment.End),
+                   onClick = {
+                       onNavigateTpProductDetailScreen(product)
 
-                }) {
-                Text(
-                    modifier=Modifier.padding(10.dp),
-                    text = stringResource(id =R.string.more),
-                    color= Color.Blue
-                )
-            }*/
+                   }) {
+                   Text(
+                       modifier=Modifier.padding(10.dp),
+                       text = stringResource(id =R.string.more),
+                       color= Color.Blue
+                   )
+               }*/
 
         }
 
@@ -780,9 +715,45 @@ fun ProductPreview(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun SelectedImagesPager(
-    pagerState:PagerState,
     selectedImages:SnapshotStateList<Uri?>
 ){
+    Log.i("SELECTED",selectedImages.toList().toString())
+    val pagerState = rememberPagerState(pageCount = {
+        selectedImages.size
+    })
+    HorizontalPager(
+        state = pagerState,
+        pageSize = PageSize.Fill,
+        pageSpacing = 15.dp,
+        contentPadding = PaddingValues(
+            horizontal = 10.dp,
+            vertical = 5.dp
+        )
+
+    ){
+        val currentImage=selectedImages[it]
+        GlideImage(
+            model = currentImage,
+            loading = placeholder(R.drawable.empty_plate),
+            contentDescription = "",
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RectangleShape),
+            contentScale = ContentScale.Crop,
+        )
+    }
+
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
+@Composable
+fun LoadedImagesPager(
+    selectedImages:List<Uri?>
+){
+    Log.i("SELECTED",selectedImages.toList().toString())
+    val pagerState = rememberPagerState(pageCount = {
+        selectedImages.size
+    })
     HorizontalPager(
         state = pagerState,
         pageSize = PageSize.Fill,
@@ -809,6 +780,7 @@ fun SelectedImagesPager(
 
 @Composable
 fun TitleAndDescription(
+    postCategory:String,
     title:MutableState<String>,
     description:MutableState<String>,
     radioOptions:List<String>,
@@ -818,7 +790,7 @@ fun TitleAndDescription(
     val expandedCategory = remember { mutableStateOf(false)}
     val selectedCat = remember { mutableStateOf(radioOptions[0])}
     val selectCategoryText= remember {
-       mutableStateOf("دسته بندی")
+        mutableStateOf(postCategory)
     }
 
     TextField(
@@ -827,7 +799,7 @@ fun TitleAndDescription(
             .padding(end = 20.dp, start = 20.dp, top = 10.dp, bottom = 10.dp),
         value = title.value!!,
         label = {
-                Text(text = stringResource(id = R.string.post_title)+"*", color = Color.Gray)
+            Text(text = stringResource(id = R.string.post_title)+"*", color = Color.Gray)
         },
         singleLine = true,
         onValueChange = {
@@ -936,30 +908,30 @@ fun TitleAndDescription(
             }
         }
     }
-    }
-        fun Context.createImageFile(): File {
-            // Create an image file name
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-            val imageFileName = "JPEG_" + timeStamp + "_"
-            val image = File.createTempFile(
-                imageFileName, /* prefix */
-                ".jpg", /* suffix */
-                externalCacheDir      /* directory */
-            )
-            return image
-        }
+}
+fun Context.createImageFile(): File {
+    // Create an image file name
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    val image = File.createTempFile(
+        imageFileName, /* prefix */
+        ".jpg", /* suffix */
+        externalCacheDir      /* directory */
+    )
+    return image
+}
 
-        fun Activity.openAppSettings() {
-            Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.fromParts("package", packageName, null)
-            ).also(::startActivity)
-        }
+fun Activity.openAppSettings() {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).also(::startActivity)
+}
 
-        fun getResourceUri(resources: Resources, resourceID: Int): Uri {
-            return Uri.parse(
-                "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
-                        resources.getResourceTypeName(resourceID) + '/'
-                        + resources.getResourceEntryName(resourceID)
-            )
-        }
+fun getResourceUri(resources: Resources, resourceID: Int): Uri {
+    return Uri.parse(
+        "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
+                resources.getResourceTypeName(resourceID) + '/'
+                + resources.getResourceEntryName(resourceID)
+    )
+}
