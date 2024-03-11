@@ -3,8 +3,11 @@ package com.saeeed.devejump.project.tailoring.interactor.upload_post
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.saeeed.devejump.project.tailoring.domain.data.DataState
-import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
+import com.saeeed.devejump.project.tailoring.domain.model.OnUpdatePost
+import com.saeeed.devejump.project.tailoring.domain.model.OnUpdateProduct
+import com.saeeed.devejump.project.tailoring.domain.model.OnUploadPost
 import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.network.RetrofitService
@@ -79,7 +82,7 @@ class UploadPostFunctions(
 
     fun uploadPost(
         token:String?,
-        post:CreatedPost,
+        post:OnUploadPost,
         isNetworkAvailable: Boolean
     ):Flow<DataState<Post>> = flow{
         if(isNetworkAvailable) {
@@ -123,6 +126,91 @@ class UploadPostFunctions(
 
         }
     }
+
+    fun UpdatePost(
+        token: String?,
+        postId: Int,
+        post: OnUpdatePost,
+        isNetworkAvailable: Boolean
+    ):Flow<DataState<String>> = flow {
+        emit(DataState.loading())
+
+        if (isNetworkAvailable) {
+            val result = retrofitService.updatePost(
+                token = token,
+                onUpdatePost=post,
+                postId = postId
+            )
+            if (result.isSuccessful) {
+                emit(DataState.success(result.body()!!))
+
+            }else if (result.code() == 401) {
+                emit(DataState.error("شما دسترسی لازم را ندارید"))
+            } else {
+                try {
+                    val errMsg = result.errorBody()?.string()?.let {
+                        JSONObject(it).getString("error") // or whatever your message is
+                    } ?: run {
+                        emit(DataState.error(result.code().toString()))
+                    }
+                    emit(DataState.error(errMsg.toString()))
+                } catch (e: Exception) {
+                    emit(DataState.error("خطای سرور"))
+
+
+                }
+            }
+
+        }else{
+            emit(DataState.error("شما به اینترنت دسترسی ندارید"))
+
+        }
+
+
+
+    }
+
+
+    fun UpdateProduct(
+        token: String?,
+        productId: Int,
+        product: OnUpdateProduct,
+        isNetworkAvailable: Boolean
+    ):Flow<DataState<String>> = flow {
+        emit(DataState.loading())
+        if (isNetworkAvailable) {
+
+            val result = retrofitService.updateProduct(
+                token=token,
+                onUpdateProduct = product,
+                productId=productId
+            )
+            if (result.isSuccessful) {
+                emit(DataState.success(result.body()!!))
+
+            }else if (result.code() == 401) {
+                emit(DataState.error("شما دسترسی لازم را ندارید"))
+            } else {
+                try {
+                    val errMsg = result.errorBody()?.string()?.let {
+                        JSONObject(it).getString("error") // or whatever your message is
+                    } ?: run {
+                        emit(DataState.error(result.code().toString()))
+                    }
+                    emit(DataState.error(errMsg.toString()))
+                } catch (e: Exception) {
+                    emit(DataState.error("خطای سرور"))
+
+
+                }
+            }
+
+        }else{
+            emit(DataState.error("شما به اینترنت دسترسی ندارید"))
+
+        }
+    }
+
 
     fun uploadProduct(
         token: String?,
@@ -174,6 +262,7 @@ class UploadPostFunctions(
         val result= mutableListOf<MultipartBody.Part>()
         uris.forEach {uri->
             result.add(getFileOfUri.getImageFileFromUri(uri!!))
+
 
         }
         return result

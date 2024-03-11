@@ -55,7 +55,7 @@ fun PostCart(
 
     }else{
         GlideImage(
-            model = post.featuredImage[0],
+            model = if(!post.featuredImage.isEmpty()) post.featuredImage[0] else "",
             loading = placeholder(R.drawable.empty_plate),
             contentDescription = "",
             modifier = Modifier

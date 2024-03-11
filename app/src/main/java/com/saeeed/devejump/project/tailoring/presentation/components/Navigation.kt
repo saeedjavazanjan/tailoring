@@ -11,6 +11,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.saeeed.devejump.project.tailoring.datastore.AppDataStore
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
+import com.saeeed.devejump.project.tailoring.presentation.ui.UpdatePost.UpdatePostScreen
+import com.saeeed.devejump.project.tailoring.presentation.ui.UpdatePost.UpdatePostViewModel
 import com.saeeed.devejump.project.tailoring.presentation.ui.article.ArticleScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.bests.BestsScreen
 import com.saeeed.devejump.project.tailoring.presentation.ui.courses.CoursesScreen
@@ -60,6 +62,7 @@ fun Navigation(
     val uploadPostViewModel: UploadPostViewModel = viewModel()
     val schoolViewModel:SchoolViewModel= viewModel()
     val notificationViewModel:NotificationsViewModel= viewModel()
+    val updatePostViewModel:UpdatePostViewModel= viewModel()
     NavHost(navController = navController, startDestination = Screen.Splash.route) {
 
         composable(Screen.Splash.route) {
@@ -116,7 +119,7 @@ fun Navigation(
                 },
                 viewModel = authorProfileViewModel,
                 onNavigateToUploadPostScreen = {
-                    navController.navigate(Screen.UploadPost.route+ "/0/upload")
+                    navController.navigate(Screen.UploadPost.route)
                 }
             )
 
@@ -149,7 +152,7 @@ fun Navigation(
                     navController.navigate(Screen.ProductDetail.route)
                 },
 
-                onNavigateToUploadPost = {
+                onNavigateToUpdatePost = {
                     navController.navigate(it)
                 }
             )
@@ -220,19 +223,11 @@ fun Navigation(
 
 
 
-        composable(
-            route = Screen.UploadPost.route + "/{postID}/{navigateType}",
-            arguments = listOf(
-                navArgument("postID") { type = NavType.IntType },
-                navArgument("navigateType") { type = NavType.StringType },
-
-                )) {navBackStackEntry->
+        composable(route = Screen.UploadPost.route ) {navBackStackEntry->
 
             UploadPostScreen(
                 isDarkTheme = appDataStore.isDark.value,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                navigateType=navBackStackEntry.arguments?.getString("navigateType"),
-                postId=navBackStackEntry.arguments?.getInt("postID"),
                 viewModel = uploadPostViewModel,
                 navController = navController,
                 onNavigateTpProductDetailScreen = navController::navigate,
@@ -243,9 +238,23 @@ fun Navigation(
             )
 
         }
+        composable( route = Screen.UpdatePost.route + "/{postId}",
+            arguments = listOf(navArgument("postId") {
+                type = NavType.IntType
+            })){navBackStackEntry->
+                UpdatePostScreen(
+                    isDarkTheme =appDataStore.isDark.value,
+                    isNetworkAvailable =connectivityManager.isNetworkAvailable.value ,
+                    viewModel =updatePostViewModel ,
+                    postId =navBackStackEntry.arguments?.getInt("postId"),
+                    navController = navController,
+                    onNavigateTpProductDetailScreen =navController::navigate,
+                    onNavigateToAuthorProfile={
+                        navController.navigate(Screen.AuthorProfile.route)
 
-
-
+                    }
+                )
+            }
 
 
         composable(Screen.Search.route) {

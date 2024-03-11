@@ -3,7 +3,6 @@ package com.saeeed.devejump.project.tailoring.presentation.ui.upload
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import android.provider.ContactsContract.RawContacts.Data
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
@@ -11,12 +10,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.saeeed.devejump.project.tailoring.domain.model.CreatedPost
+import com.saeeed.devejump.project.tailoring.domain.model.OnUploadPost
 import com.saeeed.devejump.project.tailoring.domain.model.Post
 import com.saeeed.devejump.project.tailoring.domain.model.Product
 import com.saeeed.devejump.project.tailoring.interactor.description.GetPost
@@ -24,14 +21,12 @@ import com.saeeed.devejump.project.tailoring.interactor.upload_post.UploadPostFu
 import com.saeeed.devejump.project.tailoring.utils.ConnectivityManager
 import com.saeeed.devejump.project.tailoring.utils.DialogQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Date
 import javax.inject.Inject
 
 
@@ -41,8 +36,6 @@ class UploadPostViewModel
         private val uploadPostFunctions: UploadPostFunctions,
         private val userPreferencesDataStore: DataStore<Preferences>,
         private val connectivityManager: ConnectivityManager,
-        private val getPost: GetPost
-
         ):ViewModel() {
 
     val authorToken= mutableStateOf<String?>("")
@@ -66,21 +59,7 @@ class UploadPostViewModel
     )
         )
 
-    val onEditPost= mutableStateOf( Post(
-        id = 0,
-        postType = "",
-        description = "",
-        longDataAdded = 0,
-        haveProduct = 0,
-        authorId = 0,
-        category = "",
-        title = "",
-        dateAdded = "",
-        videoUrl = "",
-        publisher = "",
-        like =0,
-        authorAvatar = ""
-    ))
+
 
     val zipFilePath= mutableStateOf("")
     val productAttachedFile= mutableStateOf("")
@@ -128,7 +107,7 @@ class UploadPostViewModel
     }
 
 
-    fun getPostFromServerForEdit(
+   /* fun getPostFromServerForEdit(
         postId:Int
     ){
         getPost.execute(
@@ -150,9 +129,9 @@ class UploadPostViewModel
             dialogQueue.appendErrorMessage("خطایی رخ داده است",it.message.toString())
         }.launchIn(viewModelScope)
 
-    }
+    }*/
 
-    fun getProductFromServer(
+   /* fun getProductFromServer(
         postId: Int
     ){
         getPost.getProductOfCurrentPost(
@@ -173,8 +152,8 @@ class UploadPostViewModel
 
         }.launchIn(viewModelScope)
 
-    }
-    fun uploadPost(post:CreatedPost){
+    }*/
+    fun uploadPost(post:OnUploadPost){
         viewModelScope.launch {
             authorToken.value=getTokenFromPreferencesStore()
         }
@@ -202,11 +181,12 @@ class UploadPostViewModel
 
         }.catch {
             dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
-
+            loading.value=false
         }.launchIn(viewModelScope)
 
 
     }
+
 
 
     fun uploadProduct(
@@ -233,7 +213,7 @@ class UploadPostViewModel
 
         }.catch {
             dialogQueue.appendErrorMessage("مشکلی رخ داده است.",it.message.toString())
-
+            loading.value=false
         }.launchIn(viewModelScope)
 
 
