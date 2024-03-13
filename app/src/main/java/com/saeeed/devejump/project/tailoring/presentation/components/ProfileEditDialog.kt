@@ -320,7 +320,7 @@ fun ProfileEditDialog(
 
 
                             applyChanges(
-                                if(userData!!.avatar=="")
+                                if(userData!!.avatar=="" )
                                     getResourceUri(context.resources,R.drawable.empty_plate)
                                 else imageUri.value!! ,
                                 userName.value!!,

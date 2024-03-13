@@ -1,6 +1,8 @@
 package com.saeeed.devejump.project.tailoring.presentation.ui.author_profile
 
 import android.annotation.SuppressLint
+import android.content.res.Resources
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -63,6 +65,7 @@ import com.saeeed.devejump.project.tailoring.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 import com.google.accompanist.pager.*
 import com.saeeed.devejump.project.tailoring.presentation.components.ProfileEditDialog
+import com.saeeed.devejump.project.tailoring.presentation.components.getResourceUri
 import com.saeeed.devejump.project.tailoring.presentation.ui.register.RegisterDialog
 import com.saeeed.devejump.project.tailoring.presentation.navigation.Screen
 
@@ -130,7 +133,18 @@ LaunchedEffect(Unit ){
                     user!!.userName = name
                     user!!.avatar = imgUri.toString()
                     user!!.bio = bio
-                    viewModel.updateUserData(user, scaffoldState, composableScope,imgUri)
+                    viewModel.updateUserData(
+                        user,
+                        scaffoldState,
+                        composableScope,
+                        avatarUri = if(imgUri.toString().take(4)=="http")
+                        getResourceUri(context.resources,R.drawable.empty_plate)
+                        else
+                        imgUri
+                        ,
+                        avatarUpdateState = if(imgUri.toString().take(4)=="http") "none" else "yes"
+                    )
+
 
                 }
             )
@@ -467,5 +481,11 @@ fun getPosts(
 
 }
 
-
+fun getResourceUri(resources: Resources, resourceID: Int): Uri {
+    return Uri.parse(
+        "android.resource://" + resources.getResourcePackageName(resourceID) + "/" +
+                resources.getResourceTypeName(resourceID) + '/'
+                + resources.getResourceEntryName(resourceID)
+    )
+}
 

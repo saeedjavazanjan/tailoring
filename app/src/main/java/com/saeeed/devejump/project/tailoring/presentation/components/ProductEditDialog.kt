@@ -434,7 +434,7 @@ fun ProductEditDialog(
 
                                             setProduct(
                                                 Product(
-                                                    id=0,
+                                                    id=if(state=="upload") 0 else product.id,
                                                     name=name.value,
                                                     description=description.value,
                                                     images = selectedImages.toList(),

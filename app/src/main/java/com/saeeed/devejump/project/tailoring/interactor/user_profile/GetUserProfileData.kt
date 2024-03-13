@@ -163,22 +163,20 @@ class GetUserProfileData(
         userData: UserData?,
         token: String?,
         avatar: Uri,
+        avatarUpdateState:String,
         isNetworkAvailable: Boolean
 
       ):Flow<DataState<String>> = flow {
-if (isNetworkAvailable) {
-    val part = getFileOfUri.getImageFileFromUri(avatar)
-
+         if (isNetworkAvailable){
+        val part = getFileOfUri.getImageFileFromUri(avatar)
     emit(DataState.loading())
-    //  val databaseUpdate= sewMethodDao.updateUserData(listOf(userDataEntityMapper.mapFromDomainModel(userData)))
-
-    // if (databaseUpdate>0){
     try {
         val result = retrofitService.updateUseData(
             token,
             userData!!.userName.toRequestBody(),
             userData.bio.toRequestBody(),
-            part
+            part,
+        avatarUpdateState
         )
         if (result.isSuccessful)
             emit(DataState.success("به روز رسانی با موفقیت انجام شد"))

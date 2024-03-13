@@ -17,14 +17,16 @@ class GetFileOfUri(
     fun getImageFileFromUri(
         uri: Uri
     ): MultipartBody.Part {
-        val fileDire = context.filesDir
-        val file = File(fileDire, "image.png")
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-        inputStream!!.copyTo(outputStream)
-        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+            val fileDire = context.filesDir
+            val file = File(fileDire, "image.png")
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val outputStream = FileOutputStream(file)
+            inputStream!!.copyTo(outputStream)
+            val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
 
-        return MultipartBody.Part.createFormData("AvatarFile", file.name, requestBody)
+            return MultipartBody.Part.createFormData("AvatarFile", file.name, requestBody)
+
+
     }
 
     fun getVideoFileFromUri(

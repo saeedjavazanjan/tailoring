@@ -156,7 +156,8 @@ constructor(
         userData: UserData?,
         scaffoldState: ScaffoldState,
         scope: CoroutineScope,
-        avatarUri: Uri
+        avatarUri: Uri,
+        avatarUpdateState:String
     ){
         val snackbarController= SnackbarController(scope)
 
@@ -167,6 +168,7 @@ constructor(
             userData,
             authorToken.value,
             avatarUri,
+            avatarUpdateState=avatarUpdateState,
             isNetworkAvailable =   connectivityManager.isNetworkAvailable.value
 
         ).onEach {dataState ->

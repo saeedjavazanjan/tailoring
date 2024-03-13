@@ -113,13 +113,14 @@ interface RetrofitService {
     ):Response<UserDataDto>
 
     @Multipart
-    @PUT("/users/updateUser")
+    @PUT("/users/updateUser/{aus}")
     suspend fun updateUseData(
         @Header("Authorization") token: String?,
         @Part("UserName") userName: RequestBody,
         @Part("Bio") bio: RequestBody,
         @Part image: MultipartBody.Part,
-    ): Response<Unit>
+        @Path("aus") avatarUpdateState: String,
+        ): Response<Unit>
 
     @Multipart
     @POST("posts/uploadPost")
